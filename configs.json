@@ -1,0 +1,9 @@
+{"database":{
+    "user":"postgres",
+    "host":"13.59.13.40",
+    "database":"PSAT",
+    "password":"postgres",
+    "sslmode":false,
+    "port":"5432"
+},
+"cookies":{"secret":"qwekksadqwe","name":"session","keys":["MTc3OS43MDIwNjcwNjI1OTE4","NDQ5My42MjI2OTgzMzg1NTY="],"resave":true,"saveUninitialized":true,"maxAge":2592000000},"secret":"sEcReT"}

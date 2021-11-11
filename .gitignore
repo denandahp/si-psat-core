@@ -74,7 +74,7 @@ node_modules
 
 # Configs
 configs.js
-configs.json
+# configs.json
 
 # docs
 docs
@@ -82,3 +82,5 @@ docs
 # VS Code
 .vscode
 jsconfig.json
+
+media
