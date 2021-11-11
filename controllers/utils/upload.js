@@ -17,7 +17,7 @@ exports.param = () => {
     },
     // konfigurasi penamaan file yang unik
     filename: function (req, file, cb) {
-      let name = file.originalname.replace(path.extname(file.originalname), '')
+      let name = file.originalname.replace(path.extname(file.originalname), '').replace(/ /g, '_').toLowerCase()
       cb(
         null, name + String(Date.now()) + path.extname(file.originalname)
       );
@@ -30,7 +30,6 @@ exports.param = () => {
 }
 
 exports.clean_size = (files)=> {
-  console.log(files)
     var limit = 2000;
     if (files.size >= (limit*1024)){
       let msg = `Ukuran file ${files.fieldname} melebihi ${limit/1000} Mb`

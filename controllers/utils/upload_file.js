@@ -10,10 +10,9 @@ class UploadController {
             try {
                 let response = [], fileLocation, fileArray;
                 if( err ){
-                    throw new Error(err.message);
+                    throw new Error(err);
                 }else{
                     if( req.files === undefined ){
-                        console.log(err.message)
                         throw new Error('No File Selected')
                     }else {
                         fileArray = req.files;
@@ -26,7 +25,6 @@ class UploadController {
                                 response.push(fileLocation)
                             }
                         }
-                        
                         res.status(200).json({ response: response });
                     }
                 }
