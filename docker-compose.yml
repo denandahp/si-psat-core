@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+    si-psat:
+        #Use Build if in Development
+        #Use image if in Production
+        build:
+            context: .
+            dockerfile: Dockerfile
+        # image: denandahp/si-psat:stag
+        container_name: si-psat-run
+        # env_file: .env
+        # environment:
+        #     - TZ=Asia/Jakarta
+        #     - POSTGRES_USER=postgres
+        #     - POSTGRES_HOST=34.101.119.75
+        #     - POSTGRES_DATABASE=petidary
+        #     - POSTGRES_PASSWORD=postgresql123
+        #     - POSTGRES_SSLMODE=$POSTGRES_SSLMODE
+        #     - POSTGRES_PORT=9005
+        #     - FIREBASE=../private_key_petdiary.json
+        networks:
+            - app
+        ports:
+            - 3000:3000
+        # command: user:postgre host:18.216.58.97 db:petdiary pass:postgres  -- npm start
+        #Use Volume if in Development & comment if in production
+        volumes:
+            - .:/app
+
+networks:
+   app:
+
+
+    
