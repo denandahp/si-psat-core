@@ -11,8 +11,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.permohonan_izin(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -29,8 +28,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.add_unit_produksi(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -47,8 +45,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.add_daftar_pemasok(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -65,8 +62,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.add_daftar_pelanggan(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -83,8 +79,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.add_info_produk(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -101,8 +96,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.update_unit_produksi(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -119,8 +113,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.update_daftar_pemasok(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -137,8 +130,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.update_daftar_pelanggan(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -155,8 +147,7 @@ class PsatPlPermohonanController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await psat_pl.update_info_produk(query);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -173,8 +164,7 @@ class PsatPlPermohonanController {
                 let id = req.query.id;
                 debug('detail %o', id);
                 let detail = await psat_pl.delete_unit_produksi(id);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -191,8 +181,7 @@ class PsatPlPermohonanController {
                 let id = req.query.id;
                 debug('detail %o', id);
                 let detail = await psat_pl.delete_daftar_pemasok(id);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -209,8 +198,7 @@ class PsatPlPermohonanController {
                 let id = req.query.id;
                 debug('detail %o', id);
                 let detail = await psat_pl.delete_daftar_pelanggan(id);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -227,8 +215,7 @@ class PsatPlPermohonanController {
                 let id = req.query.id;
                 debug('detail %o', id);
                 let detail = await psat_pl.delete_info_produk(id);
-                if (!detail == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (!detail == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }

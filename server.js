@@ -14,7 +14,7 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  debug('Server Started. *:%o', PORT);
+    debug('Server Started. *:%o', PORT);
 });
 
 // Views setting
@@ -25,13 +25,13 @@ app.set('views', __dirname + '/views');
 app.use(morgan('tiny'));
 app.use(logger('dev'));
 app.use(bodyParser.json({
-  limit: '50mb'
+    limit: '50mb'
 }));
-app.use(bodyParser.urlencoded({ 
-  limit: "50mb",
-  extended: true,
-  parameterLimit: 50000
-})); 
+app.use(bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000
+}));
 
 //Static image
 app.use(express.static(path.join(__dirname, 'uploads')));
@@ -42,23 +42,23 @@ app.set('trust proxy', 1); // trust first proxy
 app.use(session(config.cookies));
 
 // MaxAge
-app.use(function SessionMaxAgeMiddleware (req, res, next) {
-  req.sessionOptions.maxAge = req.session.maxAge || req.sessionOptions.maxAge;
-  next();
+app.use(function SessionMaxAgeMiddleware(req, res, next) {
+    req.sessionOptions.maxAge = req.session.maxAge || req.sessionOptions.maxAge;
+    next();
 });
 
 // locals.
-app.use(function LocalsMiddleware (req, res, next) {
+app.use(function LocalsMiddleware(req, res, next) {
 
-  res.locals.edit = false;
-  res.locals.user = req.session.user || false;
+    res.locals.edit = false;
+    res.locals.user = req.session.user || false;
 
-  next();
+    next();
 });
 
 // All controllers should live here
 app.get("/", function rootHandler(req, res) {
-  res.end("Hello world!");
+    res.end("Hello world!");
 });
 
 const index = require('./routes/index.js');
@@ -72,11 +72,12 @@ const past_pl_permohonan = require('./routes/psat_pl_permohonan.js');
 const past_pl_perubahan = require('./routes/psat_pl_perubahan.js');
 const oss = require('./routes/oss.js');
 const upload_file = require('./routes/upload.js');
+const sertifikat = require('./routes/sertifikat.js');
 
 app.use('/', index);
 app.use('/user', user);
 app.use('/api/psat/sppb', sppb_psat_penambahan)
-// app.use('/api/psat/sppb', sppb_psat_pengalihan)
+    // app.use('/api/psat/sppb', sppb_psat_pengalihan)
 app.use('/api/psat/sppb', sppb_psat_permohonan)
 app.use('/api/psat/sppb', sppb_psat_perpanjangan)
 app.use('/api/psat/pl', past_pl_pengalihan)
@@ -84,6 +85,7 @@ app.use('/api/psat/pl', past_pl_permohonan)
 app.use('/api/psat/pl', past_pl_perubahan)
 app.use('/api/oss', oss)
 app.use('/api/upload', upload_file)
+app.use('/api/sertifikat', sertifikat);
 
 
 // Error Middleware
