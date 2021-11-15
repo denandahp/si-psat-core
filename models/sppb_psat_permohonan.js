@@ -7,7 +7,7 @@ const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_ruang_lingkup = schema + '.' + '"ruang_lingkup"';
 const db_unit_produksi = schema + '.' + '"unit_produksi"';
 const db_info_perusahaan = schema + '.' + '"info_perusahaan"';
-
+const db_history_pengajuan= schema + '.' + '"history_all_pengajuan"';
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
@@ -27,16 +27,16 @@ class SppbPsatPermohonanModel {
                 ' (id_pengguna, denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', data_file_pemohonan);
             let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', data.status_proses, data.status_aktif, data.ruang_lingkup,
-                            file_permohonan.rows[0].id, data.unit_produksi, date, date];
+                            file_permohonan.rows[0].id, data.unit_produksi,info_perusahaan.rows[0].id, date, date];
             let pengajuan = await pool.query(
                 'INSERT INTO ' + db_pengajuan + 
-                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, unit_produksi, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_pengajuan);
+                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, unit_produksi, indo_perusahaan, created, update)' +
+                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
             debug('get %o', response);
-            return { status: '200', permohonan: "Permohonan Awal SPPB PSAT", data: response };
+            return { status: '200', keterangan: "Permohonan Awal SPPB PSAT", data: response };
         } catch (ex) {
             console.log(ex.message);
             return { status: '400', Error: "" + ex };
@@ -54,7 +54,7 @@ class SppbPsatPermohonanModel {
                 'file_bukti, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_unit_produksi);
 
             debug('get %o', unit_produksi);
-            return { status: '200', permohonan: "Tambah Unit Produksi", data: unit_produksi.rows[0] };
+            return { status: '200', keterangan: "Tambah Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -71,7 +71,23 @@ class SppbPsatPermohonanModel {
                 ' (id_pengguna, nama_komoditas, cara_penyimpanan, pengolahan_minimal, pengemasan_ulang, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', data_ruang_lingkup);
             debug('get %o', ruang_lingkup);
-            return { status: '200', permohonan: "Tambah Ruang Lingkup", data: ruang_lingkup.rows[0] };
+            return { status: '200', keterangan: "Tambah Ruang Lingkup", data: ruang_lingkup.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_nomor_sppb_psat(data) {
+        try {
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PERMOHONAN', data.nomor_sppb_psat, date];
+            let pengajuan = await pool.query(
+                'UPDATE' + db_pengajuan + 
+                ' SET (nomor_sppb_psat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
+                'RETURNING id, id_pengguna, jenis_permohonan, status_proses, nomor_sppb_psat', data_pengajuan);
+
+            debug('get %o', pengajuan);
+            return { status: '200', keterangan: `Update Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -90,7 +106,7 @@ class SppbPsatPermohonanModel {
                 'WHERE id=$1 AND id_pengguna=$2 RETURNING *', data_unit_produksi);
 
             debug('get %o', unit_produksi);
-            return { status: '200', permohonan: "Update Unit Produksi", data: unit_produksi.rows[0] };
+            return { status: '200', keterangan: "Update Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -107,7 +123,7 @@ class SppbPsatPermohonanModel {
                 ' SET (nama_komoditas, cara_penyimpanan, pengolahan_minimal, pengemasan_ulang, created, update)' +
                 ' = ($3, $4, $5, $6, $7, $8) WHERE id=$1 AND id_pengguna=$2 RETURNING *', data_ruang_lingkup);
             debug('get %o', ruang_lingkup);
-            return { status: '200', permohonan: "Update Ruang Lingkup", data: ruang_lingkup.rows[0] };
+            return { status: '200', keterangan: "Update Ruang Lingkup", data: ruang_lingkup.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -118,7 +134,7 @@ class SppbPsatPermohonanModel {
         try {
             let unit_produksi = await pool.query('DELETE FROM ' + db_unit_produksi + ` WHERE id = ${id} RETURNING *`)
             debug('get %o', unit_produksi);
-            return { status: '200', permohohan: "Delete Unit Produksi", data: unit_produksi.rows[0] };
+            return { status: '200', keterangan: "Delete Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -129,7 +145,98 @@ class SppbPsatPermohonanModel {
         try {
           let ruang_lingkup = await pool.query('DELETE FROM ' + db_ruang_lingkup + ` WHERE id = ${id} RETURNING *`)
             debug('get %o', ruang_lingkup);
-            return { status: '200', permohohan: "Delete Ruang Lingkup", data: ruang_lingkup.rows[0] };
+            return { status: '200', keterangan: "Delete Ruang Lingkup", data: ruang_lingkup.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_permohonan_awal(id) {
+        try {
+            let permohonan_awal;
+            if(id == 'all'){
+                unit_produksi = await pool.query('SELECT * FROM ' + db_pengajuan)
+            } else{
+                unit_produksi = await pool.query('SELECT * FROM ' + db_pengajuan + ` WHERE id = ${id}`)
+            }
+            debug('get %o', unit_produksi);
+            return { status: '200', keterangan: "Detail Unit Produksi", data: unit_produksi.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_unit_produksi(id) {
+        try {
+            let unit_produksi;
+            if(id == 'all'){
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi)
+            } else{
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ${id}`)
+            }
+            debug('get %o', unit_produksi);
+            return { status: '200', keterangan: "Detail Unit Produksi", data: unit_produksi.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_ruang_lingkup(id) {
+        try {
+            let ruang_lingkup
+            if(id == 'all'){
+                ruang_lingkup = await pool.query('SELECT * FROM ' + db_ruang_lingkup)
+            } else {
+                ruang_lingkup = await pool.query('SELECT * FROM ' + db_ruang_lingkup + ` WHERE id = ${id}`)
+            }
+            debug('get %o', ruang_lingkup);
+            return { status: '200', keterangan: "Detail Ruang Lingkup", data: ruang_lingkup.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_permohonan_awal(id, user) {
+        try {
+            let permohonan;
+            if(id == 'all'){
+                permohonan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, nama_perusahaan, alamat_perusahaan, denah_ruangan_psat, diagram_alir_psat, '+
+                    'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, status_proses, status_aktif, produk, '+
+                    'unit_produksi, created, update FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PERMOHONAN"])
+            } else {
+                permohonan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, nama_perusahaan, alamat_perusahaan, denah_ruangan_psat, diagram_alir_psat, '+
+                    'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, status_proses, status_aktif, produk, '+
+                    'unit_produksi, created, update FROM' + db_history_pengajuan + 
+                    ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERMOHONAN", id, user])
+            }
+            debug('get %o', permohonan);
+            return { status: '200', keterangan: "Detail Permohonan Awal SPPB PSAT", data: permohonan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_history_pengajuan(user) {
+        try {
+            console.log(user)
+            let history;
+            if(user == 'all'){
+                history = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses FROM' + db_history_pengajuan)
+            } else {
+                history = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses FROM' + 
+                    db_history_pengajuan + ' WHERE id_pengguna=$1', [user])
+            }
+            debug('get %o', history);
+            return { status: '200', keterangan: `History SPPB PSAT id ${user}` , data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

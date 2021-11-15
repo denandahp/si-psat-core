@@ -6,6 +6,8 @@ const db_pengajuan = schema + '.' + '"pengajuan"';
 const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_sertifikat = schema + '.' + '"sertifikat_psat"';
 const db_info_perusahaan = schema + '.' + '"info_perusahaan"';
+const db_history_pengajuan= schema + '.' + '"history_all_pengajuan"';
+
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
@@ -45,6 +47,47 @@ class SppbPsatModel {
             response.info_perusahaan = info_perusahaan.rows[0];
             debug('get %o', response);
             return { status: '200', permohonan: "Penambahan Ruang Lingkup SPPB PSAT", data: response };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_penambahan_nomor_sppb_psat(data) {
+        try {
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENAMBAHAN', data.nomor_sppb_psat, date];
+            let pengajuan = await pool.query(
+                'UPDATE' + db_pengajuan + 
+                ' SET (nomor_sppb_psat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
+                'RETURNING id, id_pengguna, jenis_permohonan, status_proses, nomor_sppb_psat', data_pengajuan);
+
+            debug('get %o', pengajuan);
+            return { status: '200', keterangan: `Update Penambahan Ruang Lingkup Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_penambahan_masa_berlaku(id, user) {
+        try {
+            let penambahan;
+            if(id == 'all'){
+                penambahan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, nama_perusahaan, alamat_perusahaan, nomor_sppb_psat_sebelumnya, level, denah_ruangan_psat, ' +
+                    'ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
+                    'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
+                    'produk, unit_produksi, created, update FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENAMBAHAN"])
+            } else {
+                penambahan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna,nomor_sppb_psat_baru, nama_perusahaan, alamat_perusahaan, nomor_sppb_psat_sebelumnya, level, denah_ruangan_psat, ' +
+                    'ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
+                    'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
+                    'produk, unit_produksi, created, update FROM' + db_history_pengajuan + 
+                    ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENAMBAHAN", id, user])
+            }
+            debug('get %o', penambahan);
+            return { status: '200', keterangan: "Detail Penambahan Masa Berlaku SPPB PSAT", data: penambahan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

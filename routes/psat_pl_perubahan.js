@@ -9,6 +9,8 @@ Router.post('/perubahan/create', pl.perubahan_data)
       .put('/perubahan/info-produk/update', pl.update_perubahan_info_produk)
       .delete('/perubahan/unit-produksi/delete', pl.delete_perubahan_unit_produksi)
       .delete('/perubahan/info-produk/delete', pl.delete_perubahan_info_produk)
+      .get('/perubahan/detail', pl.get_perubahan_data)
+
 
 
 

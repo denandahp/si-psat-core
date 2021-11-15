@@ -9,6 +9,8 @@ Router.post('/pengalihan/create', pl.pengalihan_kepemilikan)
       .put('/pengalihan/info-produk/update', pl.update_pengalihan_info_produk)
       .delete('/pengalihan/unit-produksi/delete', pl.delete_pengalihan_unit_produksi)
       .delete('/pengalihan/info-produk/delete', pl.delete_pengalihan_info_produk)
+      .get('/pengalihan/detail', pl.get_pengalihan_kepemilikan)
+
 
 
 module.exports = Router;

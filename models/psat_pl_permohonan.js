@@ -8,6 +8,7 @@ const db_file_permohonan = schemapet + '.' + '"file_permohonan"';
 const db_info_produk = schemapet + '.' + '"info_produk"';
 const db_pengajuan = schemapet + '.' + '"pengajuan"';
 const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
+const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
 
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -97,17 +98,18 @@ class PsatPlPermohonanModel {
     }
 
     async add_info_produk(data) {
+        console.log(data.jenis_klaim);
         try {
             let data_info_produk = [
                 data.id_pengguna, data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri, 
-                data.kelas_mutu, data.jenis_klaim, data.laporan_hasil_uji_mutu_nomor, data.laporan_hasil_uji_mutu_tanggal,
+                data.kelas_mutu, data.laporan_hasil_uji_mutu_nomor, data.laporan_hasil_uji_mutu_tanggal,
                 data.sertifikat_jaminan_keamanan_psat, data.nama_merek, date, date];
             let sql = format('INSERT INTO ' + db_info_produk + 
                 ' (id_pengguna, jenis_psat, nama_latin, negara_asal, nama_dagang, jenis_kemasan, berat_bersih, komposisi, coa_nomor, coa_tanggal, '+
-                'desain_tabel_dan_kemasan, diagram_alir_psat_luar_negri, kelas_mutu, jenis_klaim, laporan_hasil_uji_mutu_nomor, laporan_hasil_uji_mutu_tanggal, '+
-                'sertifikat_jaminan_keamanan_psat, nama_merek, created, update, unit_produksi, daftar_pemasok, daftar_pelanggan) VALUES '+
-                `(%L, '{${data.unit_produksi}}', '{${data.daftar_pemasok}}', '{${data.daftar_pelanggan}}') RETURNING *`, data_info_produk)
+                'desain_tabel_dan_kemasan, diagram_alir_psat_luar_negri, kelas_mutu, laporan_hasil_uji_mutu_nomor, laporan_hasil_uji_mutu_tanggal, '+
+                'sertifikat_jaminan_keamanan_psat, nama_merek, created, update, unit_produksi, daftar_pemasok, daftar_pelanggan, jenis_klaim) VALUES '+
+                `(%L, '{${data.unit_produksi}}', '{${data.daftar_pemasok}}', '{${data.daftar_pelanggan}}', '{${data.jenis_klaim}}') RETURNING *`, data_info_produk)
             let info_produk = await pool.query(sql);
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Info Produk", data: info_produk.rows[0] };
@@ -173,13 +175,13 @@ class PsatPlPermohonanModel {
             let data_info_produk = [
                 data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri, 
-                data.kelas_mutu, data.jenis_klaim, data.laporan_hasil_uji_mutu_nomor, data.laporan_hasil_uji_mutu_tanggal,
+                data.kelas_mutu, data.laporan_hasil_uji_mutu_nomor, data.laporan_hasil_uji_mutu_tanggal,
                 data.sertifikat_jaminan_keamanan_psat, data.nama_merek, date];
             let sql = format('UPDATE ' + db_info_produk + 
                 ' SET (jenis_psat, nama_latin, negara_asal, nama_dagang, jenis_kemasan, berat_bersih, komposisi, coa_nomor, coa_tanggal, '+
-                'desain_tabel_dan_kemasan, diagram_alir_psat_luar_negri, kelas_mutu, jenis_klaim, laporan_hasil_uji_mutu_nomor, laporan_hasil_uji_mutu_tanggal, '+
-                'sertifikat_jaminan_keamanan_psat, nama_merek, update, unit_produksi, daftar_pemasok, daftar_pelanggan) = '+
-                `(%L, '{${data.unit_produksi}}', '{${data.daftar_pemasok}}', '{${data.daftar_pelanggan}}') `+
+                'desain_tabel_dan_kemasan, diagram_alir_psat_luar_negri, kelas_mutu, laporan_hasil_uji_mutu_nomor, laporan_hasil_uji_mutu_tanggal, '+
+                'sertifikat_jaminan_keamanan_psat, nama_merek, update, unit_produksi, daftar_pemasok, daftar_pelanggan, jenis_klaim) = '+
+                `(%L, '{${data.unit_produksi}}', '{${data.daftar_pemasok}}', '{${data.daftar_pelanggan}}', '{${data.jenis_klaim}}') `+
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna}RETURNING *`, data_info_produk)
             let info_produk = await pool.query(sql);
             // debug('get %o', res);
@@ -228,6 +230,90 @@ class PsatPlPermohonanModel {
             let info_produk = await pool.query('DELETE FROM ' + db_info_produk + ` WHERE id = ${id} RETURNING *`)
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Info Produk", data: info_produk.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_unit_produksi(id) {
+        try {
+            let unit_produksi;
+            if(id == 'all'){
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi)
+            } else {
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ${id}`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "Detail Unit Produksi", data: unit_produksi.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_daftar_pemasok(id) {
+        try {
+            let daftar_pemasok;
+            if(id == 'all'){
+                daftar_pemasok = await pool.query('SELECT * FROM ' + db_daftar_pemasok)
+            }else{
+                daftar_pemasok = await pool.query('SELECT * FROM ' + db_daftar_pemasok + ` WHERE id = ${id}`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "Detail Daftar Pemasok", data: daftar_pemasok.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_daftar_pelanggan(id) {
+        try {
+            let daftar_pelanggan;
+            if(id == 'all'){
+                daftar_pelanggan = await pool.query('SELECT * FROM ' + db_daftar_pelanggan)
+            } else {
+                daftar_pelanggan = await pool.query('SELECT * FROM ' + db_daftar_pelanggan + ` WHERE id = ${id}`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "Detail Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_info_produk(id) {
+        try {
+            let info_produk;
+            if(id == 'all'){
+                info_produk = await pool.query('SELECT * FROM ' + db_info_produk)
+            } else {
+                info_produk = await pool.query('SELECT * FROM ' + db_info_produk + ` WHERE id = ${id}`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "Detail Info Produk", data: info_produk.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_permohonan_izin(id, user) {
+        try {
+            let permohonan;
+            if(id == 'all'){
+                permohonan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update FROM' + 
+                    db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PERMOHONAN"])
+            } else {
+                permohonan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update FROM '+
+                    db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERMOHONAN", id, user])
+            }
+            // debug('get %o', permohonan);
+            return { status: '200', keterangan: "Detail Permohonan PSAT PL/Izin Edar PL", data: permohonan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

@@ -6,6 +6,7 @@ const db_file_permohonan = schemapet + '.' + '"file_permohonan"';
 const db_info_produk = schemapet + '.' + '"info_produk"';
 const db_pengajuan = schemapet + '.' + '"pengajuan"';
 const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
+const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
 
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -144,6 +145,26 @@ class PsatPlPengalihanModel {
           let info_produk = await pool.query('DELETE FROM ' + db_info_produk + ` WHERE id = ${id} RETURNING *`)
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Pengalihan Kepemilikan Info Produk", data: info_produk.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_pengalihan_kepemilikan(id, user) {
+        try {
+            let permohonan;
+            if(id == 'all'){
+                permohonan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' + 
+                    'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PENGALIHAN"])
+            } else {
+                permohonan = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, '+
+                    'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
+            }
+            // debug('get %o', permohonan);
+            return { status: '200', keterangan: "Detail Perubahan Data PSAT PL/Izin Edar PL", data: permohonan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

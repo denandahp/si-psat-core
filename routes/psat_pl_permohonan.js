@@ -15,6 +15,12 @@ Router.post('/permohonan/create', pl.permohonan_izin)
       .delete('/daftar-pemasok/delete', pl.delete_daftar_pemasok)
       .delete('/daftar-pelanggan/delete', pl.delete_daftar_pelanggan)
       .delete('/info-produk/delete', pl.delete_info_produk)
+      .get('/unit-produksi/detail', pl.get_unit_produksi)
+      .get('/daftar-pemasok/detail', pl.get_daftar_pemasok)
+      .get('/daftar-pelanggan/detail', pl.get_daftar_pelanggan)
+      .get('/info-produk/detail', pl.get_info_produk)
+      .get('/permohonan/detail', pl.get_permohonan_izin)
+
 
 
 module.exports = Router;

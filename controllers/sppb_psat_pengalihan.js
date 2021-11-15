@@ -46,7 +46,7 @@ class SppbPsatController {
                 let datas = req.body;
                 debug('detail %o', datas);
                 let detail = await sppb_psat.penambahan_ruang_lingkup(datas);
-                if (!detail == '400') {res.status(400).json({ detail });}
+                if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {
                 next(e.detail || e);
@@ -64,7 +64,7 @@ class SppbPsatController {
                 let datas = req.body;
                 debug('detail %o', datas);
                 let detail = await sppb_psat.pengalihan_kepemilikan(datas);
-                if (!detail == '400') {res.status(400).json({ detail });}
+                if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {
                 next(e.detail || e);
