@@ -64,7 +64,7 @@ app.get("/", function rootHandler(req, res) {
 const index = require('./routes/index.js');
 const user = require('./routes/user.js');
 const sppb_psat_penambahan = require('./routes/sppb_psat_penambahan.js');
-// const sppb_psat_pengalihan = require('./routes/sppb_psat_pengalihan.js');
+const sppb_psat_pengalihan = require('./routes/sppb_psat_pengalihan.js');
 const sppb_psat_permohonan = require('./routes/sppb_psat_permohonan.js');
 const sppb_psat_perpanjangan = require('./routes/sppb_psat_perpanjangan.js');
 const past_pl_pengalihan = require('./routes/psat_pl_pengalihan.js');
@@ -77,7 +77,7 @@ const sertifikat = require('./routes/sertifikat.js');
 app.use('/', index);
 app.use('/user', user);
 app.use('/api/psat/sppb', sppb_psat_penambahan)
-    // app.use('/api/psat/sppb', sppb_psat_pengalihan)
+app.use('/api/psat/sppb', sppb_psat_pengalihan)
 app.use('/api/psat/sppb', sppb_psat_permohonan)
 app.use('/api/psat/sppb', sppb_psat_perpanjangan)
 app.use('/api/psat/pl', past_pl_pengalihan)

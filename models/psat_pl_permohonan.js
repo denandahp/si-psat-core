@@ -320,5 +320,69 @@ class PsatPlPermohonanModel {
         };
     }
 
+    async get_list_unit_produksi(id) {
+        try {
+            let unit_produksi;
+            if(id == 'all'){
+                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi)
+            } else {
+                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "List Unit Produksi", data: unit_produksi.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_list_daftar_pemasok(id) {
+        try {
+            let daftar_pemasok;
+            if(id == 'all'){
+                daftar_pemasok = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pemasok)
+            }else{
+                daftar_pemasok = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pemasok + ` WHERE id = ANY(ARRAY${id})`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "List Daftar Pemasok", data: daftar_pemasok.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_list_daftar_pelanggan(id) {
+        try {
+            let daftar_pelanggan;
+            if(id == 'all'){
+                daftar_pelanggan = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pelanggan)
+            } else {
+                daftar_pelanggan = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pelanggan + ` WHERE id = ANY(ARRAY${id})`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "List Daftar Pelanggan", data: daftar_pelanggan.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_list_info_produk(id) {
+        try {
+            let info_produk;
+            if(id == 'all'){
+                info_produk = await pool.query('SELECT id, jenis_psat, nama_dagang, nama_latin  FROM ' + db_info_produk)
+            } else {
+                info_produk = await pool.query('SELECT id, jenis_psat, nama_dagang, nama_latin FROM ' + db_info_produk + ` WHERE id = ANY(ARRAY${id})`)
+            }
+            // debug('get %o', res);
+            return { status: '200', permohohan: "List Info Produk", data: info_produk.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
 }
 module.exports = new PsatPlPermohonanModel();

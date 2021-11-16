@@ -13,6 +13,8 @@ Router.post('/permohonan/create', sppb.permohonan_awal)
       .get('/permohonan/detail', sppb.get_permohonan_awal)
       .get('/unit-produksi/detail', sppb.get_unit_produksi)
       .get('/ruang-lingkup/detail', sppb.get_ruang_lingkup)
+      .get('/list-unit-produksi/detail', sppb.get_list_unit_produksi)
+      .get('/list-ruang-lingkup/detail', sppb.get_list_ruang_lingkup)
       .get('/history', sppb.get_history_pengajuan)
 
 

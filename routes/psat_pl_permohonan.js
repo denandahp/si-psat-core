@@ -20,6 +20,10 @@ Router.post('/permohonan/create', pl.permohonan_izin)
       .get('/daftar-pelanggan/detail', pl.get_daftar_pelanggan)
       .get('/info-produk/detail', pl.get_info_produk)
       .get('/permohonan/detail', pl.get_permohonan_izin)
+      .get('/list-unit-produksi/detail', pl.get_list_unit_produksi)
+      .get('/list-daftar-pemasok/detail', pl.get_list_daftar_pemasok)
+      .get('/list-daftar-pelanggan/detail', pl.get_list_daftar_pelanggan)
+      .get('/list-info-produk/detail', pl.get_list_info_produk)
 
 
 

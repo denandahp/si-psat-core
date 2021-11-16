@@ -152,22 +152,6 @@ class SppbPsatPermohonanModel {
         };
     }
 
-    async get_permohonan_awal(id) {
-        try {
-            let permohonan_awal;
-            if(id == 'all'){
-                unit_produksi = await pool.query('SELECT * FROM ' + db_pengajuan)
-            } else{
-                unit_produksi = await pool.query('SELECT * FROM ' + db_pengajuan + ` WHERE id = ${id}`)
-            }
-            debug('get %o', unit_produksi);
-            return { status: '200', keterangan: "Detail Unit Produksi", data: unit_produksi.rows[0] };
-        } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
-        };
-    }
-
     async get_unit_produksi(id) {
         try {
             let unit_produksi;
@@ -237,6 +221,38 @@ class SppbPsatPermohonanModel {
             }
             debug('get %o', history);
             return { status: '200', keterangan: `History SPPB PSAT id ${user}` , data: history.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_list_unit_produksi(id) {
+        try {
+            let unit_produksi;
+            if(id == 'all'){
+                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi)
+            } else{
+                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
+            }
+            debug('get %o', unit_produksi);
+            return { status: '200', keterangan: "List Unit Produksi", data: unit_produksi.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_list_ruang_lingkup(id) {
+        try {
+            let ruang_lingkup
+            if(id == 'all'){
+                ruang_lingkup = await pool.query('SELECT id, nama_komoditas, cara_penyimpanan, pengemasan_ulang FROM ' + db_ruang_lingkup)
+            } else {
+                ruang_lingkup = await pool.query('SELECT id, nama_komoditas, cara_penyimpanan, pengemasan_ulang FROM ' + db_ruang_lingkup + ` WHERE id = ANY(ARRAY${id})`)
+            }
+            debug('get %o', ruang_lingkup);
+            return { status: '200', keterangan: "List Ruang Lingkup", data: ruang_lingkup.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

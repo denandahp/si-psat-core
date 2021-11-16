@@ -1,198 +1,202 @@
 const debug = require('debug')('app:model:sppb_psat');
+var format = require('pg-format');
 const pool = require('../libs/db');
 
-const schema = '"sppb_psat"';
-const db_pengajuan = schema + '.' + '"pengajuan"';
-const db_file_permohonan = schema + '.' + '"file_permohonan"';
-const db_info_produk = schema + '.' + '"info_produk"';
-const db_sertifikat = schema + '.' + '"sertifikat_psat"';
+
+const schema = '"pengalihan"';
+const db_pengalihan = schema + '.' + '"pengalihan"';
+const db_info_perusahaan = schema + '.' + '"info_perusahaan"';
 const db_unit_produksi = schema + '.' + '"unit_produksi"';
+const db_history_pengajuan= schema + '.' + '"history_all_pengajuan"';
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
 class SppbPsatModel {
-    async permohonan_awal(data) {
+    async pengalihan_kepemilikan(data) {
         try {
-            let response = {}
-            let arr_unit_produksi = [];
-            let arr_info_produk = [];
-            for(let i =0; i<Object.keys(data.unit_produksi).length;i++){
-                let value = data.unit_produksi
-                let data_unit_produksi = [
-                    data.id_pengguna, value[i].nama_unit, value[i].alamat_unit, value[i].status_kepemilikan, 
-                    value[i].durasi_sewa, value[i].masa_sewa_berakhir, value[i].file_bukti, date, date ]
-                let unit_produksi = await pool.query(
-                    'INSERT INTO ' + db_unit_produksi + 
-                    '(id_pengguna, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa, masa_sewa_berakhir, ' +
-                    'file_bukti, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_unit_produksi);
-                arr_unit_produksi.push(unit_produksi.rows[0].id)
-            };
-            for(let i =0; i<Object.keys(data.info_produk).length;i++){
-                let value = data.info_produk
-                let data_info_produk = [
-                    data.id_pengguna, value[i].nama_komoditas, value[i].cara_penyimpanan, value[i].pengolahan_minimal,
-                    value[i].pengemasan_ulang, date, date]
-                let info_produk = await pool.query(
-                    'INSERT INTO ' + db_info_produk + 
-                    ' (id_pengguna, nama_komoditas, cara_penyimpanan, pengolahan_minimal, pengemasan_ulang, created, update)' +
-                    ' VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', data_info_produk);
-                    arr_info_produk.push(info_produk.rows[0].id)
-            };                
-            let data_file_pemohonan = [data.id_pengguna, data.denah_ruangan_psat, data.diagram_alir_psat,
-                                       data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, date, date]
-            let file_permohonan = await pool.query(
-                'INSERT INTO ' + db_file_permohonan + 
-                ' (id_pengguna, denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', data.status_proses, data.status_aktif, arr_info_produk,
-                            file_permohonan.rows[0].id, arr_unit_produksi, date, date];
+            let data_pengajuan = [
+                data.id_pengguna, 'PENGALIHAN', data.status_proses, data.status_aktif, data.surat_permohonan_pengalihan,
+                data.surat_pernyataan, data.info_perusahaan, data.unit_produksi, date, date];
             let pengajuan = await pool.query(
-                'INSERT INTO ' + db_pengajuan + 
-                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, unit_produksi, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_pengajuan);
-            response.pengajuan = pengajuan.rows;
-            response.file_permohonan = file_permohonan.rows;
-            response.info_produk = data.info_produk;
-            response.unit_produksi = data.unit_produksi;
-            debug('get %o', response);
-            return { status: '200', permohonan: "Permohonan Awal SPPB PSAT", data: response };
+                'INSERT INTO ' + db_pengalihan + 
+                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, surat_permohonan_pengalihan, surat_pernyataan, info_perusahaan, ' +
+                'unit_produksi, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
+            debug('get %o', pengajuan.rows[0]);
+            return { status: '200', permohonan: "Pengalihan Kepemilikan SPPB PSAT", data: pengajuan.rows[0] };
         } catch (ex) {
             console.log(ex.message);
             return { status: '400', Error: "" + ex };
         };
     }
 
-    async perpanjangan_masa_berlaku(data) {
+    async add_pengalihan_unit_produksi(data) {
         try {
-            let response = {}
-            let arr_unit_produksi = [];
-            let arr_info_produk = [];
-            for(let i =0; i<Object.keys(data.unit_produksi).length;i++){
-                let value = data.unit_produksi
-                let data_unit_produksi = [
-                    data.id_pengguna, value[i].nama_unit, value[i].alamat_unit, value[i].status_kepemilikan, 
-                    value[i].durasi_sewa, value[i].masa_sewa_berakhir, value[i].file_bukti, date, date ]
-                let unit_produksi = await pool.query(
-                    'INSERT INTO ' + db_unit_produksi + 
-                    '(id_pengguna, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa, masa_sewa_berakhir, ' +
-                    'file_bukti, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_unit_produksi);
-                arr_unit_produksi.push(unit_produksi.rows[0].id)
-            };
-            for(let i =0; i<Object.keys(data.info_produk).length;i++){
-                let value = data.info_produk
-                let data_info_produk = [
-                    data.id_pengguna, value[i].nama_komoditas, value[i].cara_penyimpanan, value[i].pengolahan_minimal,
-                    value[i].pengemasan_ulang, date, date]
-                let info_produk = await pool.query(
-                    'INSERT INTO ' + db_info_produk + 
-                    ' (id_pengguna, nama_komoditas, cara_penyimpanan, pengolahan_minimal, pengemasan_ulang, created, update)' +
-                    ' VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', data_info_produk);
-                    arr_info_produk.push(info_produk.rows[0].id)
-            };    
-            let data_sertifikat = [data.id_pengguna, data.id_pengajuan, data.nomor_sppb_psat, 
-                                   data.level, data.ruang_lingkup, data.masa_berlaku, 
-                                   data.surat_pemeliharaan_psat, date, date]
-            let sertifikat = await pool.query(
-                'INSERT INTO ' + db_sertifikat + 
-                ' (id_pengguna, id_pengajuan, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_sertifikat);
-            let data_file_pemohonan = [data.id_pengguna, data.denah_ruangan_psat, data.diagram_alir_psat,
-                                       data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, 
-                                       data.sertifikat_jaminan_keamanan_pangan, date, date]
-            let file_permohonan = await pool.query(
-                'INSERT INTO ' + db_file_permohonan + 
-                ' (id_pengguna, denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, 'PERPANJANGAN', data.status_proses, data.status_aktif, 
-                                  arr_info_produk, file_permohonan.rows[0].id, 
-                                  sertifikat.rows[0].id, arr_unit_produksi, date, date];
-            let pengajuan = await pool.query(
-                'INSERT INTO ' + db_pengajuan + 
-                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
-            response.pengajuan = pengajuan.rows[0];
-            response.file_permohonan = file_permohonan.rows[0];
-            response.info_produk = data.info_produk;
-            response.unit_produksi = data.unit_produksi;
-            response.sertifikat = sertifikat.rows[0];
-            debug('get %o', response);
-            return { status: '200', permohonan: "Perpanjangan Masa Berlaku SPPB PSAT", data: response };
-        } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
-        };
-    }
-
-    async penambahan_ruang_lingkup(data) {
-        try {
-            let response = {}
-            let arr_unit_produksi = [];
-            let arr_info_produk = [];
-            for(let i =0; i<Object.keys(data.unit_produksi).length;i++){
-                let value = data.unit_produksi
-                let data_unit_produksi = [
-                    data.id_pengguna, value[i].nama_unit, value[i].alamat_unit, value[i].status_kepemilikan, 
-                    value[i].durasi_sewa, value[i].masa_sewa_berakhir, value[i].file_bukti, date, date ]
-                let unit_produksi = await pool.query(
-                    'INSERT INTO ' + db_unit_produksi + 
-                    '(id_pengguna, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa, masa_sewa_berakhir, ' +
-                    'file_bukti, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_unit_produksi);
-                arr_unit_produksi.push(unit_produksi.rows[0].id)
-            };
-            for(let i =0; i<Object.keys(data.info_produk).length;i++){
-                let value = data.info_produk
-                let data_info_produk = [
-                    data.id_pengguna, value[i].nama_komoditas, value[i].cara_penyimpanan, value[i].pengolahan_minimal,
-                    value[i].pengemasan_ulang, date, date]
-                let info_produk = await pool.query(
-                    'INSERT INTO ' + db_info_produk + 
-                    ' (id_pengguna, nama_komoditas, cara_penyimpanan, pengolahan_minimal, pengemasan_ulang, created, update)' +
-                    ' VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', data_info_produk);
-                    arr_info_produk.push(info_produk.rows[0].id)
-            };    
-            let data_sertifikat = [data.id_pengguna, data.id_pengajuan, data.nomor_sppb_psat, 
-                                   data.level, data.ruang_lingkup, data.masa_berlaku, 
-                                   data.surat_pemeliharaan_psat, date, date]
-            let sertifikat = await pool.query(
-                'INSERT INTO ' + db_sertifikat + 
-                ' (id_pengguna, id_pengajuan, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_sertifikat);
-            let data_file_pemohonan = [data.id_pengguna, data.denah_ruangan_psat, data.diagram_alir_psat,
-                                       data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, 
-                                       data.sertifikat_jaminan_keamanan_pangan, date, date]
-            let file_permohonan = await pool.query(
-                'INSERT INTO ' + db_file_permohonan + 
-                ' (id_pengguna, denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, 'PENAMBAHAN', data.status_proses, data.status_aktif, 
-                                  arr_info_produk, file_permohonan.rows[0].id, 
-                                  sertifikat.rows[0].id, arr_unit_produksi, date, date];
-            let pengajuan = await pool.query(
-                'INSERT INTO ' + db_pengajuan +
-                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
-            response.pengajuan = pengajuan.rows[0];
-            response.file_permohonan = file_permohonan.rows[0];
-            response.info_produk = data.info_produk;
-            response.unit_produksi = data.unit_produksi;
-            response.sertifikat = sertifikat.rows[0];
-            debug('get %o', response);
-            return { status: '200', permohonan: "Penambahan Ruang Lingkup SPPB PSAT", data: response };
-        } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
-        };
-    }
-
-    async pengalihan_kepemilikan(data) {
-        try {
-            let response;
-            var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
-            let value = [data.pet_id, data.pet_checkup_date, data.pet_note, data.pet_photo, d, d];
-            response = await pool.query('INSERT INTO ' + dbPetcheckup + ' (pet_id, pet_checkup_date, pet_note, pet_photo, created_at, updated_at)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', value);
+            let data_unit_produksi = [
+                data.id_pengguna, data.nama_unit_psat, data.alamat_unit_psat, data.sppb_psat_nomor, data.sppb_psat_level,
+                data.sppb_psat_masa_berlaku, data.sppb_psat_status_berlaku, data.sppb_psat_ruang_lingkup, date, date ]
+            let unit_produksi = await pool.query(
+                format('INSERT INTO ' + db_unit_produksi + 
+                ' (id_pengguna, nama_unit_psat, alamat_unit_psat, nomor_sppb_psat, level, masa_berlaku, status_berlaku, '+
+                'ruang_lingkup, created, update) VALUES (%L) RETURNING *', data_unit_produksi
+                )
+            )
             // debug('get %o', res);
-            return res.rows[0];
+            return { status: '200', keterangan: "Add Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async add_pengalihan_info_perusahaan(data) {
+        try {
+            let data_info_perusahaan = [
+                data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
+                data.nama_pemilik_baru, data.alamat_pemilik_baru, date, date ]
+            let info_perusahaan = await pool.query(
+                format('INSERT INTO ' + db_info_perusahaan + 
+                ' (id_pengguna, nama_perusahaan, alamat_perusahaan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
+                `created, update, unit_produksi) VALUES (%L, '{${data.unit_produksi}}') RETURNING *`, data_info_perusahaan
+                )
+            )
+            // debug('get %o', res);
+            return { status: '200', keterangan: "Add Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_pengalihan_unit_produksi(data) {
+        try {
+            let data_unit_produksi = [
+                data.nama_unit_psat, data.alamat_unit_psat, data.sppb_psat_nomor, data.sppb_psat_level,
+                data.sppb_psat_masa_berlaku, data.sppb_psat_status_berlaku, data.sppb_psat_ruang_lingkup, date, date ]
+            let unit_produksi = await pool.query(
+                format('UPDATE ' + db_unit_produksi + 
+                ' SET (nama_unit_psat, alamat_unit_psat, nomor_sppb_psat, level, masa_berlaku, status_berlaku, '+
+                `ruang_lingkup, created, update) = (%L) WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_unit_produksi
+                )
+            )
+            // debug('get %o', res);
+            return { status: '200', keterangan: "Update Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_pengalihan_info_perusahaan(data) {
+        try {
+            let data_info_perusahaan = [
+                data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
+                data.nama_pemilik_baru, data.alamat_pemilik_baru, date, date ]
+            let info_perusahaan = await pool.query(
+                format('UPDATE ' + db_info_perusahaan + 
+                ' SET (nama_perusahaan, alamat_perusahaan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
+                `created, update, unit_produksi) = (%L, '{${data.unit_produksi}}') `+
+                `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_info_perusahaan
+                )
+            )
+            // debug('get %o', res);
+            return { status: '200', keterangan: "Update Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async delete_pengalihan_unit_produksi(id) {
+        try {
+            let unit_produksi = await pool.query('DELETE FROM ' + db_unit_produksi + ` WHERE id = ${id} RETURNING *`)
+
+            // debug('get %o', res);
+            return { status: '200', keterangan: "Delete Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async delete_pengalihan_info_perusahaan(id) {
+        try {
+            let info_perusahaan = await pool.query('DELETE FROM ' + db_info_perusahaan + ` WHERE id = ${id} RETURNING *`)
+
+            // debug('get %o', res);
+            return { status: '200', keterangan: "Delete Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_pengalihan_kepemilikan(id, user) {
+        try {
+            let permohonan;
+            if(id == 'all'){
+                if (user){
+                    permohonan = await pool.query(
+                        'SELECT * FROM' + db_history_pengajuan + 
+                        ' WHERE jenis_permohonan=$1 AND id_pengguna=$2', ["PENGALIHAN", user])
+                } else{
+                    permohonan = await pool.query(
+                        'SELECT * FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENGALIHAN"])
+                }
+            } else {
+                permohonan = await pool.query(
+                    'SELECT * FROM' + db_history_pengajuan + 
+                    ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
+            }
+            debug('get %o', permohonan);
+            return { status: '200', keterangan: "Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: permohonan.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_pengalihan_unit_produksi(id) {
+        try {
+            let unit_produksi;
+            if(id == 'all'){
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi)
+            } else{
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ${id}`)
+            }
+            debug('get %o', unit_produksi);
+            return { status: '200', keterangan: "Detail Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_pengalihan_info_perusahaan(id) {
+        try {
+            let info_perusahaan;
+            if(id == 'all'){
+                info_perusahaan = await pool.query('SELECT * FROM ' + db_info_perusahaan)
+            } else{
+                info_perusahaan = await pool.query('SELECT * FROM ' + db_info_perusahaan + ` WHERE id = ${id}`)
+            }
+            debug('get %o', info_perusahaan);
+            return { status: '200', keterangan: "Detail Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_list_pengalihan_unit_produksi(id) {
+        try {
+            let unit_produksi;
+            if(id == 'all'){
+                unit_produksi = await pool.query('SELECT nama_unit_psat, alamat_unit_psat, nomor_sppb_psat FROM ' + db_unit_produksi)
+            } else{
+                unit_produksi = await pool.query('SELECT nama_unit_psat, alamat_unit_psat, nomor_sppb_psat FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
+            }
+            debug('get %o', unit_produksi);
+            return { status: '200', keterangan: "List Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

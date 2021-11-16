@@ -2,10 +2,18 @@ const Router = require('express').Router();
 const sppb = require('../controllers/sppb_psat_pengalihan.js');
 
 
-Router.post('/permohonan/create', sppb.permohonan_awal)
-      .post('/perpanjangan/create', sppb.perpanjangan_masa_berlaku)
-      .post('/penambahan/create', sppb.penambahan_ruang_lingkup)
-      .post('/pengalihan/create', sppb.pengalihan_kepemilikan)
+Router.post('/pengalihan/create', sppb.pengalihan_kepemilikan)
+      .post('/pengalihan/unit-produksi/add', sppb.add_pengalihan_unit_produksi)
+      .post('/pengalihan/info-perusahaan/add', sppb.add_pengalihan_info_perusahaan)
+      .put('/pengalihan/unit-produksi/update', sppb.update_pengalihan_unit_produksi)
+      .put('/pengalihan/info-perusahaan/update', sppb.update_pengalihan_info_perusahaan)
+      .delete('/pengalihan/unit-produksi/delete', sppb.delete_pengalihan_unit_produksi)
+      .delete('/pengalihan/info-perusahaan/delete', sppb.delete_pengalihan_info_perusahaan)
+      .get('/pengalihan/detail', sppb.get_pengalihan_kepemilikan)
+      .get('/pengalihan/unit-produksi/detail', sppb.get_pengalihan_unit_produksi)
+      .get('/pengalihan/info-perusahaan/detail', sppb.get_pengalihan_info_perusahaan)
+      .get('/pengalihan/list-unit-produksi/detail', sppb.get_list_pengalihan_unit_produksi)
+
     
 
 
