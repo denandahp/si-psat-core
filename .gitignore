@@ -83,4 +83,5 @@ docs
 .vscode
 jsconfig.json
 
-media/*
+media
+sertifikat

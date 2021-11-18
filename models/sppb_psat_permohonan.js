@@ -78,6 +78,37 @@ class SppbPsatPermohonanModel {
         };
     }
 
+    async update_permohonan_awal(data) {
+        try {
+            let response = {}
+            let data_info_perusahaan = [data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, date, date]
+            let info_perusahaan = await pool.query(
+                'INSERT INTO ' + db_info_perusahaan + 
+                ' (id_pengguna, nama_perusahaan, alamat_perusahaan, created, update)' +
+                ' VALUES ($1, $2, $3, $4, $5) RETURNING *', data_info_perusahaan);
+            let data_file_pemohonan = [data.id_pengguna, data.denah_ruangan_psat, data.diagram_alir_psat,
+                                       data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, date, date]
+            let file_permohonan = await pool.query(
+                'INSERT INTO ' + db_file_permohonan + 
+                ' (id_pengguna, denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, created, update)' +
+                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', data_file_pemohonan);
+            let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', data.status_proses, data.status_aktif, data.ruang_lingkup,
+                            file_permohonan.rows[0].id, data.unit_produksi,info_perusahaan.rows[0].id, date, date];
+            let pengajuan = await pool.query(
+                'INSERT INTO ' + db_pengajuan + 
+                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, unit_produksi, indo_perusahaan, created, update)' +
+                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
+            response.pengajuan = pengajuan.rows[0];
+            response.file_permohonan = file_permohonan.rows[0];
+            response.info_perusahaan = info_perusahaan.rows[0];
+            debug('get %o', response);
+            return { status: '200', keterangan: "Permohonan Awal SPPB PSAT", data: response };
+        } catch (ex) {
+            console.log(ex.message);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
     async update_nomor_sppb_psat(data) {
         try {
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PERMOHONAN', data.nomor_sppb_psat, date];
