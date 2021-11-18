@@ -57,6 +57,24 @@ class SppbPsatController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async update_permohonan_awal(req, res, next) {
+        let callback = async() => {
+            try {
+                let datas = req.body;
+                debug('detail %o', datas);
+                let detail = await sppb_psat.update_permohonan_awal(datas);
+                if (detail.status == '400') {res.status(400).json({ response: detail });}
+                else { res.status(200).json({ response: detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async update_nomor_sppb_psat(req, res, next) {
         let callback = async() => {
             try {

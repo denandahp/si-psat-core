@@ -1,4 +1,5 @@
 const authUtils = require('../utils/auth.js');
+var fs = require('fs');
 const multer = require('../../controllers/utils/upload.js');
 
 var param = multer.param();
@@ -33,6 +34,22 @@ class UploadController {
                 console.log("error" + e)
             }
         });
+    }
+
+    async view_pdf(req, res) {
+        try {
+            let path = req.query.path;
+            var file = fs.createReadStream(path);
+            var stat = fs.statSync(path);
+            res.setHeader('Content-Length', stat.size);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+            file.pipe(res);
+
+        } catch (e) {
+            res.status(400).json({error: e.message} );
+            console.log("error" + e)
+        }
     }
 }
 
