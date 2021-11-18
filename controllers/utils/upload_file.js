@@ -7,21 +7,22 @@ var param = multer.param();
 
 class UploadController {
     async upload_file(req, res) {
-        param(req, res, (err) =>{
+        param(req, res, (err) => {
             try {
-                let response = [], fileLocation, fileArray;
-                if( err ){
+                let response = [],
+                    fileLocation, fileArray;
+                if (err) {
                     throw new Error(err);
-                }else{
-                    if( req.files === undefined ){
+                } else {
+                    if (req.files === undefined) {
                         throw new Error('No File Selected')
-                    }else {
+                    } else {
                         fileArray = req.files;
-                        for(var k in fileArray){
+                        for (var k in fileArray) {
                             let size = multer.clean_size(fileArray[k]);
-                            if (size.err == 'FILE_TO_LARGE'){
+                            if (size.err == 'FILE_TO_LARGE') {
                                 throw new Error(size.message)
-                            }else{
+                            } else {
                                 fileLocation = fileArray[k].path;
                                 response.push(fileLocation)
                             }
@@ -30,7 +31,7 @@ class UploadController {
                     }
                 }
             } catch (e) {
-                res.status(400).json({error: e.message} );
+                res.status(400).json({ error: e.message });
                 console.log("error" + e)
             }
         });
