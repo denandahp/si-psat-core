@@ -119,6 +119,38 @@ class PsatPlPermohonanModel {
         };
     }
 
+    async update_permohonan_izin(data) {
+        try {
+            let response = {};
+            let file_permohonan, pengajuan;
+
+            //Create new file pemohonan
+            let data_file_permohonan = [data.surat_permohonan_izin_edar, date];
+            file_permohonan = await pool.query(
+                format('UPDATE ' + db_file_permohonan + 
+                ' SET(surat_permohonan_izin_edar, update) = (%L) '+
+                `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_file_permohonan} RETURNING *`, data_file_permohonan)
+            );
+
+            //Create pengajuan
+            let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan, date ]
+            pengajuan = await pool.query(
+                format('UPDATE ' + db_pengajuan + 
+                ` SET(status_aktif, file_permohonan, status_pengajuan, update, produk) = (%L, '{${data.info_produk}}') `+
+                `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan}RETURNING *`, data_pengajuan)
+            );
+
+            response.pengajuan = pengajuan.rows[0];
+            response.file_permohonan = file_permohonan.rows[0];
+
+            // debug('get %o', response);
+            return { status: '200', permohohan: "Update Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", data: response };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
     async update_unit_produksi(data) {
         try {
             let data_unit_produksi = [
@@ -305,11 +337,11 @@ class PsatPlPermohonanModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update FROM' + 
+                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' + 
                     db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PERMOHONAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update FROM '+
+                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM '+
                     db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERMOHONAN", id, user])
             }
             // debug('get %o', permohonan);

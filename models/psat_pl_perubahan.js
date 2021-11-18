@@ -93,6 +93,41 @@ class PsatPlPerubahanModel {
         };
     }
 
+    async update_perubahan_data(data) {
+        try {
+            let response = {};
+            let file_permohonan, perubahan_data;
+
+            //Create new file pemohonan
+            let data_file_permohonan = [
+                data.surat_permohonan_izin_edar, data.sertifikat_izin_edar_sebelumnya,
+                data.surat_pernyataan, date
+            ];
+            file_permohonan = await pool.query(
+                format('UPDATE ' + db_file_permohonan +
+                    ' SET(surat_permohonan_izin_edar, sertifikat_izin_edar_sebelumnya, ' +
+                    `surat_pernyataan, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_file_permohonan} RETURNING *`, data_file_permohonan)
+            );
+
+            //Create pengajuan
+            let data_perubahan_data = [true, file_permohonan.rows[0].id, data.status_pengajuan, date]
+            perubahan_data = await pool.query(
+                format('UPDATE ' + db_pengajuan +
+                    ` SET(status_aktif, file_permohonan, status_pengajuan, update, produk) = (%L, '{${data.info_produk}}') `+
+                    `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan} RETURNING *`, data_perubahan_data)
+            );
+
+            response.perubahan_data = perubahan_data.rows[0];
+            response.file_permohonan = file_permohonan.rows[0];
+
+            // debug('get %o', response);
+            return { status: '200', permohohan: "Update Perubahan Data Izin Edar PSAT PL", data: response };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
     async update_perubahan_unit_produksi(data) {
         try {
             let data_unit_produksi = [

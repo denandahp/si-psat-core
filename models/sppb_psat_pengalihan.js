@@ -22,7 +22,7 @@ class SppbPsatModel {
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, surat_permohonan_pengalihan, surat_pernyataan, info_perusahaan, ' +
                 'unit_produksi, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
             debug('get %o', pengajuan.rows[0]);
-            return { status: '200', permohonan: "Pengalihan Kepemilikan SPPB PSAT", data: pengajuan.rows[0] };
+            return { status: '200', keterangan:"Pengalihan Kepemilikan SPPB PSAT", data: pengajuan.rows[0] };
         } catch (ex) {
             console.log(ex.message);
             return { status: '400', Error: "" + ex };
@@ -63,6 +63,23 @@ class SppbPsatModel {
             return { status: '200', keterangan: "Add Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_pengalihan_kepemilikan(data) {
+        try {
+            let data_pengajuan = [
+                data.id_pengguna, data.id_pengajuan, 'PENGALIHAN', data.status_proses, data.status_aktif, data.surat_permohonan_pengalihan,
+                data.surat_pernyataan, data.info_perusahaan, data.unit_produksi, date];
+            let pengajuan = await pool.query(
+                'UPDATE ' + db_pengalihan + 
+                ' SET (jenis_permohonan, status_proses, status_aktif, surat_permohonan_pengalihan, surat_pernyataan, info_perusahaan, ' +
+                'unit_produksi, update) = ($3, $4, $5, $6, $7, $8, $9, $10) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
+            debug('get %o', pengajuan.rows[0]);
+            return { status: '200', keterangan:"Update Pengalihan Kepemilikan SPPB PSAT", data: pengajuan.rows[0] };
+        } catch (ex) {
+            console.log(ex.message);
             return { status: '400', Error: "" + ex };
         };
     }

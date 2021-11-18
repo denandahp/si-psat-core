@@ -95,6 +95,24 @@ class PsatPlPermohonanController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async update_permohonan_izin(req, res, next) {
+        let callback = async() => {
+            try {
+                let query = req.body;
+                debug('detail %o', query);
+                let detail = await psat_pl.update_permohonan_izin(query);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async update_unit_produksi(req, res, next) {
         let callback = async() => {
             try {
