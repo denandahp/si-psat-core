@@ -36,11 +36,11 @@ class SppbPsatModel {
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_file_pemohonan);
             let data_pengajuan = [data.id_pengguna, 'PENAMBAHAN', data.status_proses, data.status_aktif, 
                                   data.ruang_lingkup, file_permohonan.rows[0].id, 
-                                  sertifikat.rows[0].id, data.unit_produksi, date, date];
+                                  sertifikat.rows[0].id, data.unit_produksi, info_perusahaan.rows[0].id, date, date];
             let pengajuan = await pool.query(
                 'INSERT INTO ' + db_pengajuan +
-                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
+                ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, info_perusahaan, created, update)' +
+                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *', data_pengajuan);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.sertifikat = sertifikat.rows[0];
@@ -77,11 +77,11 @@ class SppbPsatModel {
                 ' = ($3, $4, $5, $6, $7, $8, $9) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_file_pemohonan);
             let data_pengajuan = [data.id_pengguna, data.id_pengajuan, 'PENAMBAHAN', data.status_proses, data.status_aktif, 
                                   data.ruang_lingkup, file_permohonan.rows[0].id, 
-                                  sertifikat.rows[0].id, data.unit_produksi, date];
+                                  sertifikat.rows[0].id, data.unit_produksi, info_perusahaan.rows[0].id, date];
             let pengajuan = await pool.query(
                 'UPDATE ' + db_pengajuan +
-                ' SET(jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, update)' +
-                ' = ($3, $4, $5, $6, $7, $8, $9, $10) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
+                ' SET(jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, info_perusahaan, update)' +
+                ' = ($3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.sertifikat = sertifikat.rows[0];
