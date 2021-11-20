@@ -119,6 +119,22 @@ class PsatPlPermohonanModel {
         };
     }
 
+    async update_nomor_izin_edar_pl(data) {
+        try {
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.status_pengajuan, data.nomor_izin_edar, date];
+            let pengajuan = await pool.query(
+                'UPDATE' + db_pengajuan + 
+                ' SET (nomor_izin_edar, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 '+
+                'RETURNING id, id_pengguna, status_pengajuan, status_proses, nomor_izin_edar', data_pengajuan);
+
+            // debug('get %o', pengajuan);
+            return { status: '200', keterangan: `Update  ${data.status_pengajuan} Nomor SPPB PSAT ${data.nomor_izin_edar}`, data: pengajuan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
     async update_permohonan_izin(data) {
         try {
             let response = {};

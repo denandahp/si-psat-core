@@ -67,6 +67,23 @@ class SppbPsatModel {
         };
     }
 
+    async update_nomor_sppb_psat(data) {
+        try {
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENGALIHAN', data.nomor_sppb_psat, date];
+            let pengajuan = await pool.query(
+                'UPDATE' + db_pengalihan + 
+                ' SET (nomor_sppb_psat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
+                'RETURNING id, id_pengguna, jenis_permohonan, status_proses, nomor_sppb_psat', data_pengajuan);
+
+            debug('get %o', pengajuan);
+            return { status: '200', keterangan: `Update Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+
     async update_pengalihan_kepemilikan(data) {
         try {
             let data_pengajuan = [

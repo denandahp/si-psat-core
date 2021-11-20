@@ -5,6 +5,7 @@ const sppb = require('../controllers/sppb_psat_pengalihan.js');
 Router.post('/pengalihan/create', sppb.pengalihan_kepemilikan)
       .post('/pengalihan/unit-produksi/add', sppb.add_pengalihan_unit_produksi)
       .post('/pengalihan/info-perusahaan/add', sppb.add_pengalihan_info_perusahaan)
+      .put('/pengalihan/nomor-sppb-psat/update', sppb.update_nomor_sppb_psat)
       .put('/pengalihan/update', sppb.update_pengalihan_kepemilikan)
       .put('/pengalihan/unit-produksi/update', sppb.update_pengalihan_unit_produksi)
       .put('/pengalihan/info-perusahaan/update', sppb.update_pengalihan_info_perusahaan)
