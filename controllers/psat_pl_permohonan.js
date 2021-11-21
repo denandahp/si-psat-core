@@ -437,6 +437,24 @@ class PsatPlPermohonanController {
         }
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
+
+    async get_history_pengajuan(req, res, next) {
+        let callback = async() => {
+            try {
+                let user = req.query.user;
+                debug('detail %o', user);
+                let detail = await psat_pl.get_history_pengajuan(user);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
 }
 
 module.exports = new PsatPlPermohonanController();

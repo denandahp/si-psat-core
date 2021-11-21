@@ -28,10 +28,10 @@ class PsatPlPermohonanModel {
             );
 
             //Create pengajuan
-            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, date, date ]
+            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date, date ]
             pengajuan = await pool.query(
                 format('INSERT INTO ' + db_pengajuan + 
-                ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengajuan)
+                ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengajuan)
             );
 
             response.pengajuan = pengajuan.rows[0];
@@ -149,10 +149,10 @@ class PsatPlPermohonanModel {
             );
 
             //Create pengajuan
-            let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan, date ]
+            let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date ]
             pengajuan = await pool.query(
                 format('UPDATE ' + db_pengajuan + 
-                ` SET(status_aktif, file_permohonan, status_pengajuan, update, produk) = (%L, '{${data.info_produk}}') `+
+                ` SET(status_aktif, file_permohonan, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') `+
                 `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan}RETURNING *`, data_pengajuan)
             );
 
@@ -426,6 +426,25 @@ class PsatPlPermohonanModel {
             }
             // debug('get %o', res);
             return { status: '200', permohohan: "List Info Produk", data: info_produk.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_history_pengajuan(user) {
+        try {
+            let history;
+            if(user == 'all'){
+                history = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + db_history_pengajuan)
+            } else {
+                history = await pool.query(
+                    'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + 
+                    db_history_pengajuan + ' WHERE id_pengguna=$1', [user])
+            }
+            // debug('get %o', history);
+            return { status: '200', keterangan: `History SPPB PSAT id ${user}` , data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

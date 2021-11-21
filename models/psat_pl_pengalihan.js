@@ -28,10 +28,10 @@ class PsatPlPengalihanModel {
             );
 
             //Create pengajuan
-            let data_pengalihan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, date, date ]
+            let data_pengalihan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date, date ]
             pengalihan_data = await pool.query(
                 format('INSERT INTO ' + db_pengajuan + 
-                ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengalihan_data)
+                ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengalihan_data)
             );
 
             response.pengalihan_data = pengalihan_data.rows[0];
@@ -103,10 +103,10 @@ class PsatPlPengalihanModel {
             );
 
             //Create pengajuan
-            let data_pengalihan_data = [true, file_permohonan.rows[0].id, data.status_pengajuan, date, date ]
+            let data_pengalihan_data = [true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date ]
             pengalihan_data = await pool.query(
                 format('UPDATE ' + db_pengajuan + 
-                ` SET(status_aktif, file_permohonan, status_pengajuan, update, produk) = (%L, '{${data.info_produk}}') ` +
+                ` SET(status_aktif, file_permohonan, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') ` +
                 `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan} RETURNING *`, data_pengalihan_data)
             );
 

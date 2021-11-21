@@ -26,7 +26,6 @@ Router.post('/permohonan/create', pl.permohonan_izin)
       .get('/list-daftar-pemasok/detail', pl.get_list_daftar_pemasok)
       .get('/list-daftar-pelanggan/detail', pl.get_list_daftar_pelanggan)
       .get('/list-info-produk/detail', pl.get_list_info_produk)
-
-
+      .get('/history', pl.get_history_pengajuan)
 
 module.exports = Router;
