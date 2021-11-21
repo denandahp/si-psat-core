@@ -444,7 +444,7 @@ class PsatPlPermohonanModel {
                     db_history_pengajuan + ' WHERE id_pengguna=$1', [user])
             }
             // debug('get %o', history);
-            return { status: '200', keterangan: `History SPPB PSAT id ${user}` , data: history.rows };
+            return { status: '200', keterangan: `History Izin Edar PL id ${user}` , data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
