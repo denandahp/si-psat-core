@@ -1,3 +1,4 @@
+const check_query = require('./param/utils.js');
 const debug = require('debug')('app:model:sppb_psat');
 const pool = require('../libs/db');
 
@@ -60,7 +61,7 @@ class SppbPsatModel {
                 'UPDATE' + db_pengajuan + 
                 ' SET (nomor_sppb_psat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
                 'RETURNING id, id_pengguna, jenis_permohonan, status_proses, nomor_sppb_psat', data_pengajuan);
-
+            check_query.check_queryset(pengajuan);
             debug('get %o', pengajuan);
             return { status: '200', keterangan: `Update Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
         } catch (ex) {
@@ -98,6 +99,10 @@ class SppbPsatModel {
                 'UPDATE ' + db_pengajuan + 
                 ' SET(jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, info_perusahaan, update)' +
                 ' = ($3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
+            check_query.check_queryset(pengajuan);
+            check_query.check_queryset(file_permohonan);
+            check_query.check_queryset(sertifikat);
+            check_query.check_queryset(info_perusahaan);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.sertifikat = sertifikat.rows[0];
@@ -127,6 +132,7 @@ class SppbPsatModel {
                     'produk, unit_produksi, created, update, id_sertifikat, id_info_perusahaan, id_file_permohonan FROM' + db_history_pengajuan + 
                     ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERPANJANGAN", id, user])
             }
+            check_query.check_queryset(perpanjangan);
             debug('get %o', perpanjangan);
             return { status: '200', keterangan: "Detail Perpanjangan Masa Berlaku SPPB PSAT", data: perpanjangan.rows[0] };
         } catch (ex) {

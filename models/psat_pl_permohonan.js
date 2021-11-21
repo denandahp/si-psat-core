@@ -1,3 +1,4 @@
+const check_query = require('./param/utils.js');
 const pool = require('../libs/db');
 var format = require('pg-format');
 
@@ -126,7 +127,7 @@ class PsatPlPermohonanModel {
                 'UPDATE' + db_pengajuan + 
                 ' SET (nomor_izin_edar, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 '+
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, nomor_izin_edar', data_pengajuan);
-
+            check_query.check_queryset(pengajuan);
             // debug('get %o', pengajuan);
             return { status: '200', keterangan: `Update  ${data.status_pengajuan} Nomor SPPB PSAT ${data.nomor_izin_edar}`, data: pengajuan.rows[0] };
         } catch (ex) {
@@ -147,7 +148,7 @@ class PsatPlPermohonanModel {
                 ' SET(surat_permohonan_izin_edar, update) = (%L) '+
                 `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_file_permohonan} RETURNING *`, data_file_permohonan)
             );
-
+            check_query.check_queryset(file_permohonan);
             //Create pengajuan
             let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date ]
             pengajuan = await pool.query(
@@ -179,7 +180,8 @@ class PsatPlPermohonanModel {
                 'file_bukti, surat_pernyataan_sppb_psat, sppb_psat_nomor, sppb_psat_level, sppb_psat_masa_berlaku, '+
                 'sppb_psat_ruang_lingkup, sppb_psat_file, update) = (%L) '+
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_unit_produksi)
-            )
+            );
+            check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
@@ -195,6 +197,7 @@ class PsatPlPermohonanModel {
                 'UPDATE ' + db_daftar_pemasok + ' SET (nama, alamat, update) = (%L) '+
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_daftar_pemasok)
             );
+            check_query.check_queryset(daftar_pemasok);
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Daftar Pemasok", data: daftar_pemasok.rows[0] };
         } catch (ex) {
@@ -210,6 +213,7 @@ class PsatPlPermohonanModel {
                 format('UPDATE ' + db_daftar_pelanggan + ' SET (nama, alamat, update) = (%L) '+
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_daftar_pelanggan)
             );
+            check_query.check_queryset(daftar_pelanggan);
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
         } catch (ex) {
@@ -232,6 +236,7 @@ class PsatPlPermohonanModel {
                 `(%L, '{${data.unit_produksi}}', '{${data.daftar_pemasok}}', '{${data.daftar_pelanggan}}', '{${data.jenis_klaim}}') `+
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna}RETURNING *`, data_info_produk)
             let info_produk = await pool.query(sql);
+            check_query.check_queryset(info_produk);
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
@@ -243,6 +248,7 @@ class PsatPlPermohonanModel {
     async delete_unit_produksi(id) {
         try {
             let unit_produksi = await pool.query('DELETE FROM ' + db_unit_produksi + ` WHERE id = ${id} RETURNING *`)
+            check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
@@ -254,6 +260,7 @@ class PsatPlPermohonanModel {
     async delete_daftar_pemasok(id) {
         try {
             let daftar_pemasok = await pool.query('DELETE FROM ' + db_daftar_pemasok + ` WHERE id = ${id} RETURNING *`)
+            check_query.check_queryset(daftar_pemasok);
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Daftar Pemasok", data: daftar_pemasok.rows[0] };
         } catch (ex) {
@@ -265,6 +272,7 @@ class PsatPlPermohonanModel {
     async delete_daftar_pelanggan(id) {
         try {
             let daftar_pelanggan = await pool.query('DELETE FROM ' + db_daftar_pelanggan + ` WHERE id = ${id} RETURNING *`)
+            check_query.check_queryset(daftar_pelanggan);
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
         } catch (ex) {
@@ -276,6 +284,7 @@ class PsatPlPermohonanModel {
     async delete_info_produk(id) {
         try {
             let info_produk = await pool.query('DELETE FROM ' + db_info_produk + ` WHERE id = ${id} RETURNING *`)
+            check_query.check_queryset(info_produk);
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
@@ -292,6 +301,7 @@ class PsatPlPermohonanModel {
             } else {
                 unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ${id}`)
             }
+            check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
             return { status: '200', permohohan: "Detail Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
@@ -308,6 +318,7 @@ class PsatPlPermohonanModel {
             }else{
                 daftar_pemasok = await pool.query('SELECT * FROM ' + db_daftar_pemasok + ` WHERE id = ${id}`)
             }
+            check_query.check_queryset(daftar_pemasok);
             // debug('get %o', res);
             return { status: '200', permohohan: "Detail Daftar Pemasok", data: daftar_pemasok.rows[0] };
         } catch (ex) {
@@ -324,6 +335,7 @@ class PsatPlPermohonanModel {
             } else {
                 daftar_pelanggan = await pool.query('SELECT * FROM ' + db_daftar_pelanggan + ` WHERE id = ${id}`)
             }
+            check_query.check_queryset(daftar_pelanggan);
             // debug('get %o', res);
             return { status: '200', permohohan: "Detail Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
         } catch (ex) {
@@ -340,6 +352,7 @@ class PsatPlPermohonanModel {
             } else {
                 info_produk = await pool.query('SELECT * FROM ' + db_info_produk + ` WHERE id = ${id}`)
             }
+            check_query.check_queryset(info_produk);
             // debug('get %o', res);
             return { status: '200', permohohan: "Detail Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
@@ -360,6 +373,7 @@ class PsatPlPermohonanModel {
                     'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM '+
                     db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERMOHONAN", id, user])
             }
+            check_query.check_queryset(permohonan);
             // debug('get %o', permohonan);
             return { status: '200', keterangan: "Detail Permohonan PSAT PL/Izin Edar PL", data: permohonan.rows[0] };
         } catch (ex) {
@@ -376,6 +390,7 @@ class PsatPlPermohonanModel {
             } else {
                 unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
             }
+            check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
             return { status: '200', permohohan: "List Unit Produksi", data: unit_produksi.rows };
         } catch (ex) {
@@ -392,6 +407,7 @@ class PsatPlPermohonanModel {
             }else{
                 daftar_pemasok = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pemasok + ` WHERE id = ANY(ARRAY${id})`)
             }
+            check_query.check_queryset(daftar_pemasok);
             // debug('get %o', res);
             return { status: '200', permohohan: "List Daftar Pemasok", data: daftar_pemasok.rows };
         } catch (ex) {
@@ -408,6 +424,7 @@ class PsatPlPermohonanModel {
             } else {
                 daftar_pelanggan = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pelanggan + ` WHERE id = ANY(ARRAY${id})`)
             }
+            check_query.check_queryset(daftar_pelanggan);
             // debug('get %o', res);
             return { status: '200', permohohan: "List Daftar Pelanggan", data: daftar_pelanggan.rows };
         } catch (ex) {
@@ -424,6 +441,7 @@ class PsatPlPermohonanModel {
             } else {
                 info_produk = await pool.query('SELECT id, jenis_psat, nama_dagang, nama_latin FROM ' + db_info_produk + ` WHERE id = ANY(ARRAY${id})`)
             }
+            check_query.check_queryset(info_produk);
             // debug('get %o', res);
             return { status: '200', permohohan: "List Info Produk", data: info_produk.rows };
         } catch (ex) {
@@ -443,6 +461,7 @@ class PsatPlPermohonanModel {
                     'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + 
                     db_history_pengajuan + ' WHERE id_pengguna=$1', [user])
             }
+            check_query.check_queryset(history);
             // debug('get %o', history);
             return { status: '200', keterangan: `History Izin Edar PL id ${user}` , data: history.rows };
         } catch (ex) {

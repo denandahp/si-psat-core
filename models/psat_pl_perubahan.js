@@ -1,3 +1,4 @@
+const check_query = require('./param/utils.js');
 const pool = require('../libs/db');
 var format = require('pg-format');
 
@@ -116,7 +117,8 @@ class PsatPlPerubahanModel {
                     ` SET(status_aktif, file_permohonan, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') `+
                     `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan} RETURNING *`, data_perubahan_data)
             );
-
+            check_query.check_queryset(perubahan_data);
+            check_query.check_queryset(file_permohonan);
             response.perubahan_data = perubahan_data.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
 
@@ -142,7 +144,8 @@ class PsatPlPerubahanModel {
                         'sppb_psat_ruang_lingkup, sppb_psat_file, created, update) = (%L) ' +
                         `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna}RETURNING *`, data_unit_produksi)
                 )
-                // debug('get %o', res);
+            check_query.check_queryset(unit_produksi);
+            // debug('get %o', res);
             return { status: '200', permohohan: "Update Perubahan Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -162,6 +165,7 @@ class PsatPlPerubahanModel {
                 'data_awal, data_baru, alasan_perubahan, kemasan_lama, kemasan_baru, created, update, unit_produksi) = ' +
                 `(%L, '{${data.unit_produksi}}') WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_info_produk)
             let info_produk = await pool.query(sql);
+            check_query.check_queryset(info_produk);
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Perubahan Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
@@ -173,7 +177,7 @@ class PsatPlPerubahanModel {
     async delete_perubahan_unit_produksi(id) {
         try {
             let unit_produksi = await pool.query('DELETE FROM ' + db_unit_produksi + ` WHERE id = ${id} RETURNING *`)
-
+            check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Perubahan Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
@@ -185,7 +189,8 @@ class PsatPlPerubahanModel {
     async delete_perubahan_info_produk(id) {
         try {
             let info_produk = await pool.query('DELETE FROM ' + db_info_produk + ` WHERE id = ${id} RETURNING *`)
-                // debug('get %o', res);
+            check_query.check_queryset(info_produk);
+            // debug('get %o', res);
             return { status: '200', permohohan: "Delete Perubahan Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -205,6 +210,7 @@ class PsatPlPerubahanModel {
                     'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, '+
                     'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERUBAHAN", id, user])
             }
+            check_query.check_queryset(permohonan);
             // debug('get %o', permohonan);
             return { status: '200', keterangan: "Detail Perubahan Data PSAT PL/Izin Edar PL", data: permohonan.rows[0] };
         } catch (ex) {

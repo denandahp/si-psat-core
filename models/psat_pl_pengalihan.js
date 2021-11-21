@@ -1,3 +1,4 @@
+const check_query = require('./param/utils.js');
 const pool = require('../libs/db');
 var format = require('pg-format');
 
@@ -101,7 +102,7 @@ class PsatPlPengalihanModel {
                 ' SET(surat_permohonan_izin_edar, sertifikat_izin_edar_sebelumnya, '+
                 `surat_pernyataan, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_file_permohonan} RETURNING *`, data_file_permohonan)
             );
-
+            check_query.check_queryset(file_permohonan);
             //Create pengajuan
             let data_pengalihan_data = [true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date ]
             pengalihan_data = await pool.query(
@@ -134,6 +135,8 @@ class PsatPlPengalihanModel {
                 'sppb_psat_ruang_lingkup, sppb_psat_file, created, update) = (%L) '+
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna}RETURNING *`, data_unit_produksi)
             )
+            check_query.check_queryset(unit_produksi);
+
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Pengalihan Kepemilikan Unit Produksi", data: unit_produksi.rows[0] };
         } catch (ex) {
@@ -154,6 +157,7 @@ class PsatPlPengalihanModel {
                 'tanggal_pengalihan, created, update, unit_produksi) = '+
                 `(%L, '{${data.unit_produksi}}') WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_info_produk)
             let info_produk = await pool.query(sql);
+            check_query.check_queryset(info_produk);
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Pengalihan Kepemilikan Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
@@ -165,6 +169,7 @@ class PsatPlPengalihanModel {
     async delete_pengalihan_unit_produksi(id) {
         try {
             let unit_produksi = await pool.query('DELETE FROM ' + db_unit_produksi + ` WHERE id = ${id} RETURNING *`)
+            check_query.check_queryset(unit_produksi);
 
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Pengalihan Kepemilikan Unit Produksi", data: unit_produksi.rows[0] };
@@ -177,6 +182,7 @@ class PsatPlPengalihanModel {
     async delete_pengalihan_info_produk(id) {
         try {
           let info_produk = await pool.query('DELETE FROM ' + db_info_produk + ` WHERE id = ${id} RETURNING *`)
+          check_query.check_queryset(info_produk);
             // debug('get %o', res);
             return { status: '200', permohohan: "Delete Pengalihan Kepemilikan Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
@@ -197,6 +203,7 @@ class PsatPlPengalihanModel {
                     'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, '+
                     'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
             }
+            check_query.check_queryset(permohonan);
             // debug('get %o', permohonan);
             return { status: '200', keterangan: "Detail Perubahan Data PSAT PL/Izin Edar PL", data: permohonan.rows[0] };
         } catch (ex) {
