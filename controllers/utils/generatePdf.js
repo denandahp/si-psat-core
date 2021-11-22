@@ -9,7 +9,8 @@ const sppb_psat_view = require('../../models/sppb_psat_view.js')
 const sppb_pl_view = require('../../models/sppb_pl_view.js')
 const authUtils = require('../utils/auth');
 
-const url = 'stag.testing-nusantera.com/api/upload/view_pdf?path=/home/tstingnu/stagnusantera/'
+// const url = 'stag.testing-nusantera.com/api/upload/view_pdf?path=/home/tstingnu/stagnusantera/'
+const url = 'http://103.161.184.37:3000/api/upload_view_pdf?path=/home/si-psat-core/'
 class generatePdfController {
     async sppb_psat(req, res, next) {
         let callback = async() => {
