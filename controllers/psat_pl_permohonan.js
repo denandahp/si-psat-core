@@ -95,6 +95,42 @@ class PsatPlPermohonanController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async update_nomor_izin_edar_pl(req, res, next) {
+        let callback = async() => {
+            try {
+                let datas = req.body;
+                debug('detail %o', datas);
+                let detail = await psat_pl.update_nomor_izin_edar_pl(datas);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async update_permohonan_izin(req, res, next) {
+        let callback = async() => {
+            try {
+                let query = req.body;
+                debug('detail %o', query);
+                let detail = await psat_pl.update_permohonan_izin(query);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async update_unit_produksi(req, res, next) {
         let callback = async() => {
             try {
@@ -390,6 +426,24 @@ class PsatPlPermohonanController {
                 let id = req.query.id;
                 debug('detail %o', id);
                 let detail = await psat_pl.get_list_info_produk(id);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async get_history_pengajuan(req, res, next) {
+        let callback = async() => {
+            try {
+                let user = req.query.user;
+                debug('detail %o', user);
+                let detail = await psat_pl.get_history_pengajuan(user);
                 if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {

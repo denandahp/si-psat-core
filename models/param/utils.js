@@ -21,3 +21,9 @@ exports.time_format = ()=> {
     var FormattedDate = y + '-'+ mm + '-'+ dd;
     return String(FormattedDate);
 }
+
+exports.check_queryset = (queryset)=> {
+    if (queryset.rowCount <= 0){
+        throw  new Error('Invalid id/data is empty. Check again your data query');
+    }
+}

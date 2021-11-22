@@ -1,3 +1,4 @@
+const check_query = require('./param/utils.js');
 const debug = require('debug')('app:model:sppb_psat');
 var format = require('pg-format');
 const pool = require('../libs/db');
@@ -22,7 +23,7 @@ class SppbPsatModel {
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, surat_permohonan_pengalihan, surat_pernyataan, info_perusahaan, ' +
                 'unit_produksi, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
             debug('get %o', pengajuan.rows[0]);
-            return { status: '200', permohonan: "Pengalihan Kepemilikan SPPB PSAT", data: pengajuan.rows[0] };
+            return { status: '200', keterangan:"Pengalihan Kepemilikan SPPB PSAT", data: pengajuan.rows[0] };
         } catch (ex) {
             console.log(ex.message);
             return { status: '400', Error: "" + ex };
@@ -67,6 +68,40 @@ class SppbPsatModel {
         };
     }
 
+    async update_nomor_sppb_psat(data) {
+        try {
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENGALIHAN', data.nomor_sppb_psat, date];
+            let pengajuan = await pool.query(
+                'UPDATE' + db_pengalihan + 
+                ' SET (nomor_sppb_psat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
+                'RETURNING id, id_pengguna, jenis_permohonan, status_proses, nomor_sppb_psat', data_pengajuan);
+            check_query.check_queryset(pengajuan);
+            debug('get %o', pengajuan);
+            return { status: '200', keterangan: `Update Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_pengalihan_kepemilikan(data) {
+        try {
+            let data_pengajuan = [
+                data.id_pengguna, data.id_pengajuan, 'PENGALIHAN', data.status_proses, data.status_aktif, data.surat_permohonan_pengalihan,
+                data.surat_pernyataan, data.info_perusahaan, data.unit_produksi, date];
+            let pengajuan = await pool.query(
+                'UPDATE ' + db_pengalihan + 
+                ' SET (jenis_permohonan, status_proses, status_aktif, surat_permohonan_pengalihan, surat_pernyataan, info_perusahaan, ' +
+                'unit_produksi, update) = ($3, $4, $5, $6, $7, $8, $9, $10) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
+            check_query.check_queryset(pengajuan);
+            debug('get %o', pengajuan.rows[0]);
+            return { status: '200', keterangan:"Update Pengalihan Kepemilikan SPPB PSAT", data: pengajuan.rows[0] };
+        } catch (ex) {
+            console.log(ex.message);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
     async update_pengalihan_unit_produksi(data) {
         try {
             let data_unit_produksi = [
@@ -78,6 +113,7 @@ class SppbPsatModel {
                 `ruang_lingkup, created, update) = (%L) WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_unit_produksi
                 )
             )
+            check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
             return { status: '200', keterangan: "Update Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
         } catch (ex) {
@@ -98,6 +134,7 @@ class SppbPsatModel {
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_info_perusahaan
                 )
             )
+            check_query.check_queryset(info_perusahaan);
             // debug('get %o', res);
             return { status: '200', keterangan: "Update Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
         } catch (ex) {
@@ -109,6 +146,7 @@ class SppbPsatModel {
     async delete_pengalihan_unit_produksi(id) {
         try {
             let unit_produksi = await pool.query('DELETE FROM ' + db_unit_produksi + ` WHERE id = ${id} RETURNING *`)
+            check_query.check_queryset(unit_produksi);
 
             // debug('get %o', res);
             return { status: '200', keterangan: "Delete Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
@@ -121,7 +159,7 @@ class SppbPsatModel {
     async delete_pengalihan_info_perusahaan(id) {
         try {
             let info_perusahaan = await pool.query('DELETE FROM ' + db_info_perusahaan + ` WHERE id = ${id} RETURNING *`)
-
+            check_query.check_queryset(info_perusahaan);
             // debug('get %o', res);
             return { status: '200', keterangan: "Delete Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
         } catch (ex) {
@@ -147,6 +185,7 @@ class SppbPsatModel {
                     'SELECT * FROM' + db_history_pengajuan + 
                     ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
             }
+            check_query.check_queryset(permohonan);
             debug('get %o', permohonan);
             return { status: '200', keterangan: "Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: permohonan.rows };
         } catch (ex) {
@@ -163,6 +202,7 @@ class SppbPsatModel {
             } else{
                 unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ${id}`)
             }
+            check_query.check_queryset(unit_produksi);
             debug('get %o', unit_produksi);
             return { status: '200', keterangan: "Detail Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
         } catch (ex) {
@@ -179,6 +219,7 @@ class SppbPsatModel {
             } else{
                 info_perusahaan = await pool.query('SELECT * FROM ' + db_info_perusahaan + ` WHERE id = ${id}`)
             }
+            check_query.check_queryset(info_perusahaan);
             debug('get %o', info_perusahaan);
             return { status: '200', keterangan: "Detail Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
         } catch (ex) {
@@ -195,6 +236,7 @@ class SppbPsatModel {
             } else{
                 unit_produksi = await pool.query('SELECT nama_unit_psat, alamat_unit_psat, nomor_sppb_psat FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
             }
+            check_query.check_queryset(unit_produksi);
             debug('get %o', unit_produksi);
             return { status: '200', keterangan: "List Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows };
         } catch (ex) {

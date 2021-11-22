@@ -58,6 +58,42 @@ class SppbPsatController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async update_nomor_sppb_psat(req, res, next) {
+        let callback = async() => {
+            try {
+                let datas = req.body;
+                debug('detail %o', datas);
+                let detail = await sppb_psat.update_nomor_sppb_psat(datas);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async update_pengalihan_kepemilikan(req, res, next) {
+        let callback = async() => {
+            try {
+                let datas = req.body;
+                debug('detail %o', datas);
+                let detail = await sppb_psat.update_pengalihan_kepemilikan(datas);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async update_pengalihan_unit_produksi(req, res, next) {
         let callback = async() => {
             try {

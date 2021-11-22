@@ -7,6 +7,8 @@ Router.post('/permohonan/create', pl.permohonan_izin)
       .post('/daftar-pemasok/add', pl.add_daftar_pemasok)
       .post('/daftar-pelanggan/add', pl.add_daftar_pelanggan)
       .post('/info-produk/add', pl.add_info_produk)
+      .put('/nomor-sppb-psat/update', pl.update_nomor_izin_edar_pl)
+      .put('/permohonan/update', pl.update_permohonan_izin)
       .put('/unit-produksi/update', pl.update_unit_produksi)
       .put('/daftar-pemasok/update', pl.update_daftar_pemasok)
       .put('/daftar-pelanggan/update', pl.update_daftar_pelanggan)
@@ -24,7 +26,6 @@ Router.post('/permohonan/create', pl.permohonan_izin)
       .get('/list-daftar-pemasok/detail', pl.get_list_daftar_pemasok)
       .get('/list-daftar-pelanggan/detail', pl.get_list_daftar_pelanggan)
       .get('/list-info-produk/detail', pl.get_list_info_produk)
-
-
+      .get('/history', pl.get_history_pengajuan)
 
 module.exports = Router;
