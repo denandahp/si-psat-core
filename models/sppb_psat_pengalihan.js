@@ -232,9 +232,9 @@ class SppbPsatModel {
         try {
             let unit_produksi;
             if(id == 'all'){
-                unit_produksi = await pool.query('SELECT nama_unit_psat, alamat_unit_psat, nomor_sppb_psat FROM ' + db_unit_produksi)
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi)
             } else{
-                unit_produksi = await pool.query('SELECT nama_unit_psat, alamat_unit_psat, nomor_sppb_psat FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
             }
             check_query.check_queryset(unit_produksi);
             debug('get %o', unit_produksi);

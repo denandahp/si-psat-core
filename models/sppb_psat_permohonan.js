@@ -273,9 +273,9 @@ class SppbPsatPermohonanModel {
         try {
             let unit_produksi;
             if(id == 'all'){
-                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi)
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi)
             } else{
-                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
             }
             check_query.check_queryset(unit_produksi);
             debug('get %o', unit_produksi);
@@ -290,9 +290,9 @@ class SppbPsatPermohonanModel {
         try {
             let ruang_lingkup
             if(id == 'all'){
-                ruang_lingkup = await pool.query('SELECT id, nama_komoditas, cara_penyimpanan, pengemasan_ulang FROM ' + db_ruang_lingkup)
+                ruang_lingkup = await pool.query('SELECT * FROM ' + db_ruang_lingkup)
             } else {
-                ruang_lingkup = await pool.query('SELECT id, nama_komoditas, cara_penyimpanan, pengemasan_ulang FROM ' + db_ruang_lingkup + ` WHERE id = ANY(ARRAY${id})`)
+                ruang_lingkup = await pool.query('SELECT * FROM ' + db_ruang_lingkup + ` WHERE id = ANY(ARRAY${id})`)
             }
             check_query.check_queryset(ruang_lingkup);
             debug('get %o', ruang_lingkup);

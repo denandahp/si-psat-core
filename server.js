@@ -5,7 +5,6 @@ const app = express();
 const morgan = require('morgan');
 const logger = require('morgan');
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
 const bodyParser = require('body-parser');
 const CONFIG_FILE_PATH = __dirname + '/configs.json';
 const config = require(CONFIG_FILE_PATH);

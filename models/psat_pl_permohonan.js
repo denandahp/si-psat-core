@@ -386,9 +386,9 @@ class PsatPlPermohonanModel {
         try {
             let unit_produksi;
             if(id == 'all'){
-                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi)
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi)
             } else {
-                unit_produksi = await pool.query('SELECT id, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
+                unit_produksi = await pool.query('SELECT * FROM ' + db_unit_produksi + ` WHERE id = ANY(ARRAY${id})`)
             }
             check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
@@ -403,9 +403,9 @@ class PsatPlPermohonanModel {
         try {
             let daftar_pemasok;
             if(id == 'all'){
-                daftar_pemasok = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pemasok)
+                daftar_pemasok = await pool.query('SELECT * FROM ' + db_daftar_pemasok)
             }else{
-                daftar_pemasok = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pemasok + ` WHERE id = ANY(ARRAY${id})`)
+                daftar_pemasok = await pool.query('SELECT * FROM ' + db_daftar_pemasok + ` WHERE id = ANY(ARRAY${id})`)
             }
             check_query.check_queryset(daftar_pemasok);
             // debug('get %o', res);
@@ -420,9 +420,9 @@ class PsatPlPermohonanModel {
         try {
             let daftar_pelanggan;
             if(id == 'all'){
-                daftar_pelanggan = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pelanggan)
+                daftar_pelanggan = await pool.query('SELECT * FROM ' + db_daftar_pelanggan)
             } else {
-                daftar_pelanggan = await pool.query('SELECT id, nama, alamat FROM ' + db_daftar_pelanggan + ` WHERE id = ANY(ARRAY${id})`)
+                daftar_pelanggan = await pool.query('SELECT * FROM ' + db_daftar_pelanggan + ` WHERE id = ANY(ARRAY${id})`)
             }
             check_query.check_queryset(daftar_pelanggan);
             // debug('get %o', res);
@@ -437,9 +437,9 @@ class PsatPlPermohonanModel {
         try {
             let info_produk;
             if(id == 'all'){
-                info_produk = await pool.query('SELECT id, jenis_psat, nama_dagang, nama_latin  FROM ' + db_info_produk)
+                info_produk = await pool.query('SELECT * FROM ' + db_info_produk)
             } else {
-                info_produk = await pool.query('SELECT id, jenis_psat, nama_dagang, nama_latin FROM ' + db_info_produk + ` WHERE id = ANY(ARRAY${id})`)
+                info_produk = await pool.query('SELECT * FROM ' + db_info_produk + ` WHERE id = ANY(ARRAY${id})`)
             }
             check_query.check_queryset(info_produk);
             // debug('get %o', res);

@@ -1,19 +1,27 @@
+const dotenv = require('dotenv');
 const format_date = require('../../models/param/utils.js');
 var fs = require('fs');
 const multer = require('multer');
 const path = require('path');
 
+dotenv.config();
+
 exports.param = () => {
     var date = format_date.time_format();
-    var dir = path.join(process.cwd(), `/media/${date}/`);
-
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
+    var dir;
     const diskStorage = multer.diskStorage({
         // konfigurasi folder penyimpanan file
         destination: function(req, file, cb) {
-            cb(null, path.join(process.cwd(), `/media/${date}`));
+            if(process.env.NODE_ENV == 'LOKAL'){
+                dir = path.join(process.cwd(), `/media/${date}/`);
+            } else {
+                dir = `/root/si-psat-core/media/${date}/`;
+            };
+
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
+            cb(null, dir);
         },
         // konfigurasi penamaan file yang unik
         filename: function(req, file, cb) {
