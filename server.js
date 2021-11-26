@@ -84,7 +84,7 @@ const upload_file = require('./routes/upload.js');
 const sertifikat = require('./routes/sertifikat.js');
 
 app.use('/', index);
-app.use('/user', user);
+app.use('/api/user', user);
 app.use('/api/psat/sppb', sppb_psat_penambahan)
 app.use('/api/psat/sppb', sppb_psat_pengalihan)
 app.use('/api/psat/sppb', sppb_psat_permohonan)
