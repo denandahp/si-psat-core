@@ -52,8 +52,10 @@ class UserController {
   } 
 
   async logout (req, res, next) {
-    req.session = null;
-    res.redirect('/');
+    res.clearCookie('jwt');
+    res.status(200).json({
+      message: 'Cookie cleared'
+    });
   }
 
   async register_superadmin(req, res, next) {
