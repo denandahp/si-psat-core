@@ -12,7 +12,7 @@ const db_pengguna = schema + '.' + '"pengguna"';
 const db_kepemilikan = schema + '.' + '"info_kepemilikan"';
 const db_sekretariat = schema + '.' + '"info_sekretariat"';
 const db_list_sekretariat = schema + '.' + '"list_sekretariat"';
-const db_list_pelaku_usaha = schema + '.' + '"_list_pelaku_usaha"';
+const db_list_pelaku_usaha = schema + '.' + '"_listall_pelaku_usaha"';
 
 
 
