@@ -238,6 +238,24 @@ class SppbPsatController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async get_history_all_sppb(req, res, next) {
+        let callback = async() => {
+            try {
+                let user = req.query.user;
+                debug('detail %o', user);
+                let detail = await sppb_psat.get_history_all_sppb(user);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async get_list_unit_produksi(req, res, next) {
         let callback = async() => {
             try {

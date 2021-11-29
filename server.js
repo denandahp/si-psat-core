@@ -76,6 +76,7 @@ const sppb_psat_penambahan = require('./routes/sppb_psat_penambahan.js');
 const sppb_psat_pengalihan = require('./routes/sppb_psat_pengalihan.js');
 const sppb_psat_permohonan = require('./routes/sppb_psat_permohonan.js');
 const sppb_psat_perpanjangan = require('./routes/sppb_psat_perpanjangan.js');
+const sppb_psat_audit = require('./routes/sppb_psat_audit.js');
 const past_pl_pengalihan = require('./routes/psat_pl_pengalihan.js');
 const past_pl_permohonan = require('./routes/psat_pl_permohonan.js');
 const past_pl_perubahan = require('./routes/psat_pl_perubahan.js');
@@ -89,6 +90,7 @@ app.use('/api/psat/sppb', sppb_psat_penambahan)
 app.use('/api/psat/sppb', sppb_psat_pengalihan)
 app.use('/api/psat/sppb', sppb_psat_permohonan)
 app.use('/api/psat/sppb', sppb_psat_perpanjangan)
+app.use('/api/psat/sppb', sppb_psat_audit)
 app.use('/api/psat/pl', past_pl_pengalihan)
 app.use('/api/psat/pl', past_pl_permohonan)
 app.use('/api/psat/pl', past_pl_perubahan)

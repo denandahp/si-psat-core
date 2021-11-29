@@ -455,11 +455,12 @@ class PsatPlPermohonanModel {
             let history;
             if(user == 'all'){
                 history = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + db_history_pengajuan)
+                    'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + db_history_pengajuan +
+                    ' ORDER BY created DESC')
             } else {
                 history = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + 
-                    db_history_pengajuan + ' WHERE id_pengguna=$1', [user])
+                    db_history_pengajuan + ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
             }
             check_query.check_queryset(history);
             // debug('get %o', history);

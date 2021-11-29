@@ -15,7 +15,7 @@ exports.param = () => {
             if(process.env.NODE_ENV == 'LOKAL'){
                 dir = path.join(process.cwd(), `/media/${date}/`);
             } else {
-                dir = `/root/si-psat-core/media/${date}/`;
+                dir = `si-psat-core/media/${date}/`;
             };
 
             if (!fs.existsSync(dir)) {

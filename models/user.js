@@ -12,6 +12,8 @@ const db_pengguna = schema + '.' + '"pengguna"';
 const db_kepemilikan = schema + '.' + '"info_kepemilikan"';
 const db_sekretariat = schema + '.' + '"info_sekretariat"';
 const db_list_sekretariat = schema + '.' + '"list_sekretariat"';
+const db_list_pelaku_usaha = schema + '.' + '"_list_pelaku_usaha"';
+
 
 
 class UserModel {
@@ -46,21 +48,20 @@ class UserModel {
 
   async register_pelaku_usaha(data) {
     try {
-        let response = {};
-        let data_kepemilikan = [data.username, data.password, '01', data.nomor_identitas, data.nama, data.email, data.alamat, 
-                                data.telp, 'Y', '11', data.flag_umk, data.jenis_perseroan, data.flag_migrasi, data.npwp_perseroan];
-        let info_kepemilikan = await pool.query(
-          'INSERT INTO ' + db_kepemilikan + '(username, password, jenis_identitas, nomor_identitas, nama, email, '+
-          'alamat, telp, status, role, flag_umk, jenis_perseroan, flag_migrasi, npwp_perseroan)' +
-          'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *', data_kepemilikan);
-        let data_pengguna = [info_kepemilikan.rows[0].id, data.username, data.password, date, date];
-        let pengguna = await pool.query(
-          'INSERT INTO ' + db_pengguna + '(info_kepemilikan, username, password, created, update)' +
-          'VALUES ($1, $2, $3, $4, $5) RETURNING *', data_pengguna);
-        response.pengguna = pengguna.rows[0];
-        response.info_kepemilikan = info_kepemilikan.rows[0];
-        debug('get %o', response);
-        return {status:200, data: response};
+      let response = {};
+      let data_kepemilikan = [data.username, data.password, data.nomor_identitas, data.nama, data.email, data.alamat, 
+                              data.telp, data.npwp_perseroan];
+      let info_kepemilikan = await pool.query(format(
+        'INSERT INTO ' + db_kepemilikan + '(username, password, nomor_identitas, nama, email, alamat, telp, npwp_perseroan)' +
+        'VALUES (%L) RETURNING *', data_kepemilikan));
+      let data_pengguna = [info_kepemilikan.rows[0].id, data.username, data.password, 'PELAKU_USAHA', date, date];
+      let pengguna = await pool.query(format(
+        'INSERT INTO ' + db_pengguna + '(info_kepemilikan, username, password, role, created, update)' +
+        'VALUES (%L) RETURNING *', data_pengguna));
+      response.pengguna = pengguna.rows[0];
+      response.info_kepemilikan = info_kepemilikan.rows[0];
+      debug('get %o', response);
+      return {status:200, keterangan: `Update Pelaku Usaha ${info_kepemilikan.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
         return { status: '400', Error: "" + ex };
@@ -134,6 +135,30 @@ class UserModel {
         response.detail = info_superadmin.rows[0];
         debug('get %o', response);
         return {status:200, keterangan: `Register superamin ${info_superadmin.rows[0].nama}`, data: response};
+    } catch (ex) {
+        console.log('Enek seng salah iki ' + ex);
+        return { status: '400', Error: "" + ex };
+    };
+  }
+
+  async update_pelaku_usaha(data) {
+    try {
+        let response = {};
+        let data_pengguna = [data.username, data.password, date];
+        let pengguna = await pool.query(format(
+          'UPDATE ' + db_pengguna + ' SET (username, password, update)' +
+          `= (%L) WHERE id=${data.id_user} RETURNING *`, data_pengguna));
+        check_query.check_queryset(pengguna);
+        let data_kepemilikan = [data.username, data.password, data.nomor_identitas, data.nama, data.email, data.alamat, 
+                                data.telp, data.npwp_perseroan];
+        let info_kepemilikan = await pool.query(format(
+          'UPDATE  ' + db_kepemilikan + ' SET(username, password, nomor_identitas, nama, email, alamat, telp, npwp_perseroan)' +
+          `= (%L) WHERE id=${pengguna.rows[0].info_kepemilikan} RETURNING *`, data_kepemilikan));
+        check_query.check_queryset(info_kepemilikan);
+        response.pengguna = pengguna.rows[0];
+        response.info_kepemilikan = info_kepemilikan.rows[0];
+        debug('get %o', response);
+        return {status:200, keterangan: `Update Pelaku Usaha ${info_kepemilikan.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
         return { status: '400', Error: "" + ex };
@@ -242,6 +267,23 @@ class UserModel {
         return { status: '400', Error: "" + ex };
     };
   }
+
+  async detail_pelaku_usaha(id, role) {
+    try {
+      let user;
+      if(id == 'all'){
+          user = await pool.query('SELECT * FROM ' + db_list_pelaku_usaha + ` ORDER BY created DESC`)
+      } else{
+          user = await pool.query('SELECT * FROM ' + db_list_pelaku_usaha + ` WHERE id = ${id} AND role = 'PELAKU_USAHA'`)
+      };
+      check_query.check_queryset(user);
+      debug('get %o', user);
+      return { status: '200', keterangan: `Detail User id ${user.rows[0].id} ${user.rows[0].nama}`, data: user.rows };
+  } catch (ex) {
+      console.log('Enek seng salah iki ' + ex);
+      return { status: '400', Error: "" + ex };
+  };
+}
 
   async delete_sekretariat(id, role) {
     try {

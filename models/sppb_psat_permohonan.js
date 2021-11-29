@@ -3,12 +3,15 @@ const pool = require('../libs/db');
 const check_query = require('./param/utils.js');
 
 const schema = '"sppb_psat"';
+const schema_pengguna = '"pengguna"';
 const db_pengajuan = schema + '.' + '"pengajuan"';
 const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_ruang_lingkup = schema + '.' + '"ruang_lingkup"';
 const db_unit_produksi = schema + '.' + '"unit_produksi"';
 const db_info_perusahaan = schema + '.' + '"info_perusahaan"';
 const db_history_pengajuan= schema + '.' + '"history_all_pengajuan"';
+const db_all_history_pengajuan= schema_pengguna + '.' + '"history_all_pengajuan"';
+
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
@@ -258,7 +261,7 @@ class SppbPsatPermohonanModel {
             } else {
                 history = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses FROM' + 
-                    db_history_pengajuan + ' WHERE id_pengguna=$1', [user])
+                    db_history_pengajuan + ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
             }
             check_query.check_queryset(history);
             debug('get %o', history);
@@ -297,6 +300,25 @@ class SppbPsatPermohonanModel {
             check_query.check_queryset(ruang_lingkup);
             debug('get %o', ruang_lingkup);
             return { status: '200', keterangan: "List Ruang Lingkup", data: ruang_lingkup.rows };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_history_all_sppb(user) {
+        try {
+            let history;
+            if(user == 'all'){
+                history = await pool.query(
+                    'SELECT * FROM' + db_all_history_pengajuan)
+            } else {
+                history = await pool.query(
+                    'SELECT * FROM' + db_all_history_pengajuan + ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
+            }
+            check_query.check_queryset(history);
+            debug('get %o', history);
+            return { status: '200', keterangan: `History SPPB PSAT id ${user}` , data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
