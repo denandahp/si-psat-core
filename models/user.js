@@ -49,10 +49,10 @@ class UserModel {
   async register_pelaku_usaha(data) {
     try {
       let response = {};
-      let data_kepemilikan = [data.username, data.password, data.nomor_identitas, data.nama, data.email, data.alamat, 
+      let data_kepemilikan = [data.username, data.nomor_identitas, data.nama, data.email, data.alamat, 
                               data.telp, data.npwp_perseroan];
       let info_kepemilikan = await pool.query(format(
-        'INSERT INTO ' + db_kepemilikan + '(username, password, nomor_identitas, nama, email, alamat, telp, npwp_perseroan)' +
+        'INSERT INTO ' + db_kepemilikan + '(username, nomor_identitas, nama, email, alamat, telp, npwp_perseroan)' +
         'VALUES (%L) RETURNING *', data_kepemilikan));
       let data_pengguna = [info_kepemilikan.rows[0].id, data.username, data.password, 'PELAKU_USAHA', date, date];
       let pengguna = await pool.query(format(
@@ -61,7 +61,7 @@ class UserModel {
       response.pengguna = pengguna.rows[0];
       response.info_kepemilikan = info_kepemilikan.rows[0];
       debug('get %o', response);
-      return {status:200, keterangan: `Update Pelaku Usaha ${info_kepemilikan.rows[0].nama}`, data: response};
+      return {status:200, keterangan: `Register Pelaku Usaha ${info_kepemilikan.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
         return { status: '400', Error: "" + ex };
@@ -149,10 +149,10 @@ class UserModel {
           'UPDATE ' + db_pengguna + ' SET (username, password, update)' +
           `= (%L) WHERE id=${data.id_user} RETURNING *`, data_pengguna));
         check_query.check_queryset(pengguna);
-        let data_kepemilikan = [data.username, data.password, data.nomor_identitas, data.nama, data.email, data.alamat, 
+        let data_kepemilikan = [data.username, data.nomor_identitas, data.nama, data.email, data.alamat, 
                                 data.telp, data.npwp_perseroan];
         let info_kepemilikan = await pool.query(format(
-          'UPDATE  ' + db_kepemilikan + ' SET(username, password, nomor_identitas, nama, email, alamat, telp, npwp_perseroan)' +
+          'UPDATE  ' + db_kepemilikan + ' SET(username, nomor_identitas, nama, email, alamat, telp, npwp_perseroan)' +
           `= (%L) WHERE id=${pengguna.rows[0].info_kepemilikan} RETURNING *`, data_kepemilikan));
         check_query.check_queryset(info_kepemilikan);
         response.pengguna = pengguna.rows[0];
@@ -268,7 +268,7 @@ class UserModel {
     };
   }
 
-  async detail_pelaku_usaha(id, role) {
+  async detail_pelaku_usaha(id) {
     try {
       let user;
       if(id == 'all'){

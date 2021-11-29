@@ -83,6 +83,6 @@ docs
 .vscode
 jsconfig.json
 
-media
-sertifikat
+media/**
+sertifikat/sppb-psat/**
 .env
