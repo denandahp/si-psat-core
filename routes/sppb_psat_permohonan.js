@@ -17,7 +17,7 @@ Router.post('/permohonan/create', sppb.permohonan_awal)
       .get('/list-unit-produksi/detail', sppb.get_list_unit_produksi)
       .get('/list-ruang-lingkup/detail', sppb.get_list_ruang_lingkup)
       .get('/history', sppb.get_history_pengajuan)
-      .get('/history_sppb', sppb.get_history_all_sppb)
+      .get('/all/history', sppb.get_history_all_sppb)
 
 
 module.exports = Router;
