@@ -224,8 +224,9 @@ class SppbPsatController {
         let callback = async() => {
             try {
                 let user = req.query.user;
+                let code_proses = req.query.proses;
                 debug('detail %o', user);
-                let detail = await sppb_psat.get_history_pengajuan(user);
+                let detail = await sppb_psat.get_history_pengajuan(user, code_proses);
                 if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {

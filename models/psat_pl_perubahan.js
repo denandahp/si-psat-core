@@ -34,7 +34,7 @@ class PsatPlPerubahanModel {
             );
 
             //Create pengajuan
-            let data_perubahan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date, date]
+            let data_perubahan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 10, date, date]
             perubahan_data = await pool.query(
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_perubahan_data)
@@ -111,7 +111,7 @@ class PsatPlPerubahanModel {
             );
 
             //Create pengajuan
-            let data_perubahan_data = [true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date]
+            let data_perubahan_data = [true, file_permohonan.rows[0].id, data.status_pengajuan, 10, date]
             perubahan_data = await pool.query(
                 format('UPDATE ' + db_pengajuan +
                     ` SET(status_aktif, file_permohonan, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') `+

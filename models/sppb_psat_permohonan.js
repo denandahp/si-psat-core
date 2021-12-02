@@ -30,7 +30,7 @@ class SppbPsatPermohonanModel {
                 'INSERT INTO ' + db_file_permohonan + 
                 ' (id_pengguna, denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', data.status_proses, data.status_aktif, data.ruang_lingkup,
+            let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', 10, data.status_aktif, data.ruang_lingkup,
                             file_permohonan.rows[0].id, data.unit_produksi,info_perusahaan.rows[0].id, date, date];
             let pengajuan = await pool.query(
                 'INSERT INTO ' + db_pengajuan + 
@@ -97,11 +97,11 @@ class SppbPsatPermohonanModel {
                 'UPDATE ' + db_file_permohonan + 
                 ' SET (denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, update)' +
                 ' = ($3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, data.id_pengajuan, 'PERMOHONAN', data.status_proses, data.status_aktif, data.ruang_lingkup,
+            let data_pengajuan = [data.id_pengguna, data.id_pengajuan, 'PERMOHONAN', data.status_aktif, data.ruang_lingkup,
                             file_permohonan.rows[0].id, data.unit_produksi,info_perusahaan.rows[0].id, date];
             let pengajuan = await pool.query(
                 'UPDATE ' + db_pengajuan + 
-                ' SET (jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, unit_produksi, info_perusahaan, update)' +
+                ' SET (jenis_permohonan, status_aktif, produk, file_permohonan, unit_produksi, info_perusahaan, update)' +
                 ' = ($3, $4, $5, $6, $7, $8, $9, $10) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
             check_query.check_queryset(info_perusahaan);
             check_query.check_queryset(file_permohonan);
@@ -252,16 +252,25 @@ class SppbPsatPermohonanModel {
         };
     }
 
-    async get_history_pengajuan(user) {
+    async get_history_pengajuan(user, code_proses) {
         try {
             let history;
             if(user == 'all'){
                 history = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses FROM' + db_history_pengajuan)
+                    ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, ' +
+                    ' tenggat_audit_auditor, tenggat_waktu_perbaikan, nama_perusahaan, alamat_perusahaan, keterangan FROM' + db_history_pengajuan)
             } else {
-                history = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses FROM' + 
-                    db_history_pengajuan + ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
+                if(code_proses == 'all'){
+                    history = await pool.query(
+                        ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                        ' tenggat_audit_auditor, tenggat_waktu_perbaikan, nama_perusahaan, alamat_perusahaan, keterangan FROM' + db_history_pengajuan + 
+                        ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
+                }else{
+                    history = await pool.query(
+                        ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                        ' tenggat_audit_auditor, tenggat_waktu_perbaikan, nama_perusahaan, alamat_perusahaan, keterangan FROM' + db_history_pengajuan + 
+                        ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])
+                }
             }
             check_query.check_queryset(history);
             debug('get %o', history);

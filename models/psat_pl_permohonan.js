@@ -29,7 +29,7 @@ class PsatPlPermohonanModel {
             );
 
             //Create pengajuan
-            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date, date ]
+            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 10, date, date ]
             pengajuan = await pool.query(
                 format('INSERT INTO ' + db_pengajuan + 
                 ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengajuan)
@@ -150,7 +150,7 @@ class PsatPlPermohonanModel {
             );
             check_query.check_queryset(file_permohonan);
             //Create pengajuan
-            let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan, data.status_proses, date ]
+            let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan, 10, date ]
             pengajuan = await pool.query(
                 format('UPDATE ' + db_pengajuan + 
                 ` SET(status_aktif, file_permohonan, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') `+
