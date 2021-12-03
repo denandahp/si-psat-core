@@ -4,13 +4,16 @@ const check_query = require('./param/utils.js');
 
 const schema = '"sppb_psat"';
 const schema_pengguna = '"pengguna"';
+const schema_audit= '"audit"';
 const db_pengajuan = schema + '.' + '"pengajuan"';
 const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_ruang_lingkup = schema + '.' + '"ruang_lingkup"';
 const db_unit_produksi = schema + '.' + '"unit_produksi"';
 const db_info_perusahaan = schema + '.' + '"info_perusahaan"';
-const db_history_pengajuan= schema + '.' + '"history_all_pengajuan"';
-const db_all_history_pengajuan= schema_pengguna + '.' + '"history_all_pengajuan"';
+const db_history_pengajuan = schema + '.' + '"history_all_pengajuan"';
+const db_all_history_pengajuan = schema_pengguna + '.' + '"history_all_pengajuan"';
+const db_proses_audit = schema_audit + '.' + '"proses_audit"';
+
 
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -119,10 +122,11 @@ class SppbPsatPermohonanModel {
 
     async update_nomor_sppb_psat(data) {
         try {
-            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PERMOHONAN', data.nomor_sppb_psat, date];
+            let code_proses = await pool.query('SELECT code FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PERMOHONAN', data.nomor_sppb_psat, code_proses, date];
             let pengajuan = await pool.query(
                 'UPDATE' + db_pengajuan + 
-                ' SET (nomor_sppb_psat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
+                ' SET (nomor_sppb_psat, status_proses, update) = ($4, $5, $6) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
                 'RETURNING id, id_pengguna, jenis_permohonan, status_proses, nomor_sppb_psat', data_pengajuan);
             check_query.check_queryset(pengajuan);
             debug('get %o', pengajuan);
@@ -254,27 +258,60 @@ class SppbPsatPermohonanModel {
 
     async get_history_pengajuan(user, code_proses) {
         try {
-            let history;
+            let history, code;
             if(user == 'all'){
+                code = 'Semua Proses'
                 history = await pool.query(
                     ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, ' +
                     ' tenggat_audit_auditor, tenggat_waktu_perbaikan, nama_perusahaan, alamat_perusahaan, keterangan FROM' + db_history_pengajuan)
             } else {
+                code = 'Semua Proses'
                 if(code_proses == 'all'){
                     history = await pool.query(
                         ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
-                        ' tenggat_audit_auditor, tenggat_waktu_perbaikan, nama_perusahaan, alamat_perusahaan, keterangan FROM' + db_history_pengajuan + 
+                        ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen'+
+                        ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, ' +
+                        ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang'+
+                        ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, ' +
+                        ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek'+
+                        ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, ' +
+                        ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
                         ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
                 }else{
-                    history = await pool.query(
-                        ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
-                        ' tenggat_audit_auditor, tenggat_waktu_perbaikan, nama_perusahaan, alamat_perusahaan, keterangan FROM' + db_history_pengajuan + 
-                        ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])
+                    let query_code = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE code=$1', [code_proses]);
+                    code = query_code.rows[0].status
+                    if(code_proses == '20' || code_proses == '21'){
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                            ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen'+
+                            ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, ' +
+                            ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
+                            ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])   
+                    }else if (code_proses == '30' || code_proses == '31'){
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                            ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang'+
+                            ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, ' +
+                            ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
+                            ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])
+                    }else if (code_proses == '40' || code_proses == '41'){
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                            ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek'+
+                            ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, ' +
+                            ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
+                            ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])
+                    }else{
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                            ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
+                            ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])
+                    }
                 }
             }
-            check_query.check_queryset(history);
+
             debug('get %o', history);
-            return { status: '200', keterangan: `History SPPB PSAT id ${user}` , data: history.rows };
+            return { status: '200', keterangan: `History SPPB PSAT id ${user} Proses: ${code}` , data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

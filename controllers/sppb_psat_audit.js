@@ -94,6 +94,24 @@ class AuditDokumenController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async audit_history(req, res, next) {
+        let callback = async() => {
+            try {
+                let id_pengajuan = req.query.id;
+                debug('detail %o', id_pengajuan);
+                let detail = await audit.audit_history(id_pengajuan);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
 }
 
 module.exports = new AuditDokumenController();

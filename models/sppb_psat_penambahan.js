@@ -3,11 +3,13 @@ const debug = require('debug')('app:model:sppb_psat');
 const pool = require('../libs/db');
 
 const schema = '"sppb_psat"';
+const schema_audit= '"audit"';
 const db_pengajuan = schema + '.' + '"pengajuan"';
 const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_sertifikat = schema + '.' + '"sertifikat_psat"';
 const db_info_perusahaan = schema + '.' + '"info_perusahaan"';
 const db_history_pengajuan= schema + '.' + '"history_all_pengajuan"';
+const db_proses_audit = schema_audit + '.' + '"proses_audit"';
 
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -101,10 +103,11 @@ class SppbPsatModel {
 
     async update_penambahan_nomor_sppb_psat(data) {
         try {
-            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENAMBAHAN', data.nomor_sppb_psat, date];
+            let code_proses = await pool.query('SELECT code FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENAMBAHAN', data.nomor_sppb_psat, code_proses, date];
             let pengajuan = await pool.query(
                 'UPDATE' + db_pengajuan + 
-                ' SET (nomor_sppb_psat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
+                ' SET (nomor_sppb_psat, status_proses, update) = ($4, $5, $6) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
                 'RETURNING id, id_pengguna, jenis_permohonan, status_proses, nomor_sppb_psat', data_pengajuan);
             check_query.check_queryset(pengajuan);
             debug('get %o', pengajuan);
