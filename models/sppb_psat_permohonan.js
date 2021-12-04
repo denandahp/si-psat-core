@@ -270,11 +270,11 @@ class SppbPsatPermohonanModel {
                     history = await pool.query(
                         ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
                         ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen'+
-                        ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, ' +
+                        ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
                         ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang'+
-                        ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, ' +
+                        ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang, ' +
                         ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek'+
-                        ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, ' +
+                        ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
                         ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
                         ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
                 }else{
@@ -284,21 +284,21 @@ class SppbPsatPermohonanModel {
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
                             ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen'+
-                            ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, ' +
+                            ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
                             ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
                             ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])   
                     }else if (code_proses == '30' || code_proses == '31'){
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
                             ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang'+
-                            ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, ' +
+                            ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang, ' +
                             ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
                             ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])
                     }else if (code_proses == '40' || code_proses == '41'){
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
                             ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek'+
-                            ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, ' +
+                            ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
                             ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
                             ' WHERE id_pengguna=$1 AND code_status_proses=$2 ORDER BY created DESC', [user, code_proses])
                     }else{

@@ -44,7 +44,9 @@ class PsatPlPerubahanModel {
                 data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, 'REVIEW'];
                 audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
             }else{
-                data_audit_dokumen = [data.id_pengajuan, data.id_tim_audit, data.proses, JSON.stringify(data.keterangan)];
+                data_audit_dokumen = [
+                    data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
+                ];
                 audit_dokumen = await pool.query(format('CALL ' + proc_audit_doc + ' (%L)', data_audit_dokumen));
             }
 
@@ -58,7 +60,7 @@ class PsatPlPerubahanModel {
     async audit_lapang(data) {
         try {
             let audit_lapang, data_audit_lapang ;
-            data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, JSON.stringify(data.keterangan)];
+            data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
             audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
             return { status: '200', ketarangan: `${data.proses} AUDIT LAPANG `, data: audit_lapang.rows[0] };
         } catch (ex) {
@@ -83,7 +85,7 @@ class PsatPlPerubahanModel {
     async audit_rekomendasi(data) {
         try {
             let sidang_komtek, data_sidang_komtek ;
-            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, JSON.stringify(data.keterangan)];
+            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             return { status: '200', ketarangan: `${data.proses} SIDANG KOMTEK `, data: sidang_komtek.rows[0] };
         } catch (ex) {
@@ -100,12 +102,12 @@ class PsatPlPerubahanModel {
                 ' id_tim_audit, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, lead_auditor, tim_auditor' + 
                 ' id_tim_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, lead_komtek, tim_komtek' +
                 ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen'+
-                ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, ' +
+                ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen,' +
                 ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang'+
-                ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, ' +
+                ' tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang,' +
                 ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek'+
-                ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek FROM' + db_history_audit + 
-                ' WHERE id_pengajuan=$1 ORDER BY created ASC', [id_pengajuan])
+                ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek FROM' + 
+                db_history_audit + ' WHERE id_pengajuan=$1 ORDER BY created ASC', [id_pengajuan])
             check_query.check_queryset(history);
             return { status: '200', keterangan: `History Audit id Pengajuan ${id_pengajuan}` , data: history.rows };
         } catch (ex) {
