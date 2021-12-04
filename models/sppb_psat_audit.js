@@ -59,9 +59,17 @@ class PsatPlPerubahanModel {
 
     async audit_lapang(data) {
         try {
-            let audit_lapang, data_audit_lapang ;
-            data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
-            audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
+            let audit_lapang, data_audit_lapang,  sidang_komtek, data_sidang_komtek ;
+            if (data.proses == 'CLEAR'){
+                data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses];
+                audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
+
+                data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, 'REVIEW'];
+                sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
+            }else{
+                data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
+                audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
+            }
             return { status: '200', ketarangan: `${data.proses} AUDIT LAPANG `, data: audit_lapang.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
