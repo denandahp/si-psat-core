@@ -9,7 +9,7 @@ const sppb_psat_view = require('../../models/sppb_psat_view.js')
 const sppb_pl_view = require('../../models/sppb_pl_view.js')
 const authUtils = require('../utils/auth');
 
-const url = '54.14.67.110:3000/api/upload/view_pdf?path=/si-psat-core/'
+const url = '103.161.184.37:3000/api/upload/view_pdf?path=/root/si-psat-core/'
 
 class generatePdfController {
     async sppb_psat(req, res, next) {
