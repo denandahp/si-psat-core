@@ -106,7 +106,7 @@ class PsatPlPerubahanModel {
         try {
             let history;
             history = await pool.query(
-                ' SELECT id_pengajuan, id_audit, status_proses, created, update' +
+                ' SELECT id_pengajuan, id_audit, code_status_proses, status_proses, created, update' +
                 ' id_tim_audit, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, lead_auditor, tim_auditor' + 
                 ' id_tim_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, lead_komtek, tim_komtek' +
                 ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen'+
