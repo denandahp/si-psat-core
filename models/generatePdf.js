@@ -4,9 +4,14 @@ date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
 
 exports.pdf = async(html = "", filename) => {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
+//    const browser = await puppeteer.launch();
+//    const page = await browser.newPage();
+const browser = await puppeteer.launch({
+            args: ['--no-sandbox'],
+            headless: true,
+            timeout: 0
+        });
+        const page = await browser.newPage();
     await page.setContent(html);
     console.log(filename)
 
