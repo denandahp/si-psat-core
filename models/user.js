@@ -247,17 +247,13 @@ class UserModel {
       try {
         let user;
         if(id == 'all'){
-          if(role == 'SUPERADMIN'){
+          if(role == 'list'){
             user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN')`)
           }else{
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK')`)
+            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ' WHERE role=$1' , [role])
           };
         } else{
-          if(role == 'SUPERADMIN'){
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id = ${id} AND role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN')`)
-          }else{
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id = ${id} AND role IN ('AUDITOR','TIM_KOMTEK')`)
-          }
+          user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ' WHERE id=$1 AND role=$2 ', [id, role])
         }
         check_query.check_queryset(user);
         debug('get %o', user);

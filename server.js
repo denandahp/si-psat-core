@@ -80,6 +80,7 @@ const sppb_psat_audit = require('./routes/sppb_psat_audit.js');
 const past_pl_pengalihan = require('./routes/psat_pl_pengalihan.js');
 const past_pl_permohonan = require('./routes/psat_pl_permohonan.js');
 const past_pl_perubahan = require('./routes/psat_pl_perubahan.js');
+const psat_pl_audit = require('./routes/psat_pl_audit.js');
 const oss = require('./routes/oss.js');
 const upload_file = require('./routes/upload.js');
 const sertifikat = require('./routes/sertifikat.js');
@@ -94,6 +95,7 @@ app.use('/api/psat/sppb', sppb_psat_audit)
 app.use('/api/psat/pl', past_pl_pengalihan)
 app.use('/api/psat/pl', past_pl_permohonan)
 app.use('/api/psat/pl', past_pl_perubahan)
+app.use('/api/psat/pl', psat_pl_audit)
 app.use('/api/oss', oss)
 app.use('/api/upload', upload_file)
 app.use('/api/sertifikat', sertifikat);

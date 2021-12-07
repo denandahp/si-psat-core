@@ -3,6 +3,7 @@ const pool = require('../libs/db');
 var format = require('pg-format');
 
 const schemapet = '"izin_edar"';
+const schema_audit= '"audit"';
 const db_daftar_pemasok = schemapet + '.' + '"daftar_pemasok"';
 const db_daftar_pelanggan = schemapet + '.' + '"daftar_pelanggan"';
 const db_file_permohonan = schemapet + '.' + '"file_permohonan"';
@@ -10,6 +11,8 @@ const db_info_produk = schemapet + '.' + '"info_produk"';
 const db_pengajuan = schemapet + '.' + '"pengajuan"';
 const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
 const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
+const db_proses_audit = schema_audit + '.' + '"proses_audit"';
+
 
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -122,10 +125,11 @@ class PsatPlPermohonanModel {
 
     async update_nomor_izin_edar_pl(data) {
         try {
-            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.status_pengajuan, data.nomor_izin_edar, date];
+            let code_proses = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.status_pengajuan, data.nomor_izin_edar, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
                 'UPDATE' + db_pengajuan + 
-                ' SET (nomor_izin_edar, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 '+
+                ' SET (nomor_izin_edar, status_proses, update) = ($4, $5, $6) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 '+
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, nomor_izin_edar', data_pengajuan);
             check_query.check_queryset(pengajuan);
             // debug('get %o', pengajuan);
