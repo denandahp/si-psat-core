@@ -471,15 +471,21 @@ class PsatPlPermohonanModel {
                     if(role == 'PELAKU_USAHA'){
                         code = 'Semua Proses'
                         if(proses_pengajuan === undefined){
-                            proses = '';
+                            proses = 'id_pengguna=$1';
                             data_history = [user];
                         }else{
-                            proses = 'id_pengguna=$1AND status_pengajuan=$2';
+                            proses = 'id_pengguna=$1 AND status_pengajuan=$2';
                             data_history = [user, proses_pengajuan];
                         };
                     }else{
-                        proses = `$1=ANY(${role_query})`;
-                        data_history = [user];
+                        if(proses_pengajuan === undefined){
+                            proses = `$1=ANY(${role_query})`;
+                            data_history = [user];
+                        }else{
+                            proses = `$1=ANY(${role_query}) AND status_pengajuan=$2`;
+                            data_history = [user, proses_pengajuan];
+                        }
+
                     }
                     history = await pool.query(
                         ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
@@ -493,16 +499,22 @@ class PsatPlPermohonanModel {
                 }else{
                     if(role == 'PELAKU_USAHA'){
                         if(proses_pengajuan === undefined){
-                            proses = '';
+                            proses = 'id_pengguna=$1 AND code_status_proses=$2 ';
                             data_history = [user, code_proses];
                         }else{
                             proses = 'id_pengguna=$1 AND code_status_proses=$2 AND status_pengajuan=$3';
                             data_history = [user, code_proses, proses_pengajuan];
                         };
                     }else{
-                        proses = `$1=ANY(${role_query}) AND code_status_proses=$2`;
-                        data_history = [user, code_proses];
+                        if(proses_pengajuan === undefined){
+                            proses = `$1=ANY(${role_query}) AND code_status_proses=$2`;
+                            data_history = [user, code_proses];
+                        }else{
+                            proses = `$1=ANY(${role_query}) AND code_status_proses=$2 AND status_pengajuan=$3`;
+                            data_history = [user, code_proses, proses_pengajuan];
+                        }
                     }
+                    console.log(proses)
                     let query_code = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE code=$1', [code_proses]);
                     code = query_code.rows[0].status
                     if(code_proses == '20' || code_proses == '21'){
