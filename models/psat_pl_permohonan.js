@@ -370,11 +370,11 @@ class PsatPlPermohonanModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' + 
+                    'SELECT id_pengajuan, code_status_proses, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' + 
                     db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PERMOHONAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM '+
+                    'SELECT id_pengajuan, code_status_proses, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM '+
                     db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERMOHONAN", id, user])
             }
             check_query.check_queryset(permohonan);

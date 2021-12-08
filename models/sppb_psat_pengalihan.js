@@ -93,13 +93,13 @@ class SppbPsatModel {
             if(id == 'all'){
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
-                    ' surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
+                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENGALIHAN"])
             } else {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
-                    ' surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
+                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
             }

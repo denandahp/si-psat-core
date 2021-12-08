@@ -124,13 +124,13 @@ class SppbPsatModel {
             if(id == 'all'){
                 penambahan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, nama_perusahaan, alamat_perusahaan, nomor_sppb_psat_sebelumnya, level, denah_ruangan_psat, ' +
-                    'ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
+                    'code_status_proses, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
                     'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
                     'produk, unit_produksi, created, update FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENAMBAHAN"])
             } else {
                 penambahan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna,nomor_sppb_psat_baru, nama_perusahaan, alamat_perusahaan, nomor_sppb_psat_sebelumnya, level, denah_ruangan_psat, ' +
-                    'ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
+                    'code_status_proses, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
                     'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
                     'produk, unit_produksi, created, update FROM' + db_history_pengajuan + 
                     ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENAMBAHAN", id, user])
