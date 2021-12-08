@@ -265,15 +265,15 @@ class SppbPsatPermohonanModel {
                     ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, ' +
                     ' tenggat_audit_auditor, tenggat_waktu_perbaikan, nama_perusahaan, alamat_perusahaan, keterangan FROM' + db_history_pengajuan)
             } else {
-                code = 'Semua Proses'
-                if(proses_pengajuan === undefined){
-                    proses = '';
-                    data_history = [user];
-                }else{
-                    proses = 'AND jenis_permohonan=$2';
-                    data_history = [user, proses_pengajuan];
-                };
                 if(code_proses == 'all'){
+                    code = 'Semua Proses'
+                    if(proses_pengajuan === undefined){
+                        proses = '';
+                        data_history = [user];
+                    }else{
+                        proses = 'AND jenis_permohonan=$2';
+                        data_history = [user, proses_pengajuan];
+                    };
                     history = await pool.query(
                         ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
                         ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+

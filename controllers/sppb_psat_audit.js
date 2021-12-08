@@ -112,6 +112,26 @@ class AuditDokumenController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async history_pengajuan_sppb_psat(req, res, next) {
+        let callback = async() => {
+            try {
+                let user = req.query.user;
+                let code_proses = req.query.code;
+                let role = req.query.role;
+                debug('detail %o', user);
+                let detail = await audit.history_pengajuan_sppb_psat(user, code_proses, role);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
 }
 
 module.exports = new AuditDokumenController();
