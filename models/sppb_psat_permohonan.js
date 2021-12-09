@@ -353,7 +353,7 @@ class SppbPsatPermohonanModel {
             debug('get %o', history);
             return { 
                 status: '200',
-                keterangan: `History SPPB PSAT id ${user} Code Proses: ${proses.code} ${proses_pengajuan}` ,
+                keterangan: `History SPPB PSAT role ${role} id ${user} Code Proses: ${proses.code} ${proses_pengajuan}` ,
                 data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);

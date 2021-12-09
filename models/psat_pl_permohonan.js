@@ -499,7 +499,7 @@ class PsatPlPermohonanModel {
                 }
             }
             return {status: '200', 
-                    keterangan: `History ${proses_pengajuan} PSAT PL role ${proses.code} user id ${user} Code Proses: ${code} ` ,
+                    keterangan:`History PSAT PL role ${role} id ${user} Code Proses: ${proses.code} ${proses_pengajuan}` ,
                     data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
