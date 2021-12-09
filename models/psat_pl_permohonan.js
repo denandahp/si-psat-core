@@ -456,37 +456,14 @@ class PsatPlPermohonanModel {
 
     async get_history_pengajuan(user, code_proses, role, proses_pengajuan) {
         try {
-            let history, code, proses, data_history, role_query;
-            if(role == 'AUDITOR'){
-                role_query = 'tim_auditor'
-            }else{
-                role_query = 'tim_komtek'
-            };
+            let history, code, proses;
             if(user == 'all'){
                 history = await pool.query(
                     ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_sppb_psat_baru, status_proses, ' +
                     ' tenggat_audit_auditor, tenggat_waktu_perbaikan FROM' + db_history_pengajuan)
             } else {
                 if(code_proses == 'all'){
-                    if(role == 'PELAKU_USAHA'){
-                        code = 'Semua Proses'
-                        if(proses_pengajuan === undefined){
-                            proses = 'id_pengguna=$1';
-                            data_history = [user];
-                        }else{
-                            proses = 'id_pengguna=$1 AND status_pengajuan=$2';
-                            data_history = [user, proses_pengajuan];
-                        };
-                    }else{
-                        if(proses_pengajuan === undefined){
-                            proses = `$1=ANY(${role_query})`;
-                            data_history = [user];
-                        }else{
-                            proses = `$1=ANY(${role_query}) AND status_pengajuan=$2`;
-                            data_history = [user, proses_pengajuan];
-                        }
-
-                    }
+                    proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan,'IZIN_EDAR');
                     history = await pool.query(
                         ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
                         ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
@@ -495,28 +472,9 @@ class PsatPlPermohonanModel {
                         ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
                         ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                         ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM'+ db_history_pengajuan + 
-                        ` WHERE ${proses} ORDER BY created DESC`, data_history)
+                        ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
                 }else{
-                    if(role == 'PELAKU_USAHA'){
-                        if(proses_pengajuan === undefined){
-                            proses = 'id_pengguna=$1 AND code_status_proses=$2 ';
-                            data_history = [user, code_proses];
-                        }else{
-                            proses = 'id_pengguna=$1 AND code_status_proses=$2 AND status_pengajuan=$3';
-                            data_history = [user, code_proses, proses_pengajuan];
-                        };
-                    }else{
-                        if(proses_pengajuan === undefined){
-                            proses = `$1=ANY(${role_query}) AND code_status_proses=$2`;
-                            data_history = [user, code_proses];
-                        }else{
-                            proses = `$1=ANY(${role_query}) AND code_status_proses=$2 AND status_pengajuan=$3`;
-                            data_history = [user, code_proses, proses_pengajuan];
-                        }
-                    }
-                    console.log(proses)
-                    let query_code = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE code=$1', [code_proses]);
-                    code = query_code.rows[0].status
+                    proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan,'IZIN_EDAR');
                     if(code_proses == '20' || code_proses == '21'){
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
@@ -524,7 +482,7 @@ class PsatPlPermohonanModel {
                             ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
                             ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                             ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM'+ db_history_pengajuan + 
-                            ` WHERE ${proses}  ORDER BY created DESC`, data_history)   
+                            ` WHERE ${proses.filter}  ORDER BY created DESC`, proses.data)   
                     }else if (code_proses == '40' || code_proses == '41'){
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
@@ -532,15 +490,17 @@ class PsatPlPermohonanModel {
                             ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
                             ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                             ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM '+ db_history_pengajuan + 
-                            ` WHERE ${proses}  ORDER BY created DESC`, data_history)
+                            ` WHERE ${proses.filter}  ORDER BY created DESC`, proses.data)
                     }else{
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses FROM ' + 
-                            db_history_pengajuan + ` WHERE ${proses} ORDER BY created DESC`, data_history)
+                            db_history_pengajuan + ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
                     }
                 }
             }
-            return { status: '200', keterangan: `History ${proses_pengajuan} SPPB PSAT role ${role} user id ${user} Code Proses: ${code} ` , data: history.rows };
+            return {status: '200', 
+                    keterangan: `History ${proses_pengajuan} PSAT PL role ${proses.code} user id ${user} Code Proses: ${code} ` ,
+                    data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
