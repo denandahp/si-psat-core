@@ -85,28 +85,28 @@ class SppbPsatPermohonanModel {
 
     async update_permohonan_awal(data) {
         try {
-            console.log(data)
             let response = {}
-            let data_info_perusahaan = [data.id_pengguna, data.id_info_perusahaan, data.nama_perusahaan, data.alamat_perusahaan, date]
+            let data_pengajuan = [
+                data.id_pengguna, data.id_pengajuan, 'PERMOHONAN', data.status_aktif, 
+                data.ruang_lingkup, data.unit_produksi, date];
+            let pengajuan = await pool.query(
+                'UPDATE ' + db_pengajuan + 
+                ' SET (jenis_permohonan, status_aktif, produk, unit_produksi, update)' +
+                ' = ($3, $4, $5, $6, $7) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
+            check_query.check_queryset(pengajuan);
+            let data_info_perusahaan = [data.id_pengguna, pengajuan.rows[0].info_perusahaan, data.nama_perusahaan, data.alamat_perusahaan, date]
             let info_perusahaan = await pool.query(
                 'UPDATE ' + db_info_perusahaan + 
                 ' SET (nama_perusahaan, alamat_perusahaan, update)' +
                 ' = ($3, $4, $5) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_info_perusahaan);
-            let data_file_pemohonan = [data.id_pengguna, data.id_file_permohonan, data.denah_ruangan_psat, data.diagram_alir_psat,
+            check_query.check_queryset(info_perusahaan);
+            let data_file_pemohonan = [data.id_pengguna, pengajuan.rows[0].file_permohonan, data.denah_ruangan_psat, data.diagram_alir_psat,
                                        data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, date]
             let file_permohonan = await pool.query(
                 'UPDATE ' + db_file_permohonan + 
                 ' SET (denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, update)' +
                 ' = ($3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, data.id_pengajuan, 'PERMOHONAN', data.status_aktif, data.ruang_lingkup,
-                            file_permohonan.rows[0].id, data.unit_produksi,info_perusahaan.rows[0].id, date];
-            let pengajuan = await pool.query(
-                'UPDATE ' + db_pengajuan + 
-                ' SET (jenis_permohonan, status_aktif, produk, file_permohonan, unit_produksi, info_perusahaan, update)' +
-                ' = ($3, $4, $5, $6, $7, $8, $9, $10) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
-            check_query.check_queryset(info_perusahaan);
             check_query.check_queryset(file_permohonan);
-            check_query.check_queryset(pengajuan);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];

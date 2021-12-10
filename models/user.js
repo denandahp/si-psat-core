@@ -19,23 +19,20 @@ const db_list_pelaku_usaha = schema + '.' + '"_listall_pelaku_usaha"';
 class UserModel {
   async login (username, password) {
     try{
-      let response = {};
-      let pengguna, info_kepemilikan;
+      let pengguna, detail;
       pengguna = await pool.query('SELECT * from ' + db_pengguna + ' where username = $1', [username]);  
       if (pengguna.rowCount <= 0) {
         throw new Error('User tidak ditemukan.');
       } else {
         if (await password == pengguna.rows[0].password) {
           if (pengguna.rows[0].role == 'PELAKU_USAHA'){
-            info_kepemilikan = await pool.query('SELECT * from ' + db_kepemilikan + ' where id=$1', [pengguna.rows[0].info_kepemilikan]);
+            detail = await pool.query('SELECT * from ' + db_list_pelaku_usaha + ' where id=$1', [pengguna.rows[0].id]);
           }else{
-            info_kepemilikan = await pool.query('SELECT * from ' + db_sekretariat + ' where id=$1', [pengguna.rows[0].info_sekretariat]);
+            detail = await pool.query('SELECT * from ' + db_list_sekretariat + ' where id=$1', [pengguna.rows[0].id]);
           };
           pengguna.rows[0].password = undefined; //undefined gunanya buat ngilangin di res.rows[0]
-          response.pengguna = pengguna.rows[0];
-          response.detail = info_kepemilikan.rows[0];
-          debug('login %o', response);
-          return {status:200, data: response};
+          debug('login %o', detail);
+          return {status:200, data: detail.rows[0]};
         } else {
           throw new Error('Password salah.');
         }
@@ -252,12 +249,14 @@ class UserModel {
           }else{
             user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ' WHERE role=$1' , [role])
           };
-        } else{
-          user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ' WHERE id=$1 AND role=$2 ', [id, role])
+        }else{
+          user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id=ANY(ARRAY${id}) AND role='${role}'`)
         }
         check_query.check_queryset(user);
         debug('get %o', user);
-        return { status: '200', keterangan: `Detail User id ${user.rows[0].id} ${user.rows[0].nama}`, data: user.rows };
+        return {status: '200',
+                keterangan: `Detail User id ${id} and role ${role}`,
+                data: user.rows };
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
         return { status: '400', Error: "" + ex };
