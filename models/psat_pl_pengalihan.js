@@ -212,6 +212,5 @@ class PsatPlPengalihanModel {
         };
     }
 
-
 }
 module.exports = new PsatPlPengalihanModel();

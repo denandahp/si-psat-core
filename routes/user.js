@@ -15,4 +15,5 @@ Router.post('/login', user.login)
       .get('/index/sekretariat', user.index_sekretariat)
       .get('/detail/pelaku_usaha', user.detail_pelaku_usaha)
 
+
 module.exports = Router;

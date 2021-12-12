@@ -15,7 +15,6 @@ const db_list_sekretariat = schema + '.' + '"list_sekretariat"';
 const db_list_pelaku_usaha = schema + '.' + '"_listall_pelaku_usaha"';
 
 
-
 class UserModel {
   async login (username, password) {
     try{
@@ -278,7 +277,7 @@ class UserModel {
       console.log('Enek seng salah iki ' + ex);
       return { status: '400', Error: "" + ex };
   };
-}
+  }
 
   async delete_sekretariat(id, role) {
     try {
@@ -299,6 +298,7 @@ class UserModel {
         return { status: '400', Error: "" + ex };
     };
   }
+
 }
 
 module.exports = new UserModel();
