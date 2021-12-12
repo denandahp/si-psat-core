@@ -245,12 +245,12 @@ class UserModel {
         let user;
         if(id == 'all'){
           if(role == 'list'){
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN')`)
+            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN') AND is_deleted='false'`)
           }else{
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ' WHERE role=$1' , [role])
+            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role=$1 AND is_deleted='false'` , [role])
           };
         }else{
-          user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id=ANY(ARRAY${id}) AND role='${role}'`)
+          user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id=ANY(ARRAY${id}) AND role='${role}' AND is_deleted='false'`)
         }
         check_query.check_queryset(user);
         debug('get %o', user);
@@ -282,18 +282,18 @@ class UserModel {
 
   async delete_sekretariat(id, role) {
     try {
+      console.log(role, id);
       let response = {};
       let user = await pool.query(
-        'UPDATE ' + db_pengguna + ' SET (is_deleted, update) = ($3, $4) WHERE id=$1 and role=$2 RETURNING *', [id, role, false, date]);
+        'UPDATE ' + db_pengguna + ' SET (is_deleted, update) = ($3, $4) WHERE id=$1 and role=$2 RETURNING *', [id, role, true, date]);
       check_query.check_queryset(user);
-      let info_sekretariat = await pool.query(format(
-        'UPDATE ' + db_sekretariat + ' SET (status, update) = ($2, $3) WHERE id=$1 RETURNING *', [pengguna.rows[0].info_sekretariat, false, date])
-      );
+      let info_sekretariat = await pool.query(
+        'UPDATE ' + db_sekretariat + ' SET (status, update) = ($2, $3) WHERE id=$1 RETURNING *', [user.rows[0].info_sekretariat, false, date]);
       check_query.check_queryset(info_sekretariat);
-      response.pengguna = pengguna.rows[0];
+      response.pengguna = user.rows[0];
       response.info_sekretariat = info_sekretariat.rows[0];
       debug('get %o', response);
-      return {status:200, keterangan: `Delete pengguna id ${user.rows[0].id} ${user.rows[0].nama}`, data: response};
+      return {status:200, keterangan: `Delete pengguna id ${user.rows[0].id} ${info_sekretariat.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
         return { status: '400', Error: "" + ex };

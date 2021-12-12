@@ -92,20 +92,20 @@ class SppbPsatModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENGALIHAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
             }
             check_query.check_queryset(permohonan);
             debug('get %o', permohonan);
-            return { status: '200', keterangan: "Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: permohonan.rows };
+            return { status: '200', keterangan: "Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: permohonan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
