@@ -1,6 +1,8 @@
 const pool = require('../../libs/db');
 
 const db_proses_audit = 'audit.proses_audit';
+const db_pengguna = 'pengguna.pengguna';
+
 
 
 exports.limit_time = (limit)=> {
@@ -128,5 +130,12 @@ exports.proses_code = async (user, code_proses, role, proses_pengajuan, pengajua
         filter: proses,
         data: data_history,
         code: code
+    }
+}
+
+exports.check_username = async (queryset)=> {
+    let check_username = await pool.query('SELECT * FROM ' + db_pengguna + ' WHERE username=$1', [queryset.username]);
+    if (check_username.rowCount > 0){
+        throw new Error('401');
     }
 }

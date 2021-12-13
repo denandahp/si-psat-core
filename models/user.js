@@ -67,6 +67,7 @@ class UserModel {
   async register_auditor(data) {
     try {
         let response = {};
+        await check_query.check_username(data);
         let data_auditor = [
           data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
           data.alamat, true, date ,date];
@@ -84,7 +85,9 @@ class UserModel {
         debug('get %o', response);
         return {status:200, keterangan: `Register tim auditor ${info_auditor.rows[0].nama}`, data: response};
     } catch (ex) {
-        console.log('Enek seng salah iki ' + ex);
+        if(ex.message == '401'){
+          return { status: '401', Error: `Username ${data.username} telah digunakan` };
+        }
         return { status: '400', Error: "" + ex };
     };
   }
@@ -92,6 +95,7 @@ class UserModel {
   async register_tim_komtek(data) {
     try {
         let response = {};
+        await check_query.check_username(data);
         let data_tim_komtek = [
           data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
           data.alamat, true, date ,date];
@@ -109,6 +113,9 @@ class UserModel {
         return {status:200, keterangan: `Register tim komtek ${info_tim_komtek.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
+        if(ex.message == '401'){
+          return { status: '401', Error: `Username ${data.username} telah digunakan` };
+        }
         return { status: '400', Error: "" + ex };
     };
   }
@@ -116,6 +123,7 @@ class UserModel {
   async register_superadmin(data) {
     try {
         let response = {};
+        await check_query.check_username(data);
         let data_superadmin = [
           data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
           data.alamat, true, date ,date];
@@ -133,6 +141,9 @@ class UserModel {
         return {status:200, keterangan: `Register superamin ${info_superadmin.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
+        if(ex.message == '401'){
+          return { status: '401', Error: `Username ${data.username} telah digunakan` };
+        }
         return { status: '400', Error: "" + ex };
     };
   }

@@ -11,8 +11,8 @@ const authUtils = require('../utils/auth');
 
 const url = '103.161.184.37:3000/api/upload/view_pdf?path=/root/si-psat-core/'
 
-const db_pengajuan_sppb_psat = '"sppb_psat.pengajuan"';
-const db_pengajuan_izin_edar = '"izin_edar.pengajuan"';
+const db_pengajuan_sppb_psat = 'sppb_psat.pengajuan';
+const db_pengajuan_izin_edar = 'izin_edar.pengajuan';
 
 
 
