@@ -45,7 +45,7 @@ class SppbPsatModel {
     async update_nomor_sppb_psat(data) {
         try {
             let code_proses = await pool.query('SELECT code FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
-            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENGALIHAN', data.nomor_sppb_psat, code_proses, date];
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENGALIHAN', data.nomor_sppb_psat, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
                 'UPDATE' + db_pengalihan + 
                 ' SET (nomor_sppb_psat, status_proses, update) = ($4, $5, $6) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
@@ -92,20 +92,24 @@ class SppbPsatModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
-                    ' surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
+                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENGALIHAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
-                    ' surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
+                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
             }
             check_query.check_queryset(permohonan);
             debug('get %o', permohonan);
-            return { status: '200', keterangan: "Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: permohonan.rows };
+            return { status: '200', keterangan: "Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: permohonan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

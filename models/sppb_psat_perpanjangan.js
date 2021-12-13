@@ -60,7 +60,7 @@ class SppbPsatModel {
     async update_perpanjangan_nomor_sppb_psat(data) {
         try {
             let code_proses = await pool.query('SELECT code FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
-            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PERPANJANGAN', data.nomor_sppb_psat, code_proses, date];
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PERPANJANGAN', data.nomor_sppb_psat, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
                 'UPDATE' + db_pengajuan + 
                 ' SET (nomor_sppb_psat, status_proses, update) = ($4, $5, $6) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
@@ -125,14 +125,18 @@ class SppbPsatModel {
             if(id == 'all'){
                 perpanjangan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna,nomor_sppb_psat_baru, nama_perusahaan, alamat_perusahaan, nomor_sppb_psat_sebelumnya, level, denah_ruangan_psat, ' +
-                    'ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
+                    'code_status_proses, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
                     'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                     'produk, unit_produksi, created, update, id_sertifikat, id_info_perusahaan, id_file_permohonan FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PERPANJANGAN"])
             } else {
                 perpanjangan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna,nomor_sppb_psat_baru, nama_perusahaan, alamat_perusahaan, nomor_sppb_psat_sebelumnya, level, denah_ruangan_psat, ' +
-                    'ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
+                    'code_status_proses, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
                     'jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                     'produk, unit_produksi, created, update, id_sertifikat, id_info_perusahaan, id_file_permohonan FROM' + db_history_pengajuan + 
                     ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERPANJANGAN", id, user])
             }

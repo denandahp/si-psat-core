@@ -15,27 +15,23 @@ const db_list_sekretariat = schema + '.' + '"list_sekretariat"';
 const db_list_pelaku_usaha = schema + '.' + '"_listall_pelaku_usaha"';
 
 
-
 class UserModel {
   async login (username, password) {
     try{
-      let response = {};
-      let pengguna, info_kepemilikan;
+      let pengguna, detail;
       pengguna = await pool.query('SELECT * from ' + db_pengguna + ' where username = $1', [username]);  
       if (pengguna.rowCount <= 0) {
         throw new Error('User tidak ditemukan.');
       } else {
         if (await password == pengguna.rows[0].password) {
           if (pengguna.rows[0].role == 'PELAKU_USAHA'){
-            info_kepemilikan = await pool.query('SELECT * from ' + db_kepemilikan + ' where id=$1', [pengguna.rows[0].info_kepemilikan]);
+            detail = await pool.query('SELECT * from ' + db_list_pelaku_usaha + ' where id=$1', [pengguna.rows[0].id]);
           }else{
-            info_kepemilikan = await pool.query('SELECT * from ' + db_sekretariat + ' where id=$1', [pengguna.rows[0].info_sekretariat]);
+            detail = await pool.query('SELECT * from ' + db_list_sekretariat + ' where id=$1', [pengguna.rows[0].id]);
           };
           pengguna.rows[0].password = undefined; //undefined gunanya buat ngilangin di res.rows[0]
-          response.pengguna = pengguna.rows[0];
-          response.detail = info_kepemilikan.rows[0];
-          debug('login %o', response);
-          return {status:200, data: response};
+          debug('login %o', detail);
+          return {status:200, data: detail.rows[0]};
         } else {
           throw new Error('Password salah.');
         }
@@ -71,6 +67,7 @@ class UserModel {
   async register_auditor(data) {
     try {
         let response = {};
+        await check_query.check_username(data);
         let data_auditor = [
           data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
           data.alamat, true, date ,date];
@@ -88,7 +85,9 @@ class UserModel {
         debug('get %o', response);
         return {status:200, keterangan: `Register tim auditor ${info_auditor.rows[0].nama}`, data: response};
     } catch (ex) {
-        console.log('Enek seng salah iki ' + ex);
+        if(ex.message == '401'){
+          return { status: '401', Error: `Username ${data.username} telah digunakan` };
+        }
         return { status: '400', Error: "" + ex };
     };
   }
@@ -96,6 +95,7 @@ class UserModel {
   async register_tim_komtek(data) {
     try {
         let response = {};
+        await check_query.check_username(data);
         let data_tim_komtek = [
           data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
           data.alamat, true, date ,date];
@@ -113,6 +113,9 @@ class UserModel {
         return {status:200, keterangan: `Register tim komtek ${info_tim_komtek.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
+        if(ex.message == '401'){
+          return { status: '401', Error: `Username ${data.username} telah digunakan` };
+        }
         return { status: '400', Error: "" + ex };
     };
   }
@@ -120,6 +123,7 @@ class UserModel {
   async register_superadmin(data) {
     try {
         let response = {};
+        await check_query.check_username(data);
         let data_superadmin = [
           data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
           data.alamat, true, date ,date];
@@ -137,6 +141,9 @@ class UserModel {
         return {status:200, keterangan: `Register superamin ${info_superadmin.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
+        if(ex.message == '401'){
+          return { status: '401', Error: `Username ${data.username} telah digunakan` };
+        }
         return { status: '400', Error: "" + ex };
     };
   }
@@ -247,21 +254,19 @@ class UserModel {
       try {
         let user;
         if(id == 'all'){
-          if(role == 'SUPERADMIN'){
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN')`)
+          if(role == 'list'){
+            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN') AND is_deleted='false'`)
           }else{
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK')`)
+            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role=$1 AND is_deleted='false'` , [role])
           };
-        } else{
-          if(role == 'SUPERADMIN'){
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id = ${id} AND role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN')`)
-          }else{
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id = ${id} AND role IN ('AUDITOR','TIM_KOMTEK')`)
-          }
+        }else{
+          user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE id=ANY(ARRAY${id}) AND role='${role}' AND is_deleted='false'`)
         }
         check_query.check_queryset(user);
         debug('get %o', user);
-        return { status: '200', keterangan: `Detail User id ${user.rows[0].id} ${user.rows[0].nama}`, data: user.rows };
+        return {status: '200',
+                keterangan: `Detail User id ${id} and role ${role}`,
+                data: user.rows };
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
         return { status: '400', Error: "" + ex };
@@ -283,27 +288,27 @@ class UserModel {
       console.log('Enek seng salah iki ' + ex);
       return { status: '400', Error: "" + ex };
   };
-}
+  }
 
   async delete_sekretariat(id, role) {
     try {
       let response = {};
       let user = await pool.query(
-        'UPDATE ' + db_pengguna + ' SET (is_deleted, update) = ($3, $4) WHERE id=$1 and role=$2 RETURNING *', [id, role, false, date]);
+        'UPDATE ' + db_pengguna + ' SET (is_deleted, update) = ($3, $4) WHERE id=$1 and role=$2 RETURNING *', [id, role, true, date]);
       check_query.check_queryset(user);
-      let info_sekretariat = await pool.query(format(
-        'UPDATE ' + db_sekretariat + ' SET (status, update) = ($2, $3) WHERE id=$1 RETURNING *', [pengguna.rows[0].info_sekretariat, false, date])
-      );
+      let info_sekretariat = await pool.query(
+        'UPDATE ' + db_sekretariat + ' SET (status, update) = ($2, $3) WHERE id=$1 RETURNING *', [user.rows[0].info_sekretariat, false, date]);
       check_query.check_queryset(info_sekretariat);
-      response.pengguna = pengguna.rows[0];
+      response.pengguna = user.rows[0];
       response.info_sekretariat = info_sekretariat.rows[0];
       debug('get %o', response);
-      return {status:200, keterangan: `Delete pengguna id ${user.rows[0].id} ${user.rows[0].nama}`, data: response};
+      return {status:200, keterangan: `Delete pengguna id ${user.rows[0].id} ${info_sekretariat.rows[0].nama}`, data: response};
     } catch (ex) {
         console.log('Enek seng salah iki ' + ex);
         return { status: '400', Error: "" + ex };
     };
   }
+
 }
 
 module.exports = new UserModel();

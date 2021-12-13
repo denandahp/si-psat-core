@@ -65,6 +65,7 @@ class UserController {
             debug('detail %o', datas);
             let detail = await user.register_superadmin(datas);
             if (detail.status == '400') {res.status(400).json({ response: detail });}
+            else if (detail.status == '401') {res.status(401).json({ response: detail });}
             else { res.status(200).json({ response: detail });}
         } catch (e) {
             next(e.detail || e);
@@ -98,10 +99,10 @@ class UserController {
     let callback = async() => {
         try {
             let datas = req.body;
-            console.log(datas);
             debug('detail %o', datas);
             let detail = await user.register_auditor(datas);
             if (detail.status == '400') {res.status(400).json({ response: detail });}
+            else if (detail.status == '401') {res.status(401).json({ response: detail });}
             else { res.status(200).json({ response: detail });}
         } catch (e) {
             next(e.detail || e);
@@ -120,6 +121,7 @@ class UserController {
             debug('detail %o', datas);
             let detail = await user.register_tim_komtek(datas);
             if (detail.status == '400') {res.status(400).json({ response: detail });}
+            else if (detail.status == '401') {res.status(401).json({ response: detail });}
             else { res.status(200).json({ response: detail });}
         } catch (e) {
             next(e.detail || e);

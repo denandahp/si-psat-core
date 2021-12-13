@@ -28,11 +28,11 @@ class UploadController {
                             } else {
                                 fileLocation = fileArray[k].path;
                                 response.push(fileLocation)
-                            }
-                        }
+                            };
+                        };
                         res.status(200).json({ response: response });
-                    }
-                }
+                    };
+                };
             } catch (e) {
                 res.status(400).json({ error: e.message });
                 console.log("error" + e)
@@ -55,6 +55,19 @@ class UploadController {
                 throw new Error('File not found!')
             }
 
+        } catch (e) {
+            res.status(400).json({ error: e.message });
+        }
+    }
+
+    async display_image(req, res) {
+        try {
+            let query_path =  req.headers.path;
+            if (fs.existsSync(query_path)) {
+                res.sendFile(query_path);
+            }else{
+                throw new Error('File not found!')
+            };
         } catch (e) {
             res.status(400).json({ error: e.message });
         }

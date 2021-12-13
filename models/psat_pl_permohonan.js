@@ -3,6 +3,7 @@ const pool = require('../libs/db');
 var format = require('pg-format');
 
 const schemapet = '"izin_edar"';
+const schema_audit= '"audit"';
 const db_daftar_pemasok = schemapet + '.' + '"daftar_pemasok"';
 const db_daftar_pelanggan = schemapet + '.' + '"daftar_pelanggan"';
 const db_file_permohonan = schemapet + '.' + '"file_permohonan"';
@@ -10,6 +11,8 @@ const db_info_produk = schemapet + '.' + '"info_produk"';
 const db_pengajuan = schemapet + '.' + '"pengajuan"';
 const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
 const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
+const db_proses_audit = schema_audit + '.' + '"proses_audit"';
+
 
 
 var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -99,7 +102,6 @@ class PsatPlPermohonanModel {
     }
 
     async add_info_produk(data) {
-        console.log(data.jenis_klaim);
         try {
             let data_info_produk = [
                 data.id_pengguna, data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
@@ -122,10 +124,11 @@ class PsatPlPermohonanModel {
 
     async update_nomor_izin_edar_pl(data) {
         try {
-            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.status_pengajuan, data.nomor_izin_edar, date];
+            let code_proses = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
+            let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.status_pengajuan, data.nomor_izin_edar, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
                 'UPDATE' + db_pengajuan + 
-                ' SET (nomor_izin_edar, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 '+
+                ' SET (nomor_izin_edar, status_proses, update) = ($4, $5, $6) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 '+
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, nomor_izin_edar', data_pengajuan);
             check_query.check_queryset(pengajuan);
             // debug('get %o', pengajuan);
@@ -366,11 +369,17 @@ class PsatPlPermohonanModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' + 
+                    'SELECT id_pengajuan, code_status_proses, status_proses, id_pengguna, status_aktif, '+
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
+                    'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' + 
                     db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PERMOHONAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_aktif, status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM '+
+                    'SELECT id_pengajuan, code_status_proses, status_proses, id_pengguna, status_aktif, '+
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
+                    'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM '+
                     db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERMOHONAN", id, user])
             }
             check_query.check_queryset(permohonan);
@@ -450,21 +459,53 @@ class PsatPlPermohonanModel {
         };
     }
 
-    async get_history_pengajuan(user) {
+    async get_history_pengajuan(user, code_proses, role, proses_pengajuan) {
         try {
-            let history;
+            let history, code, proses;
             if(user == 'all'){
                 history = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + db_history_pengajuan +
-                    ' ORDER BY created DESC')
+                    ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_sppb_psat_baru, status_proses, ' +
+                    ' tenggat_audit_auditor, tenggat_waktu_perbaikan FROM' + db_history_pengajuan)
             } else {
-                history = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses FROM' + 
-                    db_history_pengajuan + ' WHERE id_pengguna=$1 ORDER BY created DESC', [user])
+                if(code_proses == 'all'){
+                    proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan,'IZIN_EDAR');
+                    history = await pool.query(
+                        ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
+                        ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
+                        ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                        ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
+                        ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
+                        ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                        ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM'+ db_history_pengajuan + 
+                        ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
+                }else{
+                    proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan,'IZIN_EDAR');
+                    if(code_proses == '20' || code_proses == '21'){
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
+                            ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
+                            ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                            ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                            ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM'+ db_history_pengajuan + 
+                            ` WHERE ${proses.filter}  ORDER BY created DESC`, proses.data)   
+                    }else if (code_proses == '40' || code_proses == '41'){
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
+                            ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
+                            ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
+                            ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                            ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM '+ db_history_pengajuan + 
+                            ` WHERE ${proses.filter}  ORDER BY created DESC`, proses.data)
+                    }else{
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses FROM ' + 
+                            db_history_pengajuan + ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
+                    }
+                }
             }
-            check_query.check_queryset(history);
-            // debug('get %o', history);
-            return { status: '200', keterangan: `History Izin Edar PL id ${user}` , data: history.rows };
+            return {status: '200', 
+                    keterangan:`History PSAT PL role ${role} id ${user} Code Proses: ${proses.code} ${proses_pengajuan}` ,
+                    data: history.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

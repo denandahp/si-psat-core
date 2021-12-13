@@ -1,6 +1,6 @@
-const debug = require('debug')('app:controller:sppb_psat_audit');
+const debug = require('debug')('app:controller:psat_pl_audit');
 const authUtils = require('./utils/auth');
-const audit = require('../models/sppb_psat_audit.js');
+const audit = require('../models/psat_pl_audit.js');
 
 
 class AuditDokumenController {
@@ -28,24 +28,6 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.audit_dokumen(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
-            } catch (e) {
-                next(e.detail || e);
-            }
-        };
-        let fallback = (err) => {
-            next(err);
-        }
-        authUtils.processRequestWithJWT(req, callback, fallback);
-    }
-
-    async audit_lapang(req, res, next) {
-        let callback = async() => {
-            try {
-                let query = req.body;
-                debug('detail %o', query);
-                let detail = await audit.audit_lapang(query);
                 if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {
@@ -112,14 +94,14 @@ class AuditDokumenController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
-    async history_pengajuan_sppb_psat(req, res, next) {
+    async history_pengajuan_izin_edar(req, res, next) {
         let callback = async() => {
             try {
                 let user = req.query.user;
                 let code_proses = req.query.code;
                 let role = req.query.role;
                 debug('detail %o', user);
-                let detail = await audit.history_pengajuan_sppb_psat(user, code_proses, role);
+                let detail = await audit.history_pengajuan_izin_edar(user, code_proses, role);
                 if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {
