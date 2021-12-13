@@ -1,5 +1,8 @@
+const pool = require('../libs/db');
+var format = require('pg-format');
+
 const puppeteer = require('puppeteer');
-const Handlebars = require('handlebars')
+const Handlebars = require('handlebars');
 const Fs = require('fs')
 const Path = require('path')
 const Util = require('util')
