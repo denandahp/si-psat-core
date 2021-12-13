@@ -15,7 +15,8 @@ const db_pengajuan_sppb_psat = 'sppb_psat.pengajuan';
 const db_pengajuan_izin_edar = 'izin_edar.pengajuan';
 
 
-
+var date = new Date(Date.now());
+date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 class generatePdfController {
     async sppb_psat(req, res, next) {
         let callback = async() => {
@@ -48,8 +49,8 @@ class generatePdfController {
 
                 let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.jenis_permohonan, path_sertifikat, date];
                 let pengajuan = await pool.query(
-                    'UPDATE' + db_pengajuan_sppb_psat + 
-                    ' SET (final_sertifikat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 '+
+                    'UPDATE' + db_pengajuan_sppb_psat +
+                    ' SET (final_sertifikat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 ' +
                     'RETURNING id, id_pengguna, jenis_permohonan, status_proses, final_sertifikat', data_pengajuan);
 
                 // res.set("Content-Type", "application/pdf");
@@ -57,7 +58,7 @@ class generatePdfController {
                 res.status(200).json({
                     message: "Sertifikat SPPB-PSAT",
                     path: path_sertifikat,
-                    data: data, 
+                    data: data,
                     pengajuan: pengajuan.rows[0]
                 });
 
@@ -121,8 +122,8 @@ class generatePdfController {
 
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.jenis_permohonan, path_sertifikat, date];
             let pengajuan = await pool.query(
-                'UPDATE' + db_pengajuan_izin_edar + 
-                ' SET (final_sertifikat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 '+
+                'UPDATE' + db_pengajuan_izin_edar +
+                ' SET (final_sertifikat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
 
             // res.set("Content-Type", "application/pdf");
