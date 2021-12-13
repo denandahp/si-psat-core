@@ -263,7 +263,6 @@ class SppbPsatController {
         let callback = async() => {
             try {
                 let id = req.query.id;
-                console.log(id)
                 debug('detail %o', id);
                 let detail = await sppb_psat.get_list_unit_produksi(id);
                 if (detail.status == '400') {res.status(400).json({ detail });}

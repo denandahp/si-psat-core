@@ -94,7 +94,6 @@ class OSSModel {
             let response;
             const url = 'https://api-prd.oss.go.id/v1/kl/rba/receiveLicense';
             let oss = await oss_param.send_license(url, body, user_key);
-            console.log(oss)
             debug('get %o', response);
             return {status:200, response: response};
         } catch (ex) {

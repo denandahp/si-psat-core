@@ -281,7 +281,6 @@ class UserModel {
 
   async delete_sekretariat(id, role) {
     try {
-      console.log(role, id);
       let response = {};
       let user = await pool.query(
         'UPDATE ' + db_pengguna + ' SET (is_deleted, update) = ($3, $4) WHERE id=$1 and role=$2 RETURNING *', [id, role, true, date]);

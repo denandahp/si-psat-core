@@ -98,7 +98,6 @@ class UserController {
     let callback = async() => {
         try {
             let datas = req.body;
-            console.log(datas);
             debug('detail %o', datas);
             let detail = await user.register_auditor(datas);
             if (detail.status == '400') {res.status(400).json({ response: detail });}

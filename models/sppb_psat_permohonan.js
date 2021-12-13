@@ -317,7 +317,6 @@ class SppbPsatPermohonanModel {
                         ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
                 }else{
                     proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan,'SPPB_PSAT');
-                    console.log(proses, proses.data)
                     if(code_proses == '20' || code_proses == '21'){
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 

@@ -13,7 +13,6 @@ const browser = await puppeteer.launch({
         });
         const page = await browser.newPage();
     await page.setContent(html);
-    console.log(filename)
 
     // await page.emulateMedia('screen');
     const pdfConfig = {

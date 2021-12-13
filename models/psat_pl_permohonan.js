@@ -102,7 +102,6 @@ class PsatPlPermohonanModel {
     }
 
     async add_info_produk(data) {
-        console.log(data.jenis_klaim);
         try {
             let data_info_produk = [
                 data.id_pengguna, data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,

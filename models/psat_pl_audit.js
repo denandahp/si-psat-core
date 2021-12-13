@@ -24,7 +24,6 @@ class PsatPlPerubahanModel {
             let data_penunjukan_tim_audit = [
                 data.id_pengajuan, data.tanggal_penugasan, data.surat_tugas
             ];
-            console.log(data)
             penunjukan_tim_audit = await pool.query(
                 format('CALL ' + proc_tim_audit + 
                 `(%L,'{${data.lead_auditor}}', '{${data.tim_auditor}}', '${JSON.stringify(data.keterangan)}')`, 
