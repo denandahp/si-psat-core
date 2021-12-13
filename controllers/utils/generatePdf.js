@@ -1,4 +1,4 @@
-const pool = require('../libs/db');
+const pool = require('../../libs/db');
 var format = require('pg-format');
 
 const puppeteer = require('puppeteer');
