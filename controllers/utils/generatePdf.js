@@ -52,7 +52,7 @@ class generatePdfController {
 
                 let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.jenis_permohonan, path_sertifikat, date];
                 let pengajuan = await pool.query(
-                    'UPDATE' + db_pengajuan_sppb_psat +
+                    'UPDATE ' + db_pengajuan_sppb_psat +
                     ' SET (final_sertifikat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND jenis_permohonan=$3 ' +
                     'RETURNING id, id_pengguna, jenis_permohonan, status_proses, final_sertifikat', data_pengajuan);
 
@@ -125,7 +125,7 @@ class generatePdfController {
 
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.jenis_permohonan, path_sertifikat, date];
             let pengajuan = await pool.query(
-                'UPDATE' + db_pengajuan_izin_edar +
+                'UPDATE ' + db_pengajuan_izin_edar +
                 ' SET (final_sertifikat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
 
