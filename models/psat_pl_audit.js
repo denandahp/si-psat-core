@@ -26,8 +26,9 @@ class PsatPlPerubahanModel {
             ];
             console.log(data)
             penunjukan_tim_audit = await pool.query(
-                format('CALL ' + proc_tim_audit + `(%L,'{${data.lead_auditor}}' , '{${data.tim_auditor}}')`, data_penunjukan_tim_audit));
-
+                format('CALL ' + proc_tim_audit + 
+                `(%L,'{${data.lead_auditor}}', '{${data.tim_auditor}}', '${JSON.stringify(data.keterangan)}')`, 
+                data_penunjukan_tim_audit));
             return { status: '200', ketarangan: "Penunjukkan Tim Audit PSAT PL", data: penunjukan_tim_audit.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
