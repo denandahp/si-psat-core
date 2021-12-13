@@ -97,7 +97,7 @@ class generatePdfController {
 
             }
             let filename = await 'sertifikat/psat-pl/' + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.no_izin_psat_pl + '.pdf'
-            const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_PSAT.html')
+            const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL.html')
 
             const content = await ReadFile(templatePath, 'utf8')
                 // compile and render the template with handlebars
