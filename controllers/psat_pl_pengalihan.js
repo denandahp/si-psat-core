@@ -8,7 +8,7 @@ class PsatPlPengalihanController {
         let callback = async() => {
             try {
                 let query = req.body;
-                debug('detail %o', datas);
+                debug('detail %o', query);
                 let detail = await psat_pl.pengalihan_kepemilikan(query);
                 if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
