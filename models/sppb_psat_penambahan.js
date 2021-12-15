@@ -59,32 +59,32 @@ class SppbPsatModel {
     async update_penambahan_ruang_lingkup(data) {
         try {
             let response = {};
-            let data_info_perusahaan = [data.id_pengguna, data.id_info_perusahaan, data.nama_perusahaan, data.alamat_perusahaan, date]
+            let data_pengajuan = [data.id_pengguna, data.id_pengajuan, 'PENAMBAHAN', data.status_aktif, 
+                data.ruang_lingkup, data.unit_produksi, date];
+            let pengajuan = await pool.query(
+                'UPDATE ' + db_pengajuan +
+                ' SET(jenis_permohonan, status_aktif, produk, unit_produksi, update)' +
+                ' = ($3, $4, $5, $6, $7) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
+            let data_info_perusahaan = [data.id_pengguna, pengajuan.rows[0].info_perusahaan, data.nama_perusahaan, data.alamat_perusahaan, date]
             let info_perusahaan = await pool.query(
                 'UPDATE ' + db_info_perusahaan + 
                 ' SET(nama_perusahaan, alamat_perusahaan, update)' +
                 ' = ($3, $4, $5) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_info_perusahaan);
-            let data_sertifikat = [data.id_pengguna, data.id_sertifikat, data.nomor_sppb_psat, 
+            let data_sertifikat = [data.id_pengguna, pengajuan.rows[0].sertifikat, data.nomor_sppb_psat, 
                                    data.level, data.ruang_lingkup_sppb_psat, data.masa_berlaku, 
                                    data.surat_pemeliharaan_psat, date]
             let sertifikat = await pool.query(
                 'UPDATE ' + db_sertifikat + 
                 ' SET(nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, update)' +
                 ' = ($3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_sertifikat);
-            let data_file_pemohonan = [data.id_pengguna, data.id_file_permohonan, data.denah_ruangan_psat, data.diagram_alir_psat,
+            let data_file_pemohonan = [data.id_pengguna, pengajuan.rows[0].file_permohonan, data.denah_ruangan_psat, data.diagram_alir_psat,
                                        data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, 
                                        data.sertifikat_jaminan_keamanan_pangan, date]
             let file_permohonan = await pool.query(
                 'UPDATE ' + db_file_permohonan + 
                 ' SET(denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, update)' +
                 ' = ($3, $4, $5, $6, $7, $8, $9) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, data.id_pengajuan, 'PENAMBAHAN', data.status_aktif, 
-                                  data.ruang_lingkup, file_permohonan.rows[0].id, 
-                                  sertifikat.rows[0].id, data.unit_produksi, info_perusahaan.rows[0].id, date];
-            let pengajuan = await pool.query(
-                'UPDATE ' + db_pengajuan +
-                ' SET(jenis_permohonan, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, info_perusahaan, update)' +
-                ' = ($3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_pengajuan);
+
             check_query.check_queryset(pengajuan);
             check_query.check_queryset(file_permohonan);
             check_query.check_queryset(sertifikat);
