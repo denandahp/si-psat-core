@@ -61,7 +61,7 @@ class PsatPlPerubahanModel {
     async audit_rekomendasi(data) {
         try {
             let sidang_komtek, data_sidang_komtek;
-            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
+            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses,  data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             return { status: '200', ketarangan: `${data.proses} SIDANG KOMTEK PSAT PL`, data: sidang_komtek.rows[0] };
         } catch (ex) {

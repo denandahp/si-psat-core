@@ -53,13 +53,13 @@ class PsatPlPermohonanModel {
         try {
             let data_unit_produksi = [
                 data.id_pengguna, data.nama_unit, data.alamat_unit, data.status_kepemilikan, 
-                data.durasi_sewa, data.masa_sewa_berakhir, data.file_bukti, 
+                data.durasi_sewa, data.masa_sewa_berakhir, data.file_bukti, data.bukti_sewa,
                 data.surat_pernyataan_sppb_psat, data.sppb_psat_nomor, data.sppb_psat_level, 
                 data.sppb_psat_masa_berlaku, data.sppb_psat_ruang_lingkup, data.sppb_psat_file, date, date ]
             let unit_produksi = await pool.query(
                 format('INSERT INTO ' + db_unit_produksi + 
                 ' (id_pengguna, nama_unit, alamat_unit, status_kepemilikan, durasi_sewa, masa_sewa_berakhir, ' +
-                'file_bukti, surat_pernyataan_sppb_psat, sppb_psat_nomor, sppb_psat_level, sppb_psat_masa_berlaku, '+
+                'file_bukti, bukti_sewa, surat_pernyataan_sppb_psat, sppb_psat_nomor, sppb_psat_level, sppb_psat_masa_berlaku, '+
                 'sppb_psat_ruang_lingkup, sppb_psat_file, created, update) VALUES (%L) RETURNING *', data_unit_produksi
                 )
             )
@@ -175,12 +175,12 @@ class PsatPlPermohonanModel {
         try {
             let data_unit_produksi = [
                 data.nama_unit, data.alamat_unit, data.status_kepemilikan, data.durasi_sewa, data.masa_sewa_berakhir,
-                data.file_bukti, data.surat_pernyataan_sppb_psat, data.sppb_psat_nomor, data.sppb_psat_level, 
+                data.file_bukti, data.bukti_sewa, data.surat_pernyataan_sppb_psat, data.sppb_psat_nomor, data.sppb_psat_level, 
                 data.sppb_psat_masa_berlaku, data.sppb_psat_ruang_lingkup, data.sppb_psat_file, date ]
             let unit_produksi = await pool.query(
                 format('UPDATE ' + db_unit_produksi + 
                 ' SET (nama_unit, alamat_unit, status_kepemilikan, durasi_sewa, masa_sewa_berakhir, ' +
-                'file_bukti, surat_pernyataan_sppb_psat, sppb_psat_nomor, sppb_psat_level, sppb_psat_masa_berlaku, '+
+                'file_bukti, bukti_sewa, surat_pernyataan_sppb_psat, sppb_psat_nomor, sppb_psat_level, sppb_psat_masa_berlaku, '+
                 'sppb_psat_ruang_lingkup, sppb_psat_file, update) = (%L) '+
                 `WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_unit_produksi)
             );
@@ -464,17 +464,22 @@ class PsatPlPermohonanModel {
             let history, code, proses;
             if(user == 'all'){
                 history = await pool.query(
-                    ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_sppb_psat_baru, status_proses, ' +
-                    ' tenggat_audit_auditor, tenggat_waktu_perbaikan FROM' + db_history_pengajuan)
+                    ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
+                    ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
+                    ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                    ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
+                    ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM' + db_history_pengajuan)
             } else {
                 if(code_proses == 'all'){
                     proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan,'IZIN_EDAR');
                     history = await pool.query(
                         ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
-                        ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
-                        ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
-                        ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
-                        ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
+                        ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
+                        ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                        ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
+                        ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
                         ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                         ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM'+ db_history_pengajuan + 
                         ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
@@ -483,16 +488,16 @@ class PsatPlPermohonanModel {
                     if(code_proses == '20' || code_proses == '21'){
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
-                            ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
-                            ' tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                            ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, '+
+                            ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
                             ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                             ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM'+ db_history_pengajuan + 
                             ` WHERE ${proses.filter}  ORDER BY created DESC`, proses.data)   
                     }else if (code_proses == '40' || code_proses == '41'){
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' + 
-                            ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
-                            ' tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, ' +
+                            ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
+                            ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
                             ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                             ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM '+ db_history_pengajuan + 
                             ` WHERE ${proses.filter}  ORDER BY created DESC`, proses.data)
