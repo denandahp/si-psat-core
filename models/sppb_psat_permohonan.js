@@ -305,6 +305,7 @@ class SppbPsatPermohonanModel {
                     ' tenggat_perbaikan_audit_lapang, waktu_tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang, ' +
                     ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
                     ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
+                    ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp, dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_ditolak, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                     ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan)
@@ -319,6 +320,7 @@ class SppbPsatPermohonanModel {
                         ' tenggat_perbaikan_audit_lapang, waktu_tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang, ' +
                         ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, '+
                         ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
+                        ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp, dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_ditolak, ' +
                         ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                         ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                         ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
@@ -351,6 +353,16 @@ class SppbPsatPermohonanModel {
                             ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                             ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                             ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
+                            ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
+                    }else if (code_proses == '50' || code_proses == '51'){
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, kode_pengajuan, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                            ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp, nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
+                            ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
+                    }else if (code_proses == '99'){
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, kode_pengajuan, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' + 
+                            ' dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_ditolak, nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + 
                             ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
                     }else{
                         history = await pool.query(

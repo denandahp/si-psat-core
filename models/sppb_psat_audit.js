@@ -9,6 +9,8 @@ const proc_tim_komtek = schemapet + '.' + '"penunjukan_tim_komtek_sekretariat"';
 const proc_audit_doc = schemapet + '.' + '"audit_dokument_psat_auditor"';
 const proc_audit_lapang = schemapet + '.' + '"audit_lapang_psat_auditor"';
 const proc_sidang_komtek = schemapet + '.' + '"sidang_komtek_sekretariat"';
+const proc_pembayaran_pnbp = schemapet + '.' + '"pembayaran_pnbp_psat"';
+const proc_dokumen_ditolak = schemapet + '.' + '"dokumen_psat_ditolak"';
 const db_history_audit = schemapet + '.' + '"history_audit_psat"';
 const db_proses_audit = schemapet + '.' + '"proses_audit"';
 const db_history_pengajuan = schema + '.' + '"history_all_pengajuan"';
@@ -99,6 +101,36 @@ class PsatPlPerubahanModel {
             data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             return { status: '200', ketarangan: `${data.proses} SIDANG KOMTEK `, data: sidang_komtek.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async pembayaran_pnbp(data) {
+        try {
+            let pembayaran_pnbp, data_pembayaran_pnbp;
+            data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.bukti_pembayaran];
+            pembayaran_pnbp = await pool.query(format('CALL ' + proc_pembayaran_pnbp + ' (%L)', data_pembayaran_pnbp));
+            return { 
+                status: '200',
+                ketarangan: `${data.proses} PEMBAYARAN PNBP SPPB PSAT id ${data.id_pengajuan}`,
+                data: pembayaran_pnbp.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async dokumen_ditolak(data) {
+        try {
+            let dokumen_ditolak, data_dokumen_ditolak;
+            data_dokumen_ditolak = [data.id_pengajuan, data.proses, data.dokumen_ditolak, data.keterangan];
+            dokumen_ditolak = await pool.query(format('CALL ' + proc_dokumen_ditolak + ' (%L)', data_dokumen_ditolak));
+            return { 
+                status: '200',
+                ketarangan: `${data.proses} DOKUMEN SPPB PSAT DITOLAK id ${data.id_pengajuan}`,
+                data: dokumen_ditolak.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
