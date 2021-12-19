@@ -92,7 +92,7 @@ class SppbPsatModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
@@ -100,7 +100,7 @@ class SppbPsatModel {
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENGALIHAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
