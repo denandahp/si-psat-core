@@ -38,7 +38,13 @@ exports.param = () => {
 }
 
 exports.clean_size = (files) => {
-    var limit = 2000;
+    var limit;
+    let extension = path.extname(files.path)
+    if(extension == '.jpg' || extension == '.png'){
+        limit = 5000;
+    }else{
+        limit = 5000;
+    }
     if (files.size >= (limit * 1024)) {
         let msg = `Ukuran file ${files.fieldname} melebihi ${limit/1000} Mb`
         return { err: 'FILE_TO_LARGE', message: msg }

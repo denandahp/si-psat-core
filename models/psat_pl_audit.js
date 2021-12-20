@@ -7,6 +7,8 @@ const schema_izin_edar = '"izin_edar"';
 const proc_tim_audit = schemapet + '.' + '"penunjukan_tim_audit_izinedar_sekretariat"';
 const proc_audit_doc = schemapet + '.' + '"audit_dokument_izinedar_auditor"';
 const proc_sidang_komtek = schemapet + '.' + '"sidang_komtek_izinedar_sekretariat"';
+const proc_pembayaran_pnbp = schemapet + '.' + '"pembayaran_pnbp_izinedar"';
+const proc_dokumen_ditolak = schemapet + '.' + '"dokumen_izinedar_ditolak"';
 const db_history_audit = schemapet + '.' + '"history_audit_izinedar"';
 const db_history_pengajuan_izin_edar = schema_izin_edar + '.' + '"history_all_pengajuan"';
 const db_proses_audit = schemapet + '.' + '"proses_audit"';
@@ -61,9 +63,39 @@ class PsatPlPerubahanModel {
     async audit_rekomendasi(data) {
         try {
             let sidang_komtek, data_sidang_komtek;
-            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
+            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses,  data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             return { status: '200', ketarangan: `${data.proses} SIDANG KOMTEK PSAT PL`, data: sidang_komtek.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async pembayaran_pnbp(data) {
+        try {
+            let pembayaran_pnbp, data_pembayaran_pnbp;
+            data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.bukti_pembayaran, data.keterangan];
+            pembayaran_pnbp = await pool.query(format('CALL ' + proc_pembayaran_pnbp + ' (%L)', data_pembayaran_pnbp));
+            return { 
+                status: '200',
+                ketarangan: `${data.proses} PEMBAYARAN PNBP IZIN EDAR id ${data.id_pengajuan}`,
+                data: pembayaran_pnbp.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async dokumen_ditolak(data) {
+        try {
+            let dokumen_ditolak, data_dokumen_ditolak;
+            data_dokumen_ditolak = [data.id_pengajuan, data.proses, data.dokumen_ditolak, data.keterangan];
+            dokumen_ditolak = await pool.query(format('CALL ' + proc_dokumen_ditolak + ' (%L)', data_dokumen_ditolak));
+            return { 
+                status: '200',
+                ketarangan: `${data.proses} DOKUMEN IZIN EDAR DITOLAK id ${data.id_pengajuan}`,
+                data: dokumen_ditolak.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

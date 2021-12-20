@@ -92,19 +92,21 @@ class SppbPsatModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
+                    ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
-                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENGALIHAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
+                    'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
+                    ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
-                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'+
                     ' FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
             }
             check_query.check_queryset(permohonan);

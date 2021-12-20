@@ -76,6 +76,42 @@ class AuditDokumenController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async pembayaran_pnbp(req, res, next) {
+        let callback = async() => {
+            try {
+                let query = req.body;
+                debug('detail %o', query);
+                let detail = await audit.pembayaran_pnbp(query);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async dokumen_ditolak(req, res, next) {
+        let callback = async() => {
+            try {
+                let query = req.body;
+                debug('detail %o', query);
+                let detail = await audit.dokumen_ditolak(query);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async audit_history(req, res, next) {
         let callback = async() => {
             try {
