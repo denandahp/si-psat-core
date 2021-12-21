@@ -319,7 +319,7 @@ class SppbPsatPermohonanModel {
                     ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp, dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_ditolak, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
-                    ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan)
+                    ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + ' ORDER BY created DESC')
             } else {
                 if (code_proses == 'all') {
                     proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT')
