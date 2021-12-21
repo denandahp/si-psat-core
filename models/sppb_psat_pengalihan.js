@@ -93,7 +93,7 @@ class SppbPsatModel {
             if(id == 'all'){
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
-                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
+                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi,  id_info_perusahaan, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
@@ -102,7 +102,7 @@ class SppbPsatModel {
             } else {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
-                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, nama_perusahaan, alamat_perusahaan,' +
+                    ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, id_info_perusahaan, nama_perusahaan, alamat_perusahaan,' +
                     ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
                     ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+

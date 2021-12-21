@@ -75,7 +75,7 @@ class PsatPlPerubahanModel {
     async pembayaran_pnbp(data) {
         try {
             let pembayaran_pnbp, data_pembayaran_pnbp;
-            data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.bukti_pembayaran, data.keterangan];
+            data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.keterangan, data.bukti_pembayaran];
             pembayaran_pnbp = await pool.query(format('CALL ' + proc_pembayaran_pnbp + ' (%L)', data_pembayaran_pnbp));
             return { 
                 status: '200',
