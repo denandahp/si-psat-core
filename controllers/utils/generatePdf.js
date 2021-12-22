@@ -1,6 +1,6 @@
 const pool = require('../../libs/db');
 var format = require('pg-format');
-
+const fs = require('fs');
 const puppeteer = require('puppeteer');
 const Handlebars = require('handlebars');
 const Fs = require('fs')
@@ -12,6 +12,8 @@ const sppb_psat_view = require('../../models/sppb_psat_view.js')
 const sppb_pl_view = require('../../models/sppb_pl_view.js')
 const authUtils = require('../utils/auth');
 const PDFMerge = require('pdf-merge');
+const PDFDocument = require('pdf-lib').PDFDocument
+
 const url = '103.161.184.37:3000/api/upload/view_pdf?path=/root/si-psat-core/'
 
 const db_pengajuan_sppb_psat = 'sppb_psat.sertifikat_psat';
@@ -132,7 +134,29 @@ class generatePdfController {
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
 
             // res.set("Content-Type", "application/pdf");
+            var pdfBuffer1 = fs.readFileSync(filename);
+            var pdfBuffer2 = fs.readFileSync(filename);
+            var pdfsToMerge = [pdfBuffer1, pdfBuffer2]
 
+            const mergedPdf = await PDFDocument.create();
+            for (const pdfBytes of pdfsToMerge) {
+                const pdf = await PDFDocument.load(pdfBytes);
+                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                copiedPages.forEach((page) => {
+                    mergedPdf.addPage(page);
+                });
+            }
+
+            const buf = await mergedPdf.save(); // Uint8Array
+
+            let path = filename;
+            fs.open(path, 'w', function(err, fd) {
+                fs.write(fd, buf, 0, buf.length, null, function(err) {
+                    fs.close(fd, function() {
+                        console.log('wrote the file successfully');
+                    });
+                });
+            });
             res.status(200).json({
                 message: "Sertifikat SPPB-PSAT",
                 path: path_sertifikat,
