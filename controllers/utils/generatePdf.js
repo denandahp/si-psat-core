@@ -134,9 +134,15 @@ class generatePdfController {
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
 
             // res.set("Content-Type", "application/pdf");
-            var pdfBuffer1 = fs.readFileSync(filename);
-            var pdfBuffer2 = fs.readFileSync(filename);
-            var pdfsToMerge = [pdfBuffer1, pdfBuffer2]
+            var pdfsToMerge = []
+            pdfsToMerge.push(fs.readFileSync(filename))
+            if (sertifikat_pl.desain_kemasan_sppb_psat != null) {
+                pdfsToMerge.push(fs.readFileSync(sertifikat_pl.desain_kemasan_sppb_psat))
+            }
+            if (sertifikat_pl.desain_label_sppb_psat != null) {
+                pdfsToMerge.push(fs.readFileSync(sertifikat_pl.desain_label_sppb_psat))
+            }
+
 
             const mergedPdf = await PDFDocument.create();
             for (const pdfBytes of pdfsToMerge) {
