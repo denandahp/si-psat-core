@@ -3,6 +3,7 @@ const audit = require('../controllers/psat_pl_audit.js');
 
 
 Router.post('/audit/penunjukkan_auditor', audit.penunjukkan_auditor)
+      .post('/audit/permohonan_baru', audit.permohonan_baru)
       .post('/audit/dokumen', audit.audit_dokumen)
       .post('/audit/penunjukkan_tim_komtek', audit.penunjukkan_tim_komtek)
       .post('/audit/rekomendasi', audit.audit_rekomendasi)

@@ -4,6 +4,7 @@ var format = require('pg-format');
 
 const schemapet = '"audit"';
 const schema_izin_edar = '"izin_edar"';
+const proc_permohonan_baru = schemapet + '.' + '"permohonan_baru_izinedar"';
 const proc_tim_audit = schemapet + '.' + '"penunjukan_tim_audit_izinedar_sekretariat"';
 const proc_audit_doc = schemapet + '.' + '"audit_dokument_izinedar_auditor"';
 const proc_sidang_komtek = schemapet + '.' + '"sidang_komtek_izinedar_sekretariat"';
@@ -13,12 +14,26 @@ const db_history_audit = schemapet + '.' + '"history_audit_izinedar"';
 const db_history_pengajuan_izin_edar = schema_izin_edar + '.' + '"history_all_pengajuan"';
 const db_proses_audit = schemapet + '.' + '"proses_audit"';
 
-
 var date = new Date(Date.now());
 date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
 
 class PsatPlPerubahanModel {
+
+    async permohonan_baru(data) {
+        try {
+            let permohonan_baru, data_permohonan_baru;
+            data_permohonan_baru = [
+                data.id_pengajuan, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
+            ];
+            permohonan_baru = await pool.query(format('CALL ' + proc_permohonan_baru + ' (%L)', data_permohonan_baru));
+
+            return { status: '200', ketarangan: `${data.proses} Permohonan Baru Izin Edar `, data: permohonan_baru.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
 
     async penunjukkan_auditor(data) {
         try {

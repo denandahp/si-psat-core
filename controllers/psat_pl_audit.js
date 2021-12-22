@@ -4,6 +4,25 @@ const audit = require('../models/psat_pl_audit.js');
 
 
 class AuditDokumenController {
+
+    async permohonan_baru(req, res, next) {
+        let callback = async() => {
+            try {
+                let query = req.body;
+                debug('detail %o', query);
+                let detail = await audit.permohonan_baru(query);
+                if (detail.status == '400') {res.status(400).json({ detail });}
+                else { res.status(200).json({ detail });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async penunjukkan_auditor(req, res, next) {
         let callback = async() => {
             try {

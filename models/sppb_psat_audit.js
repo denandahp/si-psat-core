@@ -6,6 +6,7 @@ const schemapet = '"audit"';
 const schema = '"sppb_psat"';
 const proc_tim_audit = schemapet + '.' + '"penunjukan_tim_audit_sekretariat"';
 const proc_tim_komtek = schemapet + '.' + '"penunjukan_tim_komtek_sekretariat"';
+const proc_permohonan_baru = schemapet + '.' + '"permohonan_baru_psat"';
 const proc_audit_doc = schemapet + '.' + '"audit_dokument_psat_auditor"';
 const proc_audit_lapang = schemapet + '.' + '"audit_lapang_psat_auditor"';
 const proc_sidang_komtek = schemapet + '.' + '"sidang_komtek_sekretariat"';
@@ -21,6 +22,21 @@ date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
 
 class PsatPlPerubahanModel {
+
+    async permohonan_baru(data) {
+        try {
+            let permohonan_baru, data_permohonan_baru;
+            data_permohonan_baru = [
+                data.id_pengajuan, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
+            ];
+            permohonan_baru = await pool.query(format('CALL ' + proc_permohonan_baru + ' (%L)', data_permohonan_baru));
+
+            return { status: '200', ketarangan: `${data.proses} Permohonan Baru SPPB PSAT `, data: permohonan_baru.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
 
     async penunjukkan_auditor(data) {
         try {
