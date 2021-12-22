@@ -11,7 +11,7 @@ const generatePdf = require("../../models/generatePdf.js")
 const sppb_psat_view = require('../../models/sppb_psat_view.js')
 const sppb_pl_view = require('../../models/sppb_pl_view.js')
 const authUtils = require('../utils/auth');
-
+const PDFMerge = require('pdf-merge');
 const url = '103.161.184.37:3000/api/upload/view_pdf?path=/root/si-psat-core/'
 
 const db_pengajuan_sppb_psat = 'sppb_psat.sertifikat_psat';
@@ -82,6 +82,7 @@ class generatePdfController {
             const def = req.body
             const param = req.params
             const sertifikat_pl = await sppb_pl_view.view_sertifikat(param)
+            const unit_produksi = await sppb_pl_view.view_unitproduksi(param)
 
 
             let data = {
@@ -90,27 +91,27 @@ class generatePdfController {
                 "nama_psat": "nama_psat",
                 "jenis_psat": sertifikat_pl.jenis_psat,
                 "nama_dagang": sertifikat_pl.nama_dagang,
-                "izin_psat_pl": "izin_psat_pl",
+                "izin_psat_pl": " ",
                 "no_izin_psat_pl": def.no_izin_psat_pl,
                 "berlaku_sampai": def.berlaku_sampai,
                 "nama_latin": sertifikat_pl.nama_latin,
                 "negara_asal": sertifikat_pl.negara_asal,
-                "nama_merk": sertifikat_pl.nama_merk,
+                "nama_merk": sertifikat_pl.nama_merek,
                 "jenis_kemasan": sertifikat_pl.jenis_kemasan,
                 "berat_bersih": sertifikat_pl.berat_bersih,
-                "unit_penanganan": "unit_penanganan",
-                "nama_unit_penanganan": "nama_unit_penanganan",
-                "alamat_unit_penanganan": "alamat_unit_penanganan",
-                "status_kepemilikan": "status_kepemilikan",
-                "sppb_psat": "sppb_psat",
-                "no_sppb_psat": "no_sppb_psat",
-                "level_sppb_psat": def.level_sppb_psat,
-                "berlaku_sampai_sppb_psat": "berlaku_sampai_sppb_psat",
-                "ruang_lingkup_sppb_psat": def.ruang_lingkup,
+                "unit_penanganan": " ",
+                "nama_unit_penanganan": unit_produksi.nama_unit,
+                "alamat_unit_penanganan": unit_produksi.alamat_unit,
+                "status_kepemilikan": unit_produksi.status_kepemilikan,
+                "sppb_psat": " ",
+                "no_sppb_psat": unit_produksi.sppb_psat_nomor,
+                "level_sppb_psat": unit_produksi.level_sppb_psat,
+                "berlaku_sampai_sppb_psat": unit_produksi.sppb_psat_masa_berlaku,
+                "ruang_lingkup_sppb_psat": unit_produksi.ruang_lingkup,
                 "kelas_mutu_sppb_psat": sertifikat_pl.kelas_mutu,
                 "jenis_klaim_sppb_psat": sertifikat_pl.jenis_klaim,
-                "desain_kemasan_sppb_psat": "desain_kemasan_sppb_psat",
-                "desain_label_sppb_psat": "desain_label_sppb_psat"
+                "desain_kemasan_sppb_psat": sertifikat_pl.desain_kemasan_sppb_psat,
+                "desain_label_sppb_psat": sertifikat_pl.desain_label_sppb_psat
 
             }
             let filename = await 'sertifikat/psat-pl/' + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.no_izin_psat_pl + '.pdf'
@@ -121,6 +122,7 @@ class generatePdfController {
             const template = Handlebars.compile(content)
 
             const pdf = await generatePdf.pdf(template(data), filename);
+
             let path_sertifikat = url + filename
 
             let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date];
@@ -135,7 +137,7 @@ class generatePdfController {
                 message: "Sertifikat SPPB-PSAT",
                 path: path_sertifikat,
                 data: data,
-                pengajuan: data_pengajuan
+                pengajuan: unit_produksi
             });
 
             // } catch (e) {
