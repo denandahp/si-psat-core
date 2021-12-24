@@ -5,6 +5,7 @@ const check_query = require('./param/utils.js');
 const schema = '"sppb_psat"';
 const schema_pengguna = '"pengguna"';
 const schema_audit = '"audit"';
+const db_sertifikat = schema + '.' + '"sertifikat_psat"';
 const db_pengajuan = schema + '.' + '"pengajuan"';
 const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_ruang_lingkup = schema + '.' + '"ruang_lingkup"';
@@ -40,9 +41,16 @@ class SppbPsatPermohonanModel {
                 'INSERT INTO ' + db_pengajuan +
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, unit_produksi, info_perusahaan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
+
+            let create_sertifikat = await await pool.query(
+                'INSERT INTO ' + db_sertifikat +
+                ' (id_pengguna, id_pengajuan)' +
+                ' VALUES ($1, $2) RETURNING *', [data.id_pengguna, pengajuan.rows[0].id]);
+
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
+            response.create_sertifikat = create_sertifikat.rows[0];
             debug('get %o', response);
             return { status: '200', keterangan: "Permohonan Awal SPPB PSAT", data: response };
         } catch (ex) {

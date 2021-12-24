@@ -29,6 +29,7 @@ class generatePdfController {
                 const def = req.body
                 const param = req.params
                 const sertifikat_psat = await sppb_psat_view.view_sertifikat(param)
+                let berlaku_sampai = new Date(new Date().setFullYear(new Date().getFullYear() + 5))
 
                 let data = {
 
@@ -39,7 +40,7 @@ class generatePdfController {
                     no_sppb_psat: def.no_sppb_psat,
                     level_sppb_psat: def.level_sppb_psat,
                     ruang_lingkup: def.ruang_lingkup,
-                    berlaku_sampai: def.berlaku_sampai
+                    berlaku_sampai: berlaku_sampai
 
                 }
                 let filename = await 'sertifikat/sppb-psat/' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.no_sppb_psat + '.pdf'
@@ -52,7 +53,7 @@ class generatePdfController {
                 const pdf = await generatePdf.pdf(template(data), filename);
                 let path_sertifikat = url + filename
 
-                let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.no_sppb_psat, def.level_sppb_psat, def.ruang_lingkup, def.berlaku_sampai, date];
+                let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.no_sppb_psat, def.level_sppb_psat, def.ruang_lingkup, berlaku_sampai, date];
                 let pengajuan = await pool.query(
                     'UPDATE ' + db_pengajuan_sppb_psat +
                     ' SET (final_sertifikat, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, update) = ($3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
@@ -85,7 +86,7 @@ class generatePdfController {
                 const param = req.params
                 let sertifikat_pl = await sppb_pl_view.view_sertifikat(param)
                 let unit_produksi = await sppb_pl_view.view_unitproduksi(param)
-
+                let berlaku_sampai = new Date(new Date().setFullYear(new Date().getFullYear() + 5))
 
                 let data = {
 
@@ -95,7 +96,7 @@ class generatePdfController {
                     "nama_dagang": sertifikat_pl.nama_dagang,
                     "izin_psat_pl": " ",
                     "no_izin_psat_pl": def.no_izin_psat_pl,
-                    "berlaku_sampai": def.berlaku_sampai,
+                    "berlaku_sampai": berlaku_sampai,
                     "nama_latin": sertifikat_pl.nama_latin,
                     "negara_asal": sertifikat_pl.negara_asal,
                     "nama_merk": sertifikat_pl.nama_merek,
