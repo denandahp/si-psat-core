@@ -127,10 +127,10 @@ class generatePdfController {
 
                 let path_sertifikat = url + filename
 
-                let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date];
+                let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date, def.no_izin_psat_pl, berlaku_sampai];
                 let pengajuan = await pool.query(
                     'UPDATE ' + db_pengajuan_izin_edar +
-                    ' SET (final_sertifikat, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
+                    ' SET (final_sertifikat, update, nomor_izin_edar, berlaku_sampai) = ($4, $5, $6, $7) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
                     'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
 
                 // res.set("Content-Type", "application/pdf");
