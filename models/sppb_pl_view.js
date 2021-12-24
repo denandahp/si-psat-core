@@ -15,7 +15,7 @@ class SppbPlModel {
             let id_pengguna = param.id_pengguna
             let id_pengajuan = param.id_pengajuan
             let view_sertif = await pool.query('SELECT * FROM izin_edar.history_all_pengajuan WHERE id_pengguna = $1 AND id_pengajuan = $2;', [id_pengguna, id_pengajuan]);
-
+            // console.log(view_sertif)
             return view_sertif.rows[0];
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);

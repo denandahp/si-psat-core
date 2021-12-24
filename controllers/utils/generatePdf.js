@@ -83,8 +83,8 @@ class generatePdfController {
             // try {
             const def = req.body
             const param = req.params
-            const sertifikat_pl = await sppb_pl_view.view_sertifikat(param)
-            const unit_produksi = await sppb_pl_view.view_unitproduksi(param)
+            let sertifikat_pl = await sppb_pl_view.view_sertifikat(param)
+            let unit_produksi = await sppb_pl_view.view_unitproduksi(param)
 
 
             let data = {
@@ -112,8 +112,7 @@ class generatePdfController {
                 "ruang_lingkup_sppb_psat": unit_produksi.ruang_lingkup,
                 "kelas_mutu_sppb_psat": sertifikat_pl.kelas_mutu,
                 "jenis_klaim_sppb_psat": sertifikat_pl.jenis_klaim,
-                "desain_kemasan_sppb_psat": sertifikat_pl.desain_kemasan_sppb_psat,
-                "desain_label_sppb_psat": sertifikat_pl.desain_label_sppb_psat
+                "desain_kemasan_sppb_psat": sertifikat_pl.desain_tabel_dan_kemasan
 
             }
             let filename = await 'sertifikat/psat-pl/' + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.no_izin_psat_pl + '.pdf'
@@ -137,10 +136,12 @@ class generatePdfController {
             var pdfsToMerge = []
             pdfsToMerge.push(fs.readFileSync(filename))
             if (sertifikat_pl.desain_kemasan_sppb_psat != null) {
-                pdfsToMerge.push(fs.readFileSync(sertifikat_pl.desain_kemasan_sppb_psat))
+                pdfsToMerge.push(fs.readFileSync(sertifikat_pl.desain_kemasan_sppb_psat.replace('www/', '')))
             }
+            console.log(sertifikat_pl.desain_kemasan_sppb_psat)
+
             if (sertifikat_pl.desain_label_sppb_psat != null) {
-                pdfsToMerge.push(fs.readFileSync(sertifikat_pl.desain_label_sppb_psat))
+                pdfsToMerge.push(fs.readFileSync(sertifikat_pl.desain_label_sppb_psat.replace('www/', '')))
             }
 
 
@@ -166,7 +167,7 @@ class generatePdfController {
             res.status(200).json({
                 message: "Sertifikat SPPB-PSAT",
                 path: path_sertifikat,
-                data: data,
+                data: sertifikat_pl,
                 pengajuan: unit_produksi
             });
 
