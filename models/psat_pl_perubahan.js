@@ -206,7 +206,7 @@ class PsatPlPerubahanModel {
             if(id == 'all'){
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' + 
-                    ' sertifikat_izin_dar_sebelumnya, expire_sertifikat_lama, nomor_sertifikat_lama, ' +
+                    ' sertifikat_izin_edar_sebelumnya, expire_sertifikat_lama, nomor_sertifikat_lama, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
@@ -214,7 +214,7 @@ class PsatPlPerubahanModel {
             } else {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, '+
-                    ' sertifikat_izin_dar_sebelumnya, expire_sertifikat_lama, nomor_sertifikat_lama, ' +
+                    ' sertifikat_izin_edar_sebelumnya, expire_sertifikat_lama, nomor_sertifikat_lama, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
