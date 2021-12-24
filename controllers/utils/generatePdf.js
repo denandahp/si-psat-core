@@ -14,7 +14,7 @@ const authUtils = require('../utils/auth');
 const PDFMerge = require('pdf-merge');
 const PDFDocument = require('pdf-lib').PDFDocument
 
-const url = '103.161.184.37:3000/api/upload/view_pdf?path=/root/si-psat-core/'
+const url = '/root/si-psat-core/'
 
 const db_pengajuan_sppb_psat = 'sppb_psat.sertifikat_psat';
 const db_pengajuan_izin_edar = 'izin_edar.pengajuan';
