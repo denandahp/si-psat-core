@@ -57,7 +57,7 @@ class generatePdfController {
 
                 }
                 console.log(req.query)
-                if (req.query.view == 'true') {
+                if (req.method = "GET") {
                     res.status(200).json({
                         view_only: true,
                         message: "Sertifikat SPPB-PSAT",
@@ -123,7 +123,7 @@ class generatePdfController {
             let unit_produksi = await sppb_pl_view.view_unitproduksi(param)
             let berlaku_sampai = new Date(new Date().setFullYear(new Date().getFullYear() + 5))
 
-            if (req.query.view == "true") {
+            if (req.method = "GET") {
 
                 let data = {
 
