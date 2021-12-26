@@ -314,6 +314,7 @@ class SppbPsatPermohonanModel {
     async get_history_pengajuan(user, code_proses, role, proses_pengajuan) {
         try {
             let history, proses;
+            console.log(user)
             if (user == 'all') {
                 code = 'Semua Proses'
                 history = await pool.query(
@@ -391,7 +392,7 @@ class SppbPsatPermohonanModel {
                     }
                 }
             }
-
+            console.log(history.rows[0].final_sertifikat)
             debug('get %o', history);
             return {
                 status: '200',

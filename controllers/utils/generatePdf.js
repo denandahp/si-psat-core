@@ -12,7 +12,8 @@ const sppb_psat_view = require('../../models/sppb_psat_view.js')
 const sppb_pl_view = require('../../models/sppb_pl_view.js')
 const authUtils = require('../utils/auth');
 const PDFMerge = require('pdf-merge');
-const PDFDocument = require('pdf-lib').PDFDocument
+const PDFDocument = require('pdf-lib').PDFDocument;
+const { query } = require('../../libs/db');
 
 const url = '/root/si-psat-core/'
 
@@ -25,24 +26,48 @@ date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 class generatePdfController {
     async sppb_psat(req, res, next) {
         let callback = async() => {
-            try {
-                const def = req.body
-                const param = req.params
-                const sertifikat_psat = await sppb_psat_view.view_sertifikat(param)
-                let berlaku_sampai = new Date(new Date().setFullYear(new Date().getFullYear() + 5))
+            // try {
+            const def = req.body
+            const param = req.params
+            const sertifikat_psat = await sppb_psat_view.view_sertifikat(param)
+            let berlaku_sampai = new Date(new Date().setFullYear(new Date().getFullYear() + 5))
 
-                let data = {
+            let nama_unit_penanganan = sertifikat_psat.nama_unit_penanganan
+            let alamat_unit_penanganan = sertifikat_psat.alamat_unit_penanganan
 
-                    pbumku: "pbumku",
-                    nama_unit_penanganan: sertifikat_psat.nama_perusahaan,
-                    alamat_unit_penanganan: sertifikat_psat.alamat_perusahaan,
-                    status_kepemilikan: sertifikat_psat.status_kepemilikan,
-                    no_sppb_psat: def.no_sppb_psat,
-                    level_sppb_psat: def.level_sppb_psat,
-                    ruang_lingkup: def.ruang_lingkup,
-                    berlaku_sampai: berlaku_sampai
+            if (sertifikat_psat.nama_unit_penanganan == null) {
+                nama_unit_penanganan = sertifikat_psat.nsms_perusahaan
+            }
+            if (sertifikat_psat.alamat_unit_penanganan == null) {
+                alamat_unit_penanganan = sertifikat_psat.alamat_perusahaan
+            }
 
-                }
+
+
+            let data = {
+
+                pbumku: "pbumku",
+                nama_unit_penanganan: nama_unit_penanganan,
+                alamat_unit_penanganan: alamat_unit_penanganan,
+                status_kepemilikan: sertifikat_psat.status_kepemilikan,
+                no_sppb_psat: def.no_sppb_psat,
+                level_sppb_psat: def.level_sppb_psat,
+                ruang_lingkup: def.ruang_lingkup,
+                berlaku_sampai: berlaku_sampai
+
+            }
+            console.log(req.query)
+            if (req.query.view == 'true') {
+                res.status(200).json({
+                    view_only: true,
+                    message: "Sertifikat SPPB-PSAT",
+                    path: sertifikat_psat.final_sertifikat,
+                    data: data,
+                    //     pengajuan: data_pengajuan
+                });
+            } else {
+
+
                 let filename = await 'sertifikat/sppb-psat/' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.no_sppb_psat + '.pdf'
                 const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_PSAT.html')
 
@@ -53,25 +78,35 @@ class generatePdfController {
                 const pdf = await generatePdf.pdf(template(data), filename);
                 let path_sertifikat = url + filename
 
-                let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.no_sppb_psat, def.level_sppb_psat, def.ruang_lingkup, berlaku_sampai, date];
+                let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.no_sppb_psat, def.level_sppb_psat, def.ruang_lingkup, berlaku_sampai, date, def.nama_unit_penanganan, def.alamat_unit_penanganan, def.status_kepemilikan];
                 let pengajuan = await pool.query(
                     'UPDATE ' + db_pengajuan_sppb_psat +
-                    ' SET (final_sertifikat, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, update) = ($3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
-                    'RETURNING id_pengguna, id_pengajuan, final_sertifikat, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, update', data_pengajuan);
+                    ' SET (final_sertifikat, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, update, nama_unit_penanganan, alamat_unit_penanganan, status_kepemilikan) = ($3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
+                    'RETURNING id_pengguna, id_pengajuan, final_sertifikat, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, update, nama_unit_penanganan, alamat_unit_penanganan, status_kepemilikan', data_pengajuan);
+                let data_new = {
 
+                    pbumku: "pbumku",
+                    nama_unit_penanganan: def.nama_perusahaan,
+                    alamat_unit_penanganan: def.alamat_perusahaan,
+                    status_kepemilikan: def.status_kepemilikan,
+                    no_sppb_psat: def.no_sppb_psat,
+                    level_sppb_psat: def.level_sppb_psat,
+                    ruang_lingkup: def.ruang_lingkup,
+                    berlaku_sampai: berlaku_sampai
 
-
+                }
                 res.status(200).json({
+                    view_only: false,
                     message: "Sertifikat SPPB-PSAT",
                     path: path_sertifikat,
-                    data: data,
-                    pengajuan: data_pengajuan
+                    data: data_new,
+                    pengajuan: pengajuan.rows[0]
                 });
-
-
-            } catch (e) {
-                next(e.detail || e);
             }
+
+            //} catch (e) {
+            //   next(e.detail || e);
+            //}
         };
         let fallback = (err) => {
             next(err);
