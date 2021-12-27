@@ -77,7 +77,7 @@ class generatePdfController {
                     masa_berlaku: masa_berlaku
 
                 }
-                let filename = await 'sertifikat/sppb-psat/' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.no_sppb_psat + '.pdf'
+                let filename = await 'sertifikat/sppb-psat/' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.nomor_sppb_psat + '.pdf'
                 const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_PSAT.html')
 
                 const content = await ReadFile(templatePath, 'utf8')
@@ -213,10 +213,10 @@ class generatePdfController {
                     'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
 
 
-                let data_produk = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, def.jenis_psat, def.nama_dagang, def.nama_latin, def.negara_asal, def.nama_merek, def.jenis_kemasan, def.berat_bersih, def.kelas_mutu, def.jenis_klaim, def.desain_tabel_dan_kemasan];
+                let data_produk = [sertifikat_pl.produk[0], def.jenis_psat, def.nama_dagang, def.nama_latin, def.negara_asal, def.nama_merek, def.jenis_kemasan, def.berat_bersih, def.kelas_mutu, def.jenis_klaim, def.desain_tabel_dan_kemasan];
                 let info_produk = await pool.query(
                     'UPDATE izin_edar.info_produk' +
-                    ' SET (jenis_psat, nama_dagang, nama_latin, negara_asal, nama_merek, jenis_kemasan, berat_bersih, kelas_mutu, jenis_klaim, desain_tabel_dan_kemasan) = ($3, $4, $5, $6, $7, $8, $9, $10, $11, $12) WHERE id=$1 AND id_pengguna=$2' +
+                    ' SET (jenis_psat, nama_dagang, nama_latin, negara_asal, nama_merek, jenis_kemasan, berat_bersih, kelas_mutu, jenis_klaim, desain_tabel_dan_kemasan) = ($2, $3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id=$1' +
                     'RETURNING *', data_produk);
 
                 let data_produksi = [sertifikat_pl.id_pengguna, def.nama_unit, def.alamat_unit, def.status_kepemilikan, def.sppb_psat_nomor, def.sppb_psat_level, def.sppb_psat_masa_berlaku, def.sppb_psat_ruang_lingkup];
