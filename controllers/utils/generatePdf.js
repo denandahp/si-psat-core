@@ -93,11 +93,11 @@ class generatePdfController {
                     ' SET (final_sertifikat, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, update, nama_unit_penanganan, alamat_unit_penanganan) = ($3, $4, $5, $6, $7, $8, $9, $10) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
                     'RETURNING *', data_pengajuan);
 
-                // let data_perushaaan = [sertifikat_psat.id_info_perusahaan, sertifikat_psat.id_pengguna, def.status_kepemilikan];
-                // let pengajuan_perushaan = await pool.query(
-                //     'UPDATE  ' + db_perusahaan_sppb_psat +
-                //     ' SET (status_kepemilikan) = ($3) WHERE id=$1 AND id_pengguna=$2  ' +
-                //     'RETURNING *', data_perushaaan);
+                let data_perushaaan = [sertifikat_psat.id_info_perusahaan, sertifikat_psat.id_pengguna, def.status_kepemilikan, date];
+                let pengajuan_perushaan = await pool.query(
+                    'UPDATE  ' + db_perusahaan_sppb_psat +
+                    ' SET (status_kepemilikan, update) = ($3, $4) WHERE id=$1 AND id_pengguna=$2  ' +
+                    'RETURNING *', data_perushaaan);
 
 
                 res.status(200).json({
