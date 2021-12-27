@@ -136,7 +136,7 @@ class generatePdfController {
                     "jenis_psat": sertifikat_pl.jenis_psat,
                     "nama_dagang": sertifikat_pl.nama_dagang,
                     "izin_psat_pl": " ",
-                    "no_izin_psat_pl": sertifikat_pl.no_izin_psat_pl,
+                    "nomor_izin_edar": sertifikat_pl.nomor_izin_edar,
                     "berlaku_sampai": berlaku_sampai,
                     "nama_latin": sertifikat_pl.nama_latin,
                     "negara_asal": sertifikat_pl.negara_asal,
@@ -173,7 +173,7 @@ class generatePdfController {
                     "jenis_psat": def.jenis_psat,
                     "nama_dagang": def.nama_dagang,
                     "izin_psat_pl": " ",
-                    "no_izin_psat_pl": def.no_izin_psat_pl,
+                    "nomor_izin_edar": def.nomor_izin_edar,
                     "berlaku_sampai": berlaku_sampai,
                     "nama_latin": def.nama_latin,
                     "negara_asal": def.negara_asal,
@@ -195,7 +195,7 @@ class generatePdfController {
 
                 }
 
-                let filename = await 'sertifikat/psat-pl/' + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.no_izin_psat_pl + '.pdf'
+                let filename = await 'sertifikat/psat-pl/' + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.nomor_izin_edar + '.pdf'
                 const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL.html')
 
                 const content = await ReadFile(templatePath, 'utf8')
@@ -206,7 +206,7 @@ class generatePdfController {
 
                 let path_sertifikat = url + filename
 
-                let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date, def.no_izin_psat_pl, berlaku_sampai];
+                let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date, def.nomor_izin_edar, berlaku_sampai];
                 let pengajuan = await pool.query(
                     'UPDATE ' + db_pengajuan_izin_edar +
                     ' SET (final_sertifikat, update, nomor_izin_edar, expire_sertifikat) = ($4, $5, $6, $7) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
