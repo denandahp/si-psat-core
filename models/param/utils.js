@@ -15,9 +15,11 @@ exports.limit_time = (limit)=> {
 }
 
 exports.date_now = ()=> {
-    var date = new Date(Date.now());
-    date.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
-    return date;
+    var d = new Date(Date.now());
+    d.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
+    var dd = d.getDate();var mm = d.getMonth() + 1;var y = d.getFullYear();var hour = d.getHours();var minute = d.getMinutes();var second = d.getSeconds();
+    var FormattedDate = y + '-'+ mm + '-'+ dd + ',' + hour + ':' + minute + ':' + second;
+    return String(FormattedDate);
 }
 
 exports.time_format = ()=> {

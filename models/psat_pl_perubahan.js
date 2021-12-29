@@ -10,8 +10,7 @@ const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
 const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
 
 
-var date = new Date(Date.now());
-date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
+var date = check_query.date_now();
 
 
 class PsatPlPerubahanModel {

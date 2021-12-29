@@ -13,11 +13,7 @@ const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
 const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
 const db_proses_audit = schema_audit + '.' + '"proses_audit"';
 
-
-
-var date = new Date(Date.now());
-date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
-
+var date = check_query.date_now();
 
 class PsatPlPermohonanModel {
     async permohonan_izin(data) {
