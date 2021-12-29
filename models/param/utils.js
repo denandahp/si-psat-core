@@ -16,7 +16,7 @@ exports.limit_time = (limit)=> {
 
 exports.date_now = ()=> {
     var date = new Date(Date.now());
-    date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
+    date.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' });
     return date;
 }
 
