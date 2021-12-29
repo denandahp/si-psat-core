@@ -20,14 +20,14 @@ class UserController {
     let password = req.body.password;
 
     try {
-      let result = await user.login(username, password);
+      let data = await user.login(username, password);
       let accessToken = jwt.sign({
-        data: result
+        data
       }, config.secret, {
         expiresIn: 86400
       });
       let refreshToken = jwt.sign({
-        data: result
+        data
       }, config.secret2, {
         expiresIn: 604800
       });
@@ -36,10 +36,10 @@ class UserController {
         httpOnly: true,
         maxAge: -1
       });
-      if (result.status == '400') {res.status(400).json({ response: result });}
+      if (data.status == '400') {res.status(400).json({ response: data });}
       else {
         res.status(200).json({
-            response: result,
+            response: data,
             accessToken,
             refreshToken
           });
