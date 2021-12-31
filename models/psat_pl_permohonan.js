@@ -385,7 +385,7 @@ class PsatPlPermohonanModel {
             }
             check_query.check_queryset(permohonan);
             // debug('get %o', permohonan);
-            return { status: '200', keterangan: "Detail Permohonan PSAT PL/Izin Edar PL", data: permohonan.rows };
+            return { status: '200', keterangan: "Detail Permohonan PSAT PL/Izin Edar PL", data: permohonan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
