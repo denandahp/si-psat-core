@@ -373,7 +373,7 @@ class PsatPlPermohonanModel {
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' +
-                    db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PERMOHONAN"])
+                    db_history_pengajuan + ' WHERE status_pengajuan IN ($1, $2)', ["PERMOHONAN", "PERPANJANGAN"])
             } else {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, id_pengguna, status_aktif, ' +
@@ -381,11 +381,11 @@ class PsatPlPermohonanModel {
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM ' +
-                    db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PERMOHONAN", id, user])
+                    db_history_pengajuan + ' WHERE status_pengajuan IN ($1, $2) AND id_pengajuan=$3 AND id_pengguna=$4', ["PERMOHONAN", "PERPANJANGAN", id, user])
             }
             check_query.check_queryset(permohonan);
             // debug('get %o', permohonan);
-            return { status: '200', keterangan: "Detail Permohonan PSAT PL/Izin Edar PL", data: permohonan.rows[0] };
+            return { status: '200', keterangan: "Detail Permohonan PSAT PL/Izin Edar PL", data: permohonan.rows };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
