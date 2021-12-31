@@ -167,6 +167,7 @@ exports.pagination = async (page_query, limit_query, filter, data, query_select,
         }
     }else{results.previous ={ page : 0, limit: limit} };
     results.total_query = counts.rows[0].count;
+    results.max_page = Math.ceil(counts.rows[0].count/limit);
     res = await pool.query(`SELECT ${query_select} FROM ${database} WHERE ${filter} ORDER BY created DESC OFFSET ${startIndex} LIMIT ${limit};`,data);
     results.query = res.rows;
     results.date = d;
