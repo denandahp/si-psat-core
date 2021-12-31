@@ -421,5 +421,84 @@ class SppbPsatPermohonanModel {
         };
     }
 
+    async get_history_pengajuan_pagination(page, limit, user, code_proses, role, proses_pengajuan) {
+        try {
+            let history, proses, query_select;
+            if (user == 'all') {
+                code = 'Semua Proses'
+                history = await pool.query(
+                    ' SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                    ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
+                    ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                    ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, waktu_tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang, ' +
+                    ' tenggat_perbaikan_audit_lapang, waktu_tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang, ' +
+                    ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, ' +
+                    ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
+                    ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp, dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_audit, ' +
+                    ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
+                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
+                    ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + ' ORDER BY created DESC')
+            } else {
+                if (code_proses == 'all') {
+                    proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT')
+                    query_select = ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                                   ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
+                                   ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                                   ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, waktu_tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang, ' +
+                                   ' tenggat_perbaikan_audit_lapang, waktu_tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang, ' +
+                                   ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, ' +
+                                   ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
+                                   ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp, dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_audit, ' +
+                                   ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
+                                   ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
+                                   ' nama_perusahaan, alamat_perusahaan'
+                } else {
+                    proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT');
+                    if (code_proses == '20' || code_proses == '21') {
+                        query_select = ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                                       ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
+                                       ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                                       ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
+                                       ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
+                                       ' nama_perusahaan, alamat_perusahaan'
+                    } else if (code_proses == '30' || code_proses == '31') {
+                        query_select =  ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                                        ' id_audit_lapang, mulai_audit_lapang, tenggat_audit_lapang, waktu_tenggat_audit_lapang, selesai_audit_lapang, mulai_perbaikan_audit_lapang, ' +
+                                        ' tenggat_perbaikan_audit_lapang, waktu_tenggat_perbaikan_audit_lapang, selesai_perbaikan_audit_lapang, keterangan_audit_lapang, hasil_audit_lapang, ' +
+                                        ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
+                                        ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
+                                        ' nama_perusahaan, alamat_perusahaan'
+                    } else if (code_proses == '40' || code_proses == '41') {
+                        query_select =  ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                                        ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, ' +
+                                        ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
+                                        ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
+                                        ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
+                                        ' nama_perusahaan, alamat_perusahaan '
+                    } else if (code_proses == '50' || code_proses == '51') {
+                        query_select =  ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                                        ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp, nama_perusahaan, alamat_perusahaan '
+                    } else if (code_proses == '99') {
+                        query_select =  ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                                        ' dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_audit, nama_perusahaan, alamat_perusahaan '
+                    } else {
+                        query_select =  ' id_pengajuan, id_pengguna, kode_pengajuan, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                                        ' nama_perusahaan, alamat_perusahaan ' 
+                    }
+                }
+            }
+            history = await check_query.pagination(page, limit, proses.filter, proses.data, query_select, db_history_pengajuan)
+            debug('get %o', history);
+            return {
+                status: '200',
+                keterangan: `History SPPB PSAT role ${role} id ${user} Code Proses: ${proses.code} ${proses_pengajuan}`,
+                data: history
+            };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
 }
 module.exports = new SppbPsatPermohonanModel();

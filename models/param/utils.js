@@ -139,3 +139,40 @@ exports.check_username = async (queryset)=> {
         throw new Error('401');
     }
 }
+
+exports.pagination = async (page_query, limit_query, filter, data, query_select, database)=> {
+    let page = parseInt(page_query); let limit = parseInt(limit_query);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    let counts, res, results = {}, err = [];
+    var d = this.date_now();
+    try{
+    counts = await pool.query('SELECT COUNT (*)  FROM ' + database +  `WHERE ${filter} `, data);
+    if (endIndex <= counts.rows[0].count) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }else if(endIndex >= counts.rows[0].count){
+        results.next = {
+            page: page + 1,
+            limit: 0
+        }
+    }else{ throw new Error('data kosong');};
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }else{results.previous ={ page : 0, limit: limit} };
+    results.total_query = counts.rows[0].count;
+    res = await pool.query(`SELECT ${query_select} FROM ${database} WHERE ${filter} ORDER BY created DESC OFFSET ${startIndex} LIMIT ${limit};`,data);
+    results.query = res.rows;
+    results.date = d;
+    return results;
+    }catch(ex){
+    console.log('Enek seng salah iki ' + ex);
+    return {"error": "data" + ex, "res" : err};
+    };
+}
