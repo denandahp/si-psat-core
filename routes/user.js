@@ -13,8 +13,8 @@ Router.post('/login', user.login)
       .put('/edit/tim_komtek', user.update_tim_komtek)
       .put('/edit/superadmin', user.update_superadmin)
       .delete('/delete/sekretariat', user.delete_sekretariat)
-      .get('/index/sekretariat', auth, user.index_sekretariat)
-      .get('/detail/pelaku_usaha', auth, user.detail_pelaku_usaha)
+      .get('/index/sekretariat', user.index_sekretariat)
+      .get('/detail/pelaku_usaha', user.detail_pelaku_usaha)
 
 
 module.exports = Router;
