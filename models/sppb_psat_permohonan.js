@@ -345,7 +345,14 @@ class SppbPsatPermohonanModel {
                         ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
                 } else {
                     proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT');
-                    if (code_proses == '20' || code_proses == '21') {
+                    if (code_proses == '10' || code_proses == '11') {
+                        history = await pool.query(
+                            ' SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
+                            ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
+                            ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
+                            ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan +
+                            ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
+                    } else if (code_proses == '20' || code_proses == '21') {
                         history = await pool.query(
                             ' SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
                             ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
