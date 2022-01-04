@@ -1,4 +1,5 @@
 const pool = require('../../libs/db');
+var moment = require('moment-timezone');
 
 const db_proses_audit = 'audit.proses_audit';
 const db_pengguna = 'pengguna.pengguna';
@@ -15,10 +16,8 @@ exports.limit_time = (limit)=> {
 }
 
 exports.date_now = ()=> {
-    var d = new Date();
-    var dd = d.getDate();var mm = d.getMonth() + 1;var y = d.getFullYear();var hour = d.getHours();var minute = d.getMinutes();var second = d.getSeconds();
-    var FormattedDate = y + '-'+ mm + '-'+ dd + ' ' + hour + ':'+ minute + ':'+ second;
-    return FormattedDate;
+    var date = moment().tz("Asia/jakarta").format();
+    return date;
 }
 
 exports.time_format = ()=> {
