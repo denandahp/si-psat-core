@@ -14,7 +14,7 @@ const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_proses_audit = schema_audit + '.' + '"proses_audit"';
 
 
-var date = new Date(Date.now());date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
+var date = check_query.date_now();
 
 class SppbPsatModel {
     async pengalihan_kepemilikan(data) {
@@ -38,6 +38,23 @@ class SppbPsatModel {
             return { status: '200', keterangan:"Pengalihan Kepemilikan SPPB PSAT", data: response };
         } catch (ex) {
             console.log(ex.message);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async add_pengalihan_info_perusahaan(data) {
+        try {
+            let data_info_perusahaan = [
+                data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
+                data.nama_pemilik_baru, data.alamat_pemilik_baru, date, date ]
+            let info_perusahaan = await pool.query(
+                format('INSERT INTO ' + db_info_perusahaan + 
+                ' (id_pengguna, nama_perusahaan, alamat_perusahaan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
+                `created, update) VALUES (%L) RETURNING *`, data_info_perusahaan))
+            // debug('get %o', res);
+            return { status: '200', keterangan: "Add Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
     }
@@ -87,6 +104,26 @@ class SppbPsatModel {
         };
     }
 
+    async update_pengalihan_info_perusahaan(data) {
+        try {
+            let data_info_perusahaan = [
+                data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
+                data.nama_pemilik_baru, data.alamat_pemilik_baru, date ]
+            let info_perusahaan = await pool.query(
+                format('UPDATE ' + db_info_perusahaan + 
+                ' SET (nama_perusahaan, alamat_perusahaan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
+                `update) = (%L) WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_info_perusahaan
+                )
+            )
+            check_query.check_queryset(info_perusahaan);
+            // debug('get %o', res);
+            return { status: '200', keterangan: "Update Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
     async get_pengalihan_kepemilikan(id, user) {
         try {
             let permohonan;
@@ -94,7 +131,7 @@ class SppbPsatModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan,  nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi,  id_info_perusahaan, nama_perusahaan, alamat_perusahaan,' +
-                    ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
+                    ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
                     ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'+
@@ -103,7 +140,7 @@ class SppbPsatModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, nomor_sppb_psat_baru, status_proses, status_aktif, created, update,'+
                     ' code_status_proses, surat_permohonan_pengalihan, surat_pernyataan, unit_produksi, id_info_perusahaan, nama_perusahaan, alamat_perusahaan,' +
-                    ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru'+
+                    ' status_kepemilikan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
                     ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'+
@@ -139,23 +176,6 @@ class SppbPsatModel {
         };
     }
 
-    async add_pengalihan_info_perusahaan(data) {
-        try {
-            let data_info_perusahaan = [
-                data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
-                data.nama_pemilik_baru, data.alamat_pemilik_baru, date, date ]
-            let info_perusahaan = await pool.query(
-                format('INSERT INTO ' + db_info_perusahaan + 
-                ' (id_pengguna, nama_perusahaan, alamat_perusahaan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
-                `created, update) VALUES (%L) RETURNING *`, data_info_perusahaan))
-            // debug('get %o', res);
-            return { status: '200', keterangan: "Add Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
-        } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
-        };
-    }
-
     async update_pengalihan_unit_produksi(data) {
         try {
             let data_unit_produksi = [
@@ -170,26 +190,6 @@ class SppbPsatModel {
             check_query.check_queryset(unit_produksi);
             // debug('get %o', res);
             return { status: '200', keterangan: "Update Pengalihan Kepemilikan Unit Produksi SPPB PSAT", data: unit_produksi.rows[0] };
-        } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
-        };
-    }
-
-    async update_pengalihan_info_perusahaan(data) {
-        try {
-            let data_info_perusahaan = [
-                data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
-                data.nama_pemilik_baru, data.alamat_pemilik_baru, date ]
-            let info_perusahaan = await pool.query(
-                format('UPDATE ' + db_info_perusahaan + 
-                ' SET (nama_perusahaan, alamat_perusahaan, nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru, '+
-                `update) = (%L) WHERE id = ${data.id} AND id_pengguna = ${data.id_pengguna} RETURNING *`, data_info_perusahaan
-                )
-            )
-            check_query.check_queryset(info_perusahaan);
-            // debug('get %o', res);
-            return { status: '200', keterangan: "Update Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

@@ -10,8 +10,7 @@ const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
 const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
 
 
-var date = new Date(Date.now());
-date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
+var date = check_query.date_now();
 
 
 class PsatPlPerubahanModel {
@@ -101,7 +100,15 @@ class PsatPlPerubahanModel {
             let response = {};
             let file_permohonan, perubahan_data;
 
-            //Create new file pemohonan
+            //Update pengajuan
+            let data_perubahan_data = [true, data.status_pengajuan, 10, date]
+            perubahan_data = await pool.query(
+                format('UPDATE ' + db_pengajuan +
+                    ` SET(status_aktif, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') `+
+                    `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan} RETURNING *`, data_perubahan_data)
+            );
+
+            //Update new file pemohonan
             let data_file_permohonan = [
                 data.surat_permohonan_izin_edar, data.sertifikat_izin_edar_sebelumnya,
                 data.surat_pernyataan, date
@@ -109,15 +116,7 @@ class PsatPlPerubahanModel {
             file_permohonan = await pool.query(
                 format('UPDATE ' + db_file_permohonan +
                     ' SET(surat_permohonan_izin_edar, sertifikat_izin_edar_sebelumnya, ' +
-                    `surat_pernyataan, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_file_permohonan} RETURNING *`, data_file_permohonan)
-            );
-
-            //Create pengajuan
-            let data_perubahan_data = [true, file_permohonan.rows[0].id, data.status_pengajuan, 10, date]
-            perubahan_data = await pool.query(
-                format('UPDATE ' + db_pengajuan +
-                    ` SET(status_aktif, file_permohonan, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') `+
-                    `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan} RETURNING *`, data_perubahan_data)
+                    `surat_pernyataan, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${perubahan_data.rows[0].file_permohonan} RETURNING *`, data_file_permohonan)
             );
             check_query.check_queryset(perubahan_data);
             check_query.check_queryset(file_permohonan);
