@@ -15,7 +15,7 @@ exports.limit_time = (limit)=> {
 }
 
 exports.date_now = ()=> {
-    var d = new Date(Date.now());
+    var d = new Date();
     var dd = d.getDate();var mm = d.getMonth() + 1;var y = d.getFullYear();var hour = d.getHours();var minute = d.getMinutes();var second = d.getSeconds();
     var FormattedDate = y + '-'+ mm + '-'+ dd + ' ' + hour + ':'+ minute + ':'+ second;
     return FormattedDate;
