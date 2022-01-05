@@ -1,226 +1,225 @@
 <html>
-    <br>
-        <head>
-            <meta http-equiv=Content-Type content="text/html">
-            <title>Sertifikat Izin Edar PSAT PL</title>
-            <style>
-                p,
-                br {
-                    line-height: 115%;
-                    font-family: "Bookman Old Style", serif;
-                    font-size: 12pt;
-                    margin: 0;
-                }
-                
-                .title p {
-                    font-weight: bold;
-                    text-align: center;
-                }
-                
-                .title .logo {
-                    text-align: center;
-                    margin-bottom: 24pt;
-                }
-                
-                .logo img {
-                    width: 87;
-                    height: 87;
-                }
-                
-                .body p {
-                    margin-bottom: 6pt;
-                }
-                
-                table {
-                    text-indent: initial;
-                    white-space: normal;
-                    line-height: 150%;
-                    font-weight: normal;
-                    font-size: 10pt;
-                    font-family: "Bookman Old Style", serif;
-                    font-style: normal;
-                    color: -internal-quirk-inherit;
-                    text-align: start;
-                    border-spacing: 2px;
-                    font-variant: normal;
-                    margin-left: 5.4pt;
-                    border-collapse: collapse
-                }
-                
-                tr.header {
-                    text-align: center;
-                }
-                
-                tr.data td.left {
-                    text-align: center;
-                }
-                
-                td {
-                    border: solid 1pt;
-                    padding: 0cm 5.4pt 0cm 5.4pt;
-                    height: 1.5pt;
-                }
-                
-                td.left {
-                    width: 21.25pt;
-                }
-                
-                td.center {
-                    width: 297.7pt;
-                }
-                
-                td.right {
-                    width: 6cm;
-                }
-            </style>
-        </head>
-    </br>
-    <body>
-        <div class="body">
-            <p>Lampiran berikut memuat data teknis Izin Edar Pangan Segar Asal Tumbuhan Produksi Luar Negeri (PSAT-PL):</p>
-            <table>
-                <tr class="header">
-                    <td class="left">No</td>
-                    <td class="center" colspan="2">INFORMASI PRODUK</td>
-                    <td class="right">URAIAN</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">1.</td>
-                    <td class="center" colspan="2">Nama PSAT:</td>
-                    <td class="right"></td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">1) Jenis PSAT</td>
-                    <td class="right">{{ jenis_psat }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">2) Nama Dagang</td>
-                    <td class="right">{{ nama_dagang }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">2.</td>
-                    <td class="center" colspan="2">Izin edar PSAT-PL</td>
-                    <td class="right"></td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">a. No izin edar PSAT-PL</td>
-                    <td class="right">{{ nomor_izin_edar }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">b. Berlaku Sampai dengan</td>
-                    <td class="right">{{ expire_izin_edar }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">3.</td>
-                    <td class="center" colspan="2">Nama latin</td>
-                    <td class="right">{{ nama_latin }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">4.</td>
-                    <td class="center" colspan="2">Negara asal</td>
-                    <td class="right">{{ negara_asal }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">5.</td>
-                    <td class="center" colspan="2">Nama merk</td>
-                    <td class="right">{{ nama_merk }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left" rowspan="2">6.</td>
-                    <td  rowspan="2">Jenis Kemasan</td>
-                    <td class="right">Lama</td>
-                    <td class="right">{{ kemasan_lama }}</td>
-                </tr>
-                <tr class="data">
-                    <td >Baru</td>
-                    <td class="right">{{ kemasan_baru }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left" rowspan="2">7.</td>
-                    <td rowspan="2">Berat Bersih</td>
-                    <td class="right">Lama</td>
-                    <td class="right">{{ berat_bersih_lama }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="right">Baru</td>
-                    <td class="right">{{ berat_bersih_baru }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">8.</td>
-                    <td class="center" colspan="2">Unit Penaganan PSAT</td>
-                    <td class="right"></td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">1) Nama unit penganganan PSAT</td>
-                    <td class="right">{{ nama_unit_penanganan }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">2) Alamat</td>
-                    <td class="right">{{ alamat_unitt }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">3) Status kepemilikan (sewa/milik sendiri)</td>
-                    <td class="right">{{ status_kepemilikan }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">4)SPPB-PSAT</td>
-                    <td class="right"></td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">a. Nomor</td>
-                    <td class="right">{{ nomor_psat_sebelumnya }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">b. Level</td>
-                    <td class="right">{{ level_psat }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">c. Masa berlaku</td>
-                    <td class="right">{{ masa_berlaku }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center" colspan="2">d. Ruang lingkup</td>
-                    <td class="right">{{ ruang_lingkup }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">9.</td>
-                    <td class="center" colspan="2">Kelas mutu</td>
-                    <td class="right">{{ kelas_mutu }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">10.</td>
-                    <td class="center" colspan="2">Jenis klaim</td>
-                    <td class="right">{{ jenis_klaim }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">11.</td>
-                    <td class="center" colspan="2">Desain kemasan lama</td>
-                    <td class="right">{{ desain_lama }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">12.</td>
-                    <td class="center" colspan="2">Desain kemasan baru</td>
-                    <td class="right">{{ desain_baru }}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left">13.</td>
-                    <td class="center" colspan="2">Desain label baru</td>
-                    <td class="right">{{ label_baru }}</td>
-                </tr>
-            </table>
-            <p>*Unit penanganan psat ditulis lebih dari satu</p>
-        </div>
-    </body>
+<br>
+
+<head>
+    <meta http-equiv=Content-Type content="text/html">
+    <title>Sertifikat Izin Edar PSAT PL</title>
+    <style>
+        p,
+        br {
+            line-height: 115%;
+            font-family: "Bookman Old Style", serif;
+            font-size: 12pt;
+            margin: 0;
+        }
+        
+        .title p {
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .title .logo {
+            text-align: center;
+            margin-bottom: 24pt;
+        }
+        
+        .logo img {
+            width: 87;
+            height: 87;
+        }
+        
+        .body p {
+            margin-bottom: 6pt;
+        }
+        
+        table {
+            text-indent: initial;
+            white-space: normal;
+            line-height: 150%;
+            font-weight: normal;
+            font-size: 10pt;
+            font-family: "Bookman Old Style", serif;
+            font-style: normal;
+            color: -internal-quirk-inherit;
+            text-align: start;
+            border-spacing: 2px;
+            font-variant: normal;
+            margin-left: 5.4pt;
+            border-collapse: collapse
+        }
+        
+        tr.header {
+            text-align: center;
+        }
+        
+        tr.data td.left {
+            text-align: center;
+        }
+        
+        td {
+            border: solid 1pt;
+            padding: 0cm 5.4pt 0cm 5.4pt;
+            height: 1.5pt;
+        }
+        
+        td.left {
+            width: 21.25pt;
+        }
+        
+        td.center {
+            width: 297.7pt;
+        }
+        
+        td.right {
+            width: 6cm;
+        }
+    </style>
+</head>
+</br>
+
+<body>
+    <div class="body">
+        <p>Lampiran berikut memuat data teknis Izin Edar Pangan Segar Asal Tumbuhan Produksi Luar Negeri (PSAT-PL):</p>
+        <table>
+            <tr class="header">
+                <td class="left">No</td>
+                <td class="center" colspan="2">INFORMASI PRODUK</td>
+                <td class="right">URAIAN</td>
+            </tr>
+            <tr class="data">
+                <td class="left">1.</td>
+                <td class="center" colspan="2">Nama PSAT:</td>
+                <td class="right"></td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">1) Jenis PSAT</td>
+                <td class="right">{{ jenis_psat }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">2) Nama Dagang</td>
+                <td class="right">{{ nama_dagang }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">2.</td>
+                <td class="center" colspan="2">Izin edar PSAT-PL</td>
+                <td class="right"></td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">a. No izin edar PSAT-PL</td>
+                <td class="right">{{ nomor_izin_edar }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">b. Berlaku Sampai dengan</td>
+                <td class="right">{{ berlaku_sampai }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">3.</td>
+                <td class="center" colspan="2">Nama latin</td>
+                <td class="right">{{ nama_latin }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">4.</td>
+                <td class="center" colspan="2">Negara asal</td>
+                <td class="right">{{ negara_asal }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">5.</td>
+                <td class="center" colspan="2">Nama merk</td>
+                <td class="right">{{ nama_merk }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left" rowspan="2">6.</td>
+                <td rowspan="2">Jenis Kemasan</td>
+                <td class="right">Lama</td>
+                <td class="right">{{ jenis_kemasan_lama }}</td>
+            </tr>
+            <tr class="data">
+                <td>Baru</td>
+                <td class="right">{{ jenis_kemasan_baru }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left" rowspan="2">7.</td>
+                <td rowspan="2">Berat Bersih</td>
+                <td class="right">Lama</td>
+                <td class="right">{{ berat_bersih_lama }}</td>
+            </tr>
+            <tr class="data">
+                <td class="right">Baru</td>
+                <td class="right">{{ berat_bersih_baru }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">8.</td>
+                <td class="center" colspan="2">Unit Penaganan PSAT</td>
+                <td class="right"></td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">1) Nama unit penganganan PSAT</td>
+                <td class="right">{{ nama_unit }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">2) Alamat</td>
+                <td class="right">{{ alamat_unitt }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">3) Status kepemilikan (sewa/milik sendiri)</td>
+                <td class="right">{{ status_kepemilikan }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">4)SPPB-PSAT</td>
+                <td class="right"></td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">a. Nomor</td>
+                <td class="right">{{ sppb_psat_nomor }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">b. Level</td>
+                <td class="right">{{ sppb_psat_level }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">c. Masa berlaku</td>
+                <td class="right">{{ sppb_psat_masa_berlaku }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center" colspan="2">d. Ruang lingkup</td>
+                <td class="right">{{ sppb_psat_ruang_lingkup }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">9.</td>
+                <td class="center" colspan="2">Kelas mutu</td>
+                <td class="right">{{ kelas_mutu }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">10.</td>
+                <td class="center" colspan="2">Jenis klaim</td>
+                <td class="right">{{ jenis_klaim }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">11.</td>
+                <td class="center" colspan="2">Desain kemasan lama</td>
+                <td class="right">{{ desain_tabel_dan_kemasan }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left">12.</td>
+                <td class="center" colspan="2">Desain kemasan baru</td>
+                <td class="right">{{ desain_tabel_dan_kemasan_baru }}</td>
+            </tr>
+
+        </table>
+        <p>*Unit penanganan psat ditulis lebih dari satu</p>
+    </div>
+</body>
+
 </html>

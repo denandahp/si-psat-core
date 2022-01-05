@@ -50,6 +50,7 @@ class sppbGenerator {
                 view_only: true,
                 message: "Sertifikat SPPB-PSAT",
                 type: 'PENGALIHAN',
+                path: sertifikat_psat.final_sertifikat,
                 data: data
             }
         } else {
@@ -74,16 +75,24 @@ class sppbGenerator {
             ////////////////////////////////////////////////////
             // EXPORT TO PDF //
             ///////////////////////////////////////////////////
+            let filename = await 'sertifikat/sppb-psat/pengalihan-' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.nomor_sppb_psat + '.pdf'
+            const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_PSAT_PENGALIHAN_KEPEMILIKAN.html')
 
+            const content = await ReadFile(templatePath, 'utf8')
+                // compile and render the template with handlebars
+            const template = Handlebars.compile(content)
+
+            const pdf = await generatePdf.pdf(template(data), filename);
+            let path_sertifikat = url + filename
 
 
             //////////////////////////////////////////////////
             // UPDATE DATA //
             /////////////////////////////////////////////////
-            let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, def.level, def.ruang_lingkup, masa_berlaku, date, def.nama_unit_penanganan, def.alamat_unit_penanganan];
+            let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.level, def.ruang_lingkup, masa_berlaku, date, def.nama_unit_penanganan, def.alamat_unit_penanganan];
             let pengajuan = await pool.query(
                 'UPDATE ' + db_pengajuan_sppb_psat +
-                ' SET ( level, ruang_lingkup, masa_berlaku, update, nama_unit_penanganan, alamat_unit_penanganan) = ($3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
+                ' SET (final_sertifikat, level, ruang_lingkup, masa_berlaku, update, nama_unit_penanganan, alamat_unit_penanganan) = ($3, $4, $5, $6, $7, $8, $9) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
                 'RETURNING *', data_pengajuan);
 
             let data_perushaaan = [sertifikat_psat.id_info_perusahaan, sertifikat_psat.id_pengguna, def.nama_pemilik_lama, def.alamat_pemilik_lama, def.nama_perusahaan, def.nama_pemilik_baru, def.alamat_pemilik_baru, def.status_kepemilikan, date];
@@ -96,6 +105,7 @@ class sppbGenerator {
                 view_only: false,
                 message: "Sertifikat SPPB-PSAT",
                 type: 'PENGALIHAN',
+                path: path_sertifikat,
                 data: data
             }
         }
@@ -155,7 +165,7 @@ class sppbGenerator {
             // EXPORT TO PDF //
             ///////////////////////////////////////////////////
 
-            let filename = await 'sertifikat/sppb-psat/' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.nomor_sppb_psat + '.pdf'
+            let filename = await 'sertifikat/sppb-psat/permohonan-' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.nomor_sppb_psat + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_PSAT.html')
 
             const content = await ReadFile(templatePath, 'utf8')

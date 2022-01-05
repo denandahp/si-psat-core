@@ -72,6 +72,9 @@ class generatePdfController {
             } else if (type == 'PERUBAHAN') {
                 result = await izinedarGenerator.perubahandata(sertifikat_pl, unit_produksi, def, req.method)
                 res.status(200).json(result)
+            } else {
+                result = await izinedarGenerator.pengalihan(sertifikat_pl, unit_produksi, def, req.method)
+                res.status(200).json(result)
             }
 
             //} catch (e) {
