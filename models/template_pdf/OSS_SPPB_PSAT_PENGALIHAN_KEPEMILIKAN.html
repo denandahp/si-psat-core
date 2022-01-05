@@ -72,16 +72,22 @@
                 td.right {
                     width: 6cm;
                 }
+
+                td.sub_header {
+                    width: 15mm;
+                    height: 20.7mm;
+                    table-layout:fixed;
+                }
             </style>
         </head>
     </br>
     <body>
         <div class="body">
-            <p>Lampiran berikut memuat data teknis Izin Edar Pangan Segar Asal Tumbuhan Produksi Luar Negeri (PSAT-PL):</p>
+            <p>Lampiran data teknis pengalihan kepemilikan Sertifikat Penerapan Penanganan yang Baik Pangan Segar Asal Tumbuhan (SPPB-PSAT):</p>
             <table>
                 <tr class="header">
                     <td class="left">No</td>
-                    <td class="center">Informasi Produk</td>
+                    <td class="center">Informasi Unit Penanganan PSAT</td>
                     <td class="right">Uraian</td>
                 </tr>
                 <tr class="data">
@@ -102,7 +108,7 @@
                 <tr class="data">
                     <td class="left"></td>
                     <td class="center">3) Alamat kantor</td>
-                    <td class="right">{{alam_pemilik_lama}}</td>
+                    <td class="right">{{alamat_pemilik_lama}}</td>
                 </tr>
                 <tr class="data">
                     <td class="left">2. </td>
@@ -124,91 +130,36 @@
                     <td class="center">3) Alamat kantor</td>
                     <td class="right">{{alam_pemilik_baru}}</td>
                 </tr>
-                <tr class="data">
-                    <td class="left">3. </td>
-                    <td class="center">Unit Penanganan PSAT</td>
-                    <td class="right"></td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">1) Nama unit penanganan psat</td>
-                    <td class="right">{{nama_unit_psat}}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">2) Alamat</td>
-                    <td class="right">{{alamat_psat_sebelumnya}}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">3) Status kepemilikan(sewa/milik sendiri)</td>
-                    <td class="right">{{status_kepemilikan}}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">4) SPPB-PSAT </td>
-                    <td class="right">{{nama_psat_sebelumnya}}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">&nbsp a. Nomor </td>
-                    <td class="right">{{nomor_psat_sebelumnya}}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">&nbsp b. level </td>
-                    <td class="right">{{level_psat_sebelumnya}}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">&nbsp c. Masa berlaku </td>
-                    <td class="right">{{expire_psat_sebelumnya}}</td>
-                </tr>
-                <tr class="data">
-                    <td class="left"></td>
-                    <td class="center">&nbsp d. Ruang lingkup</td>
-                    <td class="right">{{ruang_lingkup_psat_sebelumnya}}</td>
-                </tr>
             </table>
-            <p>*Unit penanganan psat ditulis lebih dari satu</p>
         </div>
-        <br>
+        <br><br>
         <div class="body">
             <table>
-                <thead>
                     <tr class="header">
-                        <td colspan="9">DATA IZIN EDAR PSAT_PL YANG DIALIHKAN</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="header">
-                        <td rowspan="2">No</td>
-                        <td rowspan="2">No Izin Edar<br>PSAT-PL</td>
-                        <td rowspan="2">Masa <br>Berlaku</td>
-                        <td colspan="2">Nama Psat</td>
-                        <td rowspan="2">Negara<br>Asal</td>
-                        <td rowspan="2">Jenis<br>Kemasan</td>
-                        <td rowspan="2">Berat<br>Bersih</td>
-                        <td rowspan="2">Kelas<br>Mutu</td>
+                        <td colspan="8">DATA PENGALIHAN KEPEMILIKA SPPB-PSAT</td>
                     </tr>
                     <tr class="header">
-                        <td>Jenis PSAT</td>
-                        <td>Nama/Merk<br>Dagang</td>
+                        <td class="left">No</td>
+                        <td class="sub_header">Nama Unit <br> Penanganan<br>PSAT yang<br>Dialihkan</td>
+                        <td class="left">Alamat Unit <br>Penanganan<br>PSAT yang<br> Dialihkan</td>
+                        <td class="left">Status<br>Kepemilikan<br>(sewa/milik sendiri)</td>
+                        <td class="left">Nomor<br>SPPB-PSAT</td>
+                        <td class="left">Level<br>SPPB-PSAT</td>
+                        <td class="left">Ruang<br>Lingkup</td>
+                        <td class="left">Berlaku<br>Sampai<br>Dengan</td>
                     </tr>
                     <div class="data" id="data_input">
                         <tr>
                             <td>1.</td>
-                            <td>{{ nomor_izin_edar }}</td>
-                            <td>{{ masa_berlaku }}</td>
-                            <td>{{ jenis_psat }}</td>
-                            <td>{{ nama_dagang }}</td>
-                            <td>{{ negara_asal }}</td>
-                            <td>{{ jenis_kemasan }}</td>
-                            <td>{{ berat_bersih}}</td>
-                            <td>{{ kelas_mutu }}</td>
+                            <td>{{ nama_unit_penanganan }}</td>
+                            <td>{{ alamat_unit_penanganan }}</td>
+                            <td>{{ status_kepemilikan }}</td>
+                            <td>{{ nomor_psat_sebelumnya }}</td>
+                            <td>{{ level_psat_sebelumnya }}</td>
+                            <td>{{ ruang_lingkup }}</td>
+                            <td>{{ expire_psat_sebelumnya }}</td>
                         </tr>
                     </div>
-                </tbody>
             </table>
         </div>
     </body>
