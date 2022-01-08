@@ -220,8 +220,9 @@ exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
             id_pengguna.forEach(mapping_id)
             id_pengguna.concat(query_pengajuan.rows[0].id_pengguna)
         }else{
-            id_pengguna = query_pengajuan.rows[0].id_pengguna
+            id_pengguna = [query_pengajuan.rows[0].id_pengguna]
         }
+        console.log(id_pengguna)
         for(let i=0;i<id_pengguna.length;i++){
             let data_notifikasi = [id_pengguna[i], id_pengajuan, jenis_pengajuan, pesan, this.date_now(), this.date_now()]
             await pool.query(
