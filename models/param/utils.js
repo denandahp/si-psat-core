@@ -194,16 +194,18 @@ exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
             arr[index] = item.id
         }
 
-        let pesan, query_pengajuan, superadmin, id_pengguna =[];
+        let pesan, query_pengajuan, superadmin, id_pengguna =[], jenis_permohonan;
         //-------------------------- Generate Pesan Notifikasi ---------------------------------------
         if(jenis_pengajuan == 'SPPB_PSAT'){
             query_pengajuan = await pool.query('SELECT * FROM ' + db_history_sppb + ' WHERE id_pengajuan=$1', [id_pengajuan]);
             pesan = capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) + ' ' + query_pengajuan.rows[0].jenis_permohonan.toLowerCase() +
                     ' SPPB PSAT dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
+            jenis_permohonan = query_pengajuan.rows[0].jenis_permohonan.toLowerCase();
         }else if (jenis_pengajuan == 'IZIN_EDAR'){
             query_pengajuan = await pool.query('SELECT * FROM ' + db_history_izin_edar + ' WHERE id_pengajuan=$1', [id_pengajuan]);
             pesan = capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) + ' ' + query_pengajuan.rows[0].status_pengajuan.toLowerCase() +
                     ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
+            jenis_permohonan = query_pengajuan.rows[0].status_pengajuan.toLowerCase();
         }
     
         //-------------------------- Plotting Id Pengguna ---------------------------------------
@@ -222,12 +224,11 @@ exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
         }else{
             id_pengguna = [query_pengajuan.rows[0].id_pengguna]
         }
-        console.log(id_pengguna)
         for(let i=0;i<id_pengguna.length;i++){
-            let data_notifikasi = [id_pengguna[i], id_pengajuan, jenis_pengajuan, pesan, this.date_now(), this.date_now()]
+            let data_notifikasi = [id_pengguna[i], id_pengajuan, jenis_pengajuan, jenis_permohonan, pesan, this.date_now(), this.date_now()]
             await pool.query(
-            ' INSERT INTO ' + db_notifikasi + ' (id_pengguna, id_pengajuan, jenis_pengajuan, keterangan, created, update) '+
-            ' VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', data_notifikasi);
+            ' INSERT INTO ' + db_notifikasi + ' (id_pengguna, id_pengajuan, jenis_pengajuan, jenis_permohonan, keterangan, created, update) '+
+            ' VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', data_notifikasi);
         }
         return pesan;
     }catch(err){
