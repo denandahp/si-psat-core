@@ -15,6 +15,7 @@ const proc_dokumen_ditolak = schemapet + '.' + '"dokumen_psat_ditolak"';
 const db_history_audit = schemapet + '.' + '"history_audit_psat"';
 const db_proses_audit = schemapet + '.' + '"proses_audit"';
 const db_history_pengajuan = schema + '.' + '"history_all_pengajuan"';
+const db_history_sppb = 'sppb_psat.history_all_pengajuan';
 
 
 var date = new Date(Date.now());
@@ -30,8 +31,10 @@ class PsatPlPerubahanModel {
                 data.id_pengajuan, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
             ];
             permohonan_baru = await pool.query(format('CALL ' + proc_permohonan_baru + ' (%L)', data_permohonan_baru));
-
-            return { status: '200', ketarangan: `${data.proses} Permohonan Baru SPPB PSAT `, data: permohonan_baru.rows[0] };
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
+            return {status: '200',
+                    ketarangan: `${data.proses} Permohonan Baru SPPB PSAT `, 
+                    data: permohonan_baru.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -47,7 +50,7 @@ class PsatPlPerubahanModel {
             penunjukan_tim_audit = await pool.query(
                 format('CALL ' + proc_tim_audit + `(%L,'{${data.lead_auditor}}' , '{${data.tim_auditor}}', `+
                 ` '${JSON.stringify(data.keterangan)}' )`, data_penunjukan_tim_audit));
-
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: "Penunjukkan Tim Audit", data: penunjukan_tim_audit.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -70,7 +73,7 @@ class PsatPlPerubahanModel {
                 ];
                 audit_dokumen = await pool.query(format('CALL ' + proc_audit_doc + ' (%L)', data_audit_dokumen));
             }
-
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: `${data.proses} AUDIT DOCUMENT `, data: audit_dokumen.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -91,6 +94,7 @@ class PsatPlPerubahanModel {
                 data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
                 audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
             }
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: `${data.proses} AUDIT LAPANG `, data: audit_lapang.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -104,6 +108,7 @@ class PsatPlPerubahanModel {
             let data_penunjukan_tim_komtek = [data.id_pengajuan, data.tanggal_penugasan, data.surat_tugas];
             penunjukan_tim_komtek = await pool.query(
                 format('CALL ' + proc_tim_komtek + ` (%L, '{${data.lead_komtek}}', '{${data.tim_komtek}}')`, data_penunjukan_tim_komtek));
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: "Penunjukkan Tim Komtek", data: penunjukan_tim_komtek.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -116,6 +121,7 @@ class PsatPlPerubahanModel {
             let sidang_komtek, data_sidang_komtek;
             data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: `${data.proses} SIDANG KOMTEK `, data: sidang_komtek.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -129,6 +135,7 @@ class PsatPlPerubahanModel {
             data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.keterangan, data.bukti_pembayaran];
 
             pembayaran_pnbp = await pool.query(format('CALL ' + proc_pembayaran_pnbp + ' (%L)', data_pembayaran_pnbp));
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { 
                 status: '200',
                 ketarangan: `${data.proses} PEMBAYARAN PNBP SPPB PSAT id ${data.id_pengajuan}`,
@@ -144,6 +151,7 @@ class PsatPlPerubahanModel {
             let dokumen_ditolak, data_dokumen_ditolak;
             data_dokumen_ditolak = [data.id_pengajuan, data.proses, data.dokumen_ditolak, data.keterangan];
             dokumen_ditolak = await pool.query(format('CALL ' + proc_dokumen_ditolak + ' (%L)', data_dokumen_ditolak));
+            await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { 
                 status: '200',
                 ketarangan: `${data.proses} DOKUMEN SPPB PSAT DITOLAK id ${data.id_pengajuan}`,

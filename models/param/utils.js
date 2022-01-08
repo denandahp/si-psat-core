@@ -3,6 +3,11 @@ var moment = require('moment-timezone');
 
 const db_proses_audit = 'audit.proses_audit';
 const db_pengguna = 'pengguna.pengguna';
+const db_notifikasi = 'notifikasi.notifikasi';
+const db_history_sppb = 'sppb_psat.history_all_pengajuan';
+const db_history_izin_edar = 'izin_edar.history_all_pengajuan';
+const db_sekretariat = 'pengguna.list_sekretariat';
+
 
 
 
@@ -171,9 +176,60 @@ exports.pagination = async (page_query, limit_query, filter, data, query_select,
     res = await pool.query(`SELECT ${query_select} FROM ${database} WHERE ${filter} ORDER BY created DESC OFFSET ${startIndex} LIMIT ${limit};`,data);
     results.query = res.rows;
     results.date = d;
-    return results;
+        return results;
     }catch(ex){
-    console.log('Enek seng salah iki ' + ex);
-    return {"error": "data" + ex, "res" : err};
+        console.log('Enek seng salah iki ' + ex);
+        return {"error": "data" + ex, "res" : err};
     };
+}
+
+exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
+    try{
+        function capitalizeFirstLetter(string) {
+            let lower_string = string.toLowerCase()
+            return lower_string[0].toUpperCase() + lower_string.slice(1);
+        }
+    
+        function mapping_id(item, index, arr) {
+            arr[index] = item.id
+        }
+
+        let pesan, query_pengajuan, superadmin, id_pengguna =[];
+        //-------------------------- Generate Pesan Notifikasi ---------------------------------------
+        if(jenis_pengajuan == 'SPPB_PSAT'){
+            query_pengajuan = await pool.query('SELECT * FROM ' + db_history_sppb + ' WHERE id_pengajuan=$1', [id_pengajuan]);
+            pesan = capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) + ' ' + query_pengajuan.rows[0].jenis_permohonan.toLowerCase() +
+                    ' SPPB PSAT dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
+        }else if (jenis_pengajuan == 'IZIN_EDAR'){
+            query_pengajuan = await pool.query('SELECT * FROM ' + db_history_izin_edar + ' WHERE id_pengajuan=$1', [id_pengajuan]);
+            pesan = capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) + ' ' + query_pengajuan.rows[0].status_pengajuan.toLowerCase() +
+                    ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
+        }
+    
+        //-------------------------- Plotting Id Pengguna ---------------------------------------
+        if(query_pengajuan.rows[0].code_status_proses == 10 || 40 || 50 || 60){
+            superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+            id_pengguna = superadmin.rows
+            id_pengguna.forEach(mapping_id)
+        }else if(query_pengajuan.rows[0].code_status_proses == 20 || 30){
+            id_pengguna = query_pengajuan.rows[0].tim_auditor
+            id_pengguna.concat(query_pengajuan.rows[0].lead_auditor)
+        }else if(query_pengajuan.rows[0].code_status_proses == 70){
+            superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+            id_pengguna = superadmin.rows
+            id_pengguna.forEach(mapping_id)
+            id_pengguna.concat(query_pengajuan.rows[0].id_pengguna)
+        }else{
+            id_pengguna = query_pengajuan.rows[0].id_pengguna
+        }
+        for(let i=0;i<id_pengguna.length;i++){
+            let data_notifikasi = [id_pengguna[i], id_pengajuan, jenis_pengajuan, pesan, this.date_now(), this.date_now()]
+            await pool.query(
+            ' INSERT INTO ' + db_notifikasi + ' (id_pengguna, id_pengajuan, jenis_pengajuan, keterangan, created, update) '+
+            ' VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', data_notifikasi);
+        }
+        return pesan;
+    }catch(err){
+        throw new Error(err.message);
+    }
 }

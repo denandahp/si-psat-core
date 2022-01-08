@@ -84,6 +84,8 @@ const psat_pl_audit = require('./routes/psat_pl_audit.js');
 const oss = require('./routes/oss.js');
 const upload_file = require('./routes/upload.js');
 const sertifikat = require('./routes/sertifikat.js');
+const notifikasi = require('./routes/notifikasi.js');
+
 
 app.use('/', index);
 app.use('/api/user', user);
@@ -98,7 +100,8 @@ app.use('/api/psat/pl', past_pl_perubahan)
 app.use('/api/psat/pl', psat_pl_audit)
 app.use('/api/oss', oss)
 app.use('/api/upload', upload_file)
-app.use('/api/sertifikat', sertifikat);
+app.use('/api/sertifikat', sertifikat)
+app.use('/api/notifikasi', notifikasi);
 
 
 // Error Middleware

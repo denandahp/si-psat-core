@@ -16,6 +16,7 @@ var date = check_query.date_now();
 
 class SppbPsatModel {
     async penambahan_ruang_lingkup(data) {
+        let pengajuan;
         try {
             let response = {};
             let data_info_perusahaan = [data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, date, date]
@@ -40,7 +41,7 @@ class SppbPsatModel {
             let data_pengajuan = [data.id_pengguna, 'PENAMBAHAN', 10, data.status_aktif, 
                                   data.ruang_lingkup, file_permohonan.rows[0].id, 
                                   sertifikat.rows[0].id, data.unit_produksi, info_perusahaan.rows[0].id, date, date];
-            let pengajuan = await pool.query(
+            pengajuan = await pool.query(
                 'INSERT INTO ' + db_pengajuan +
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, info_perusahaan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *', data_pengajuan);
@@ -48,9 +49,14 @@ class SppbPsatModel {
             response.file_permohonan = file_permohonan.rows[0];
             response.sertifikat = sertifikat.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
+            let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
             debug('get %o', response);
-            return { status: '200', keterangan:"Penambahan Ruang Lingkup SPPB PSAT", data: response };
+            return { status: '200', keterangan:"Penambahan Ruang Lingkup SPPB PSAT", notifikasi: notif, data: response };
         } catch (ex) {
+            let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
+            await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].info_perusahaan]);
+            await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
+            await pool.query('DELETE FROM ' + db_sertifikat + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].sertifikat]);
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -94,10 +100,12 @@ class SppbPsatModel {
             response.sertifikat = sertifikat.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
             debug('get %o', response);
-            return { status: '200', keterangan:"Update Penambahan Ruang Lingkup SPPB PSAT", data: response };
+            return {status: '200', 
+                    keterangan:"Update Penambahan Ruang Lingkup SPPB PSAT",
+                    data: response };
         } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
+            console.log('Enek seng salah iki ' + ex.message);
+            return { status: '400', Error: "" + ex.message };
         };
     }
 

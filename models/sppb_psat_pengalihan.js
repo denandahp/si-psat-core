@@ -12,12 +12,13 @@ const db_unit_produksi = schema + '.' + '"unit_produksi"';
 const db_history_pengajuan = schema + '.' + '"history_all_pengajuan"';
 const db_file_permohonan = schema + '.' + '"file_permohonan"';
 const db_proses_audit = schema_audit + '.' + '"proses_audit"';
-
+const db_sertifikat = schema + '.' + '"sertifikat_psat"';
 
 var date = check_query.date_now();
 
 class SppbPsatModel {
     async pengalihan_kepemilikan(data) {
+        let pengajuan;
         try {
             let response = {};
             let data_file_permohonan = [data.id_pengguna, data.surat_permohonan_pengalihan, data.surat_pernyataan, date, date];
@@ -27,14 +28,13 @@ class SppbPsatModel {
                 ' VALUES ($1, $2, $3, $4, $5) RETURNING *', data_file_permohonan);
             let data_pengajuan = [
                 data.id_pengguna, 'PENGALIHAN', 10, data.status_aktif, file_permohonan.rows[0].id,
-                data.info_perusahaan, data.unit_produksi, date, date
-            ];
-            let pengajuan = await pool.query(
-                'INSERT INTO ' + db_pengalihan +
+                data.info_perusahaan, data.unit_produksi, date, date];
+            pengajuan = await pool.query(
+                'INSERT INTO ' + db_pengalihan + 
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, file_permohonan, info_perusahaan, ' +
                 'unit_produksi, created, update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_pengajuan);
 
-            let create_sertifikat = await await pool.query(
+            let create_sertifikat = await pool.query(
                 'INSERT INTO ' + db_sertifikat +
                 ' (id_pengguna, id_pengajuan)' +
                 ' VALUES ($1, $2) RETURNING *', [data.id_pengguna, pengajuan.rows[0].id]);
@@ -42,10 +42,14 @@ class SppbPsatModel {
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.create_sertifikat = create_sertifikat.rows[0];
-            debug('get %o', response);
-            return { status: '200', keterangan: "Pengalihan Kepemilikan SPPB PSAT", data: response };
+            let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
+            debug('get %o',response);
+            return { status: '200', keterangan:"Pengalihan Kepemilikan SPPB PSAT", notifikasi: notif, data: response };
         } catch (ex) {
-            console.log(ex.message);
+            let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengalihan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
+            await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].info_perusahaan]);
+            await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
+            console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
     }

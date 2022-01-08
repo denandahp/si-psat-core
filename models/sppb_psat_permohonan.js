@@ -19,6 +19,7 @@ var date = check_query.date_now();
 
 class SppbPsatPermohonanModel {
     async permohonan_awal(data) {
+        let pengajuan;
         try {
             let response = {}
             let data_info_perusahaan = [data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, date, date]
@@ -36,12 +37,12 @@ class SppbPsatPermohonanModel {
             let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', 10, data.status_aktif, data.ruang_lingkup,
                 file_permohonan.rows[0].id, data.unit_produksi, info_perusahaan.rows[0].id, date, date
             ];
-            let pengajuan = await pool.query(
+            pengajuan = await pool.query(
                 'INSERT INTO ' + db_pengajuan +
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, unit_produksi, info_perusahaan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', data_pengajuan);
 
-            let create_sertifikat = await await pool.query(
+            let create_sertifikat = await pool.query(
                 'INSERT INTO ' + db_sertifikat +
                 ' (id_pengguna, id_pengajuan)' +
                 ' VALUES ($1, $2) RETURNING *', [data.id_pengguna, pengajuan.rows[0].id]);
@@ -50,11 +51,18 @@ class SppbPsatPermohonanModel {
             response.file_permohonan = file_permohonan.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
             response.create_sertifikat = create_sertifikat.rows[0];
+            let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
             debug('get %o', response);
-            return { status: '200', keterangan: "Permohonan Awal SPPB PSAT", data: response };
+            return {status: '200', 
+                    keterangan: "Permohonan Awal SPPB PSAT",
+                    notifikasi: notif,
+                    data: response };
         } catch (ex) {
-            console.log(ex.message);
-            return { status: '400', Error: "" + ex };
+            pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
+            await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].info_perusahaan]);
+            await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].file_permohonan]);
+            await pool.query('DELETE FROM ' + db_sertifikat + ' WHERE id_pengajuan = $1 RETURNING *', [pengajuan.rows[0].id]);
+            return { status: '400', Error: ex.message };
         };
     }
 

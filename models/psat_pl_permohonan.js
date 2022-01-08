@@ -17,10 +17,9 @@ var date = check_query.date_now();
 
 class PsatPlPermohonanModel {
     async permohonan_izin(data) {
+        let file_permohonan, pengajuan;
         try {
             let response = {};
-            let file_permohonan, pengajuan;
-
             //Create new file pemohonan
             let data_file_permohonan = [data.id_pengguna, data.surat_permohonan_izin_edar, date, date];
             file_permohonan = await pool.query(
@@ -37,10 +36,13 @@ class PsatPlPermohonanModel {
 
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
+            let notif = await check_query.send_notification(pengajuan.rows[0].id, 'IZIN_EDAR');
 
             // debug('get %o', response);
-            return { status: '200', permohohan: "Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", data: response };
+            return { status: '200', permohohan: "Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", notifikasi: notif, data: response };
         } catch (ex) {
+            let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
+            await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
