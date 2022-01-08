@@ -207,11 +207,11 @@ exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
         }
     
         //-------------------------- Plotting Id Pengguna ---------------------------------------
-        if(query_pengajuan.rows[0].code_status_proses == 10 || 40 || 50 || 60){
+        if(query_pengajuan.rows[0].code_status_proses in [10, 40, 50, 60]){
             superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
             id_pengguna = superadmin.rows
             id_pengguna.forEach(mapping_id)
-        }else if(query_pengajuan.rows[0].code_status_proses == 20 || 30){
+        }else if(query_pengajuan.rows[0].code_status_proses in [20, 30]){
             id_pengguna = query_pengajuan.rows[0].tim_auditor
             id_pengguna.concat(query_pengajuan.rows[0].lead_auditor)
         }else if(query_pengajuan.rows[0].code_status_proses == 70){
