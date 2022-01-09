@@ -27,11 +27,11 @@ class SppbPsatModel {
                 ' VALUES ($1, $2, $3, $4, $5) RETURNING *', data_info_perusahaan);
             let data_sertifikat = [data.id_pengguna, data.nomor_sppb_psat, 
                                    data.level, data.ruang_lingkup_sppb_psat, data.masa_berlaku, 
-                                   data.surat_pemeliharaan_psat, date, date]
+                                   data.surat_pemeliharaan_psat, data.sertifikat_sppb_psat_sebelumnya, date, date]
             let sertifikat = await pool.query(
                 'INSERT INTO ' + db_sertifikat + 
-                ' (id_pengguna, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, created, update)' +
-                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', data_sertifikat);
+                ' (id_pengguna, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, sertifikat_sppb_psat_sebelumnya, created, update)' +
+                ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', data_sertifikat);
             let data_file_pemohonan = [data.id_pengguna, data.denah_ruangan_psat, data.diagram_alir_psat,
                                        data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, 
                                        data.sertifikat_jaminan_keamanan_pangan, date, date]
@@ -83,11 +83,11 @@ class SppbPsatModel {
                 ' = ($3, $4, $5) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_info_perusahaan);
             let data_sertifikat = [data.id_pengguna, pengajuan.rows[0].sertifikat, data.nomor_sppb_psat, 
                                    data.level, data.ruang_lingkup_sppb_psat, data.masa_berlaku, 
-                                   data.surat_pemeliharaan_psat, date]
+                                   data.surat_pemeliharaan_psat, data.sertifikat_sppb_psat_sebelumnya, date]
             let sertifikat = await pool.query(
                 'UPDATE ' + db_sertifikat + 
-                ' SET(nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, update)' +
-                ' = ($3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_sertifikat);
+                ' SET(nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, sertifikat_sppb_psat_sebelumnya, update)' +
+                ' = ($3, $4, $5, $6, $7, $8, $9) WHERE id_pengguna=$1 AND id=$2 RETURNING *', data_sertifikat);
             let data_file_pemohonan = [data.id_pengguna, pengajuan.rows[0].file_permohonan, data.denah_ruangan_psat, data.diagram_alir_psat,
                                        data.sop_psat, data.bukti_penerapan_sop ,data.surat_permohonan, 
                                        data.sertifikat_jaminan_keamanan_pangan, date]
