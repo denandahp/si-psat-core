@@ -18,6 +18,7 @@ class SppbPsatModel {
     async penambahan_ruang_lingkup(data) {
         let pengajuan;
         try {
+            await check_query.check_data(data)
             let response = {};
             let data_info_perusahaan = [data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, date, date]
             let info_perusahaan = await pool.query(
@@ -53,6 +54,9 @@ class SppbPsatModel {
             debug('get %o', response);
             return { status: '200', keterangan:"Penambahan Ruang Lingkup SPPB PSAT", notifikasi: notif, data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
             await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].info_perusahaan]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
@@ -64,6 +68,7 @@ class SppbPsatModel {
 
     async update_penambahan_ruang_lingkup(data) {
         try {
+            await check_query.check_data(data)
             let response = {};
             let data_pengajuan = [data.id_pengguna, data.id_pengajuan, 'PENAMBAHAN', data.status_aktif, 
                 data.ruang_lingkup, data.unit_produksi, date];
@@ -104,6 +109,9 @@ class SppbPsatModel {
                     keterangan:"Update Penambahan Ruang Lingkup SPPB PSAT",
                     data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex.message);
             return { status: '400', Error: "" + ex.message };
         };
@@ -111,6 +119,7 @@ class SppbPsatModel {
 
     async update_penambahan_nomor_sppb_psat(data) {
         try {
+            await check_query.check_data(data)
             let code_proses = await pool.query('SELECT code FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENAMBAHAN', data.nomor_sppb_psat, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
@@ -121,6 +130,9 @@ class SppbPsatModel {
             debug('get %o', pengajuan);
             return { status: '200', keterangan: `Update Penambahan Ruang Lingkup Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };

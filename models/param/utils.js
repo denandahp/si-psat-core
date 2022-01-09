@@ -9,8 +9,6 @@ const db_history_izin_edar = 'izin_edar.history_all_pengajuan';
 const db_sekretariat = 'pengguna.list_sekretariat';
 
 
-
-
 exports.limit_time = (limit)=> {
     var d = new Date(Date.now());
     d.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -39,7 +37,7 @@ exports.check_queryset = (queryset)=> {
     }
 }
 
-exports.proses_code_all = (user, code_proses, role, proses_pengajuan, pengajuan)=> {
+exports.proses_code_all = (user, code_proses, role, proses_pengajuan, pengajuan, search)=> {
     let code, proses, data_history, role_query, kolom_permohonan;
 
     if(role == 'AUDITOR'){
@@ -81,6 +79,9 @@ exports.proses_code_all = (user, code_proses, role, proses_pengajuan, pengajuan)
         }
     }
 
+    if (search !== undefined){
+        proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR nomor_sppb_psat_baru LIKE '%${search}%' `  
+    }
     return {
         filter: proses,
         data: data_history,
@@ -89,7 +90,7 @@ exports.proses_code_all = (user, code_proses, role, proses_pengajuan, pengajuan)
 
 }
 
-exports.proses_code = async (user, code_proses, role, proses_pengajuan, pengajuan)=> {
+exports.proses_code = async (user, code_proses, role, proses_pengajuan, pengajuan, search)=> {
     let code, proses, data_history, role_query, kolom_permohonan;
     if(role == 'AUDITOR'){
         role_query = 'tim_auditor'
@@ -131,6 +132,9 @@ exports.proses_code = async (user, code_proses, role, proses_pengajuan, pengajua
     let query_code = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE code=$1', [code_proses]);
     code = query_code.rows[0].status;
 
+    if (search !== undefined){
+        proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR nomor_sppb_psat_baru LIKE '%${search}%' `  
+    }
     return {
         filter: proses,
         data: data_history,
@@ -234,4 +238,23 @@ exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
     }catch(err){
         throw new Error(err.message);
     }
+}
+
+exports.check_data = async(data, data_optional)=> {
+    function mapping_id(item) {
+        let var_name = item[0], pesan;
+        if(data_optional != undefined || data_optional != null){
+            for(let i=0;i<data_optional.length;i++){
+                if(item[0] == data_optional[i]){
+                    return;
+                }
+            }
+        }
+        if(item[1] == undefined || item[1] == "" || item[1] == " " || item[1] == null){
+            pesan = `${var_name} tidak boleh kosong`
+            throw ({pesan:pesan, code:'401'});   
+        }
+    }
+    var arr_data = Object.keys(data).map((key) => [key, data[key]]);
+    arr_data.forEach(mapping_id)
 }

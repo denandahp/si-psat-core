@@ -20,6 +20,7 @@ class PsatPlPermohonanModel {
         let file_permohonan, pengajuan;
         try {
             let response = {};
+            await check_query.check_data(data)
             //Create new file pemohonan
             let data_file_permohonan = [data.id_pengguna, data.surat_permohonan_izin_edar, date, date];
             file_permohonan = await pool.query(
@@ -41,6 +42,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', response);
             return { status: '200', permohohan: "Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", notifikasi: notif, data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
             console.log('Enek seng salah iki ' + ex);
@@ -73,6 +77,7 @@ class PsatPlPermohonanModel {
 
     async add_daftar_pemasok(data) {
         try {
+            await check_query.check_data(data)
             let data_daftar_pemasok = [data.id_pengguna, data.nama, data.alamat, date, date]
             let daftar_pemasok = await pool.query(format(
                 'INSERT INTO ' + db_daftar_pemasok +
@@ -80,6 +85,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Daftar Pemasok", data: daftar_pemasok.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -87,6 +95,7 @@ class PsatPlPermohonanModel {
 
     async add_daftar_pelanggan(data) {
         try {
+            await check_query.check_data(data)
             let data_daftar_pelanggan = [data.id_pengguna, data.nama, data.alamat, date, date]
             let daftar_pelanggan = await pool.query(
                 format('INSERT INTO ' + db_daftar_pelanggan +
@@ -95,6 +104,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -102,6 +114,7 @@ class PsatPlPermohonanModel {
 
     async add_info_produk(data) {
         try {
+            await check_query.check_data(data, ['nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
             let data_info_produk = [
                 data.id_pengguna, data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri,
@@ -117,6 +130,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -124,6 +140,7 @@ class PsatPlPermohonanModel {
 
     async update_nomor_izin_edar_pl(data) {
         try {
+            await check_query.check_data(data)
             let code_proses = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.status_pengajuan, data.nomor_izin_edar, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
@@ -134,6 +151,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', pengajuan);
             return { status: '200', keterangan: `Update  ${data.status_pengajuan} Nomor SPPB PSAT ${data.nomor_izin_edar}`, data: pengajuan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -142,6 +162,7 @@ class PsatPlPermohonanModel {
     async update_permohonan_izin(data) {
         try {
             let response = {};
+            await check_query.check_data(data)
             let file_permohonan, pengajuan;
 
             //Create new file pemohonan
@@ -166,6 +187,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', response);
             return { status: '200', permohohan: "Update Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -196,6 +220,7 @@ class PsatPlPermohonanModel {
 
     async update_daftar_pemasok(data) {
         try {
+            await check_query.check_data(data)
             let data_daftar_pemasok = [data.nama, data.alamat, date]
             let daftar_pemasok = await pool.query(format(
                 'UPDATE ' + db_daftar_pemasok + ' SET (nama, alamat, update) = (%L) ' +
@@ -204,6 +229,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Daftar Pemasok", data: daftar_pemasok.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -211,6 +239,7 @@ class PsatPlPermohonanModel {
 
     async update_daftar_pelanggan(data) {
         try {
+            await check_query.check_data(data)
             let data_daftar_pelanggan = [data.nama, data.alamat, date]
             let daftar_pelanggan = await pool.query(
                 format('UPDATE ' + db_daftar_pelanggan + ' SET (nama, alamat, update) = (%L) ' +
@@ -220,6 +249,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -227,6 +259,7 @@ class PsatPlPermohonanModel {
 
     async update_info_produk(data) {
         try {
+            await check_query.check_data(data, ['nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
             let data_info_produk = [
                 data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri,
@@ -244,6 +277,9 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -462,7 +498,7 @@ class PsatPlPermohonanModel {
         };
     }
 
-    async get_history_pengajuan(user, code_proses, role, proses_pengajuan) {
+    async get_history_pengajuan(user, code_proses, role, proses_pengajuan, search) {
         try {
             let history, code, proses;
             if (user == 'all') {
@@ -477,7 +513,7 @@ class PsatPlPermohonanModel {
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM' + db_history_pengajuan + ' ORDER BY created DESC')
             } else {
                 if (code_proses == 'all') {
-                    proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'IZIN_EDAR');
+                    proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'IZIN_EDAR', search);
                     history = await pool.query(
                         ' SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                         ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
@@ -489,7 +525,7 @@ class PsatPlPermohonanModel {
                         ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek FROM' + db_history_pengajuan +
                         ` WHERE ${proses.filter} ORDER BY created DESC`, proses.data)
                 } else {
-                    proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan, 'IZIN_EDAR');
+                    proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan, 'IZIN_EDAR', search);
 
                     if (code_proses == '10' || code_proses == '11') {
                         history = await pool.query(

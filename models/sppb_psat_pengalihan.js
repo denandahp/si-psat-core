@@ -21,6 +21,7 @@ class SppbPsatModel {
         let pengajuan;
         try {
             let response = {};
+            await check_query.check_data(data)
             let data_file_permohonan = [data.id_pengguna, data.surat_permohonan_pengalihan, data.surat_pernyataan, date, date];
             let file_permohonan = await pool.query(
                 'INSERT INTO ' + db_file_permohonan +
@@ -46,6 +47,9 @@ class SppbPsatModel {
             debug('get %o',response);
             return { status: '200', keterangan:"Pengalihan Kepemilikan SPPB PSAT", notifikasi: notif, data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengalihan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
             await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].info_perusahaan]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
@@ -56,6 +60,7 @@ class SppbPsatModel {
 
     async add_pengalihan_info_perusahaan(data) {
         try {
+            await check_query.check_data(data)
             let data_info_perusahaan = [
                 data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
                 data.nama_pemilik_baru, data.alamat_pemilik_baru, date, date
@@ -67,6 +72,9 @@ class SppbPsatModel {
                 // debug('get %o', res);
             return { status: '200', keterangan: "Add Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -74,6 +82,7 @@ class SppbPsatModel {
 
     async update_nomor_sppb_psat(data) {
         try {
+            await check_query.check_data(data)
             let code_proses = await pool.query('SELECT code FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PENGALIHAN', data.nomor_sppb_psat, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
@@ -84,6 +93,9 @@ class SppbPsatModel {
             debug('get %o', pengajuan);
             return { status: '200', keterangan: `Update Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -92,6 +104,7 @@ class SppbPsatModel {
     async update_pengalihan_kepemilikan(data) {
         try {
             let response = {};
+            await check_query.check_data(data)
             let data_pengajuan = [
                 data.id_pengguna, data.id_pengajuan, 'PENGALIHAN', data.status_aktif, data.info_perusahaan, data.unit_produksi, date
             ];
@@ -114,6 +127,9 @@ class SppbPsatModel {
             debug('get %o', response);
             return { status: '200', keterangan: "Update Pengalihan Kepemilikan SPPB PSAT", data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log(ex.message);
             return { status: '400', Error: "" + ex };
         };
@@ -121,6 +137,7 @@ class SppbPsatModel {
 
     async update_pengalihan_info_perusahaan(data) {
         try {
+            await check_query.check_data(data)
             let data_info_perusahaan = [
                 data.nama_perusahaan, data.alamat_perusahaan, data.nama_pemilik_lama, data.alamat_pemilik_lama,
                 data.nama_pemilik_baru, data.alamat_pemilik_baru, date
@@ -135,6 +152,9 @@ class SppbPsatModel {
             // debug('get %o', res);
             return { status: '200', keterangan: "Update Pengalihan Kepemilikan Info Perusahaan SPPB PSAT", data: info_perusahaan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };

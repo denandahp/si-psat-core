@@ -19,6 +19,7 @@ class SppbPsatModel {
     async perpanjangan_masa_berlaku(data) {
         let pengajuan;
         try {
+            await check_query.check_data(data, ['sertifikat_jaminan_keamanan_pangan'])
             let response = {}
             let data_info_perusahaan = [data.id_pengguna, data.nama_perusahaan, data.alamat_perusahaan, date, date]
             let info_perusahaan = await pool.query(
@@ -54,6 +55,9 @@ class SppbPsatModel {
             debug('get %o', response);
             return { status: '200', keterangan:"Perpanjangan Masa Berlaku SPPB PSAT", notifikasi: notif, data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
             await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].info_perusahaan]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
@@ -65,6 +69,7 @@ class SppbPsatModel {
 
     async update_perpanjangan_nomor_sppb_psat(data) {
         try {
+            await check_query.check_data(data)
             let code_proses = await pool.query('SELECT code FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, 'PERPANJANGAN', data.nomor_sppb_psat, code_proses.rows[0].code, date];
             let pengajuan = await pool.query(
@@ -75,6 +80,9 @@ class SppbPsatModel {
             debug('get %o', pengajuan);
             return { status: '200', keterangan: `Update Nomor SPPB PSAT ${data.nomor_sppb_psat}`, data: pengajuan.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -83,6 +91,7 @@ class SppbPsatModel {
     async update_perpanjangan_masa_berlaku(data) {
         try {
             let response = {}
+            await check_query.check_data(data, ['sertifikat_jaminan_keamanan_pangan'])
             let data_info_perusahaan = [data.id_pengguna, data.id_info_perusahaan, data.nama_perusahaan, data.alamat_perusahaan, date]
             let info_perusahaan = await pool.query(
                 'UPDATE ' + db_info_perusahaan + 
@@ -120,6 +129,9 @@ class SppbPsatModel {
             debug('get %o', response);
             return { status: '200', keterangan:"Update Perpanjangan Masa Berlaku SPPB PSAT", data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };

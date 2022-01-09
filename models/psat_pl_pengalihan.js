@@ -17,6 +17,7 @@ class PsatPlPengalihanModel {
         let file_permohonan, pengalihan_data;
         try {
             let response = {};
+            await check_query.check_data(data)
             //Create new file pemohonan
             let data_file_permohonan = [
                 data.id_pengguna, data.surat_permohonan_izin_edar, data.sertifikat_izin_edar_sebelumnya,
@@ -41,6 +42,9 @@ class PsatPlPengalihanModel {
             // debug('get %o', response);
             return { status: '200', permohohan: "Pengalihan Kepemilikan Izin Edar PSAT PL", notifikasi: notif, data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengalihan_data.rows[0].id]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
             console.log('Enek seng salah iki ' + ex);
@@ -73,6 +77,7 @@ class PsatPlPengalihanModel {
 
     async add_pengalihan_info_produk(data) {
         try {
+            await check_query.check_data(data)
             let data_info_produk = [
                 data.id_pengguna, data.jenis_psat, data.nama_latin, data.nama_dagang, data.nomor_sertifikat,
                 data.expire_sertifikat, data.file_sertifikat, data.nama_pemilik_lama, data.alamat_pemilik_lama,
@@ -87,6 +92,9 @@ class PsatPlPengalihanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Pengalihan Kepemilikan Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -96,7 +104,7 @@ class PsatPlPengalihanModel {
         try {
             let response = {};
             let file_permohonan, pengalihan_data;
-
+            await check_query.check_data(data)
             //Create new file pemohonan
             let data_file_permohonan = [
                 data.surat_permohonan_izin_edar, data.sertifikat_izin_edar_sebelumnya,
@@ -122,6 +130,9 @@ class PsatPlPengalihanModel {
             // debug('get %o', response);
             return { status: '200', permohohan: "Update Pengalihan Kepemilikan Izin Edar PSAT PL", data: response };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -153,6 +164,7 @@ class PsatPlPengalihanModel {
 
     async update_pengalihan_info_produk(data) {
         try {
+            await check_query.check_data(data)
             let data_info_produk = [
                 data.jenis_psat, data.nama_latin, data.nama_dagang, data.nomor_sertifikat,
                 data.expire_sertifikat, data.file_sertifikat, data.nama_pemilik_lama, data.alamat_pemilik_lama,
@@ -168,6 +180,9 @@ class PsatPlPengalihanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Pengalihan Kepemilikan Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
