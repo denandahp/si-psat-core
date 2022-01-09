@@ -35,12 +35,12 @@ app.use(bodyParser.urlencoded({
 
 //Simple Usage (Enable All CORS Requests)
 app.use(cors())
-// app.get('/products/:id', function (req, res, next) {
-//   res.json({msg: 'This is CORS-enabled for all origins!'})
-// })
-// app.listen(80, function () {
-//   console.log('CORS-enabled web server listening on port 80')
-// })
+    // app.get('/products/:id', function (req, res, next) {
+    //   res.json({msg: 'This is CORS-enabled for all origins!'})
+    // })
+    // app.listen(80, function () {
+    //   console.log('CORS-enabled web server listening on port 80')
+    // })
 
 //Static image
 app.use(express.static(path.join(__dirname, 'uploads')));
@@ -85,6 +85,7 @@ const oss = require('./routes/oss.js');
 const upload_file = require('./routes/upload.js');
 const sertifikat = require('./routes/sertifikat.js');
 const notifikasi = require('./routes/notifikasi.js');
+const summary = require('./routes/summary.js');
 
 
 app.use('/', index);
@@ -102,6 +103,7 @@ app.use('/api/oss', oss)
 app.use('/api/upload', upload_file)
 app.use('/api/sertifikat', sertifikat)
 app.use('/api/notifikasi', notifikasi);
+app.use('/api/summary', summary);
 
 
 // Error Middleware
