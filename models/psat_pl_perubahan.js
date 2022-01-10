@@ -43,7 +43,7 @@ class PsatPlPerubahanModel {
 
             response.perubahan_data = perubahan_data.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
-            await check_query.send_notification(perubahan_data.rows[0].id, 'IZIN_EDAR');
+            let notif = await check_query.send_notification(perubahan_data.rows[0].id, 'IZIN_EDAR');
             // debug('get %o', response);
             return { status: '200', permohohan: "Perubahan Data Izin Edar PSAT PL", notifikasi: notif, data: response };
         } catch (ex) {
