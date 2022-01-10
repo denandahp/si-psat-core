@@ -5,6 +5,8 @@ var format = require('pg-format');
 
 const schema = '"notifikasi"';
 const db_notfikasi = schema + '.' + '"notifikasi"';
+const db_list_notfikasi = schema + '.' + '"list_notifikasi"';
+
 
 var date = check_query.date_now();
 
@@ -35,8 +37,8 @@ class SppbPsatModel {
     async history_notifikasi(user, page, limit) {
         try {
             let unread_count = await pool.query(
-                'SELECT COUNT (*) FROM' + db_notfikasi + 'WHERE id_pengguna=$1 AND status=$2', [user,'UNREAD']);
-            let history = await check_query.pagination(page, limit, 'id_pengguna=$1', [user], '*', db_notfikasi)
+                'SELECT COUNT (*) FROM' + db_list_notfikasi + 'WHERE id_pengguna_tujuan=$1 AND status=$2', [user,'UNREAD']);
+            let history = await check_query.pagination(page, limit, 'id_pengguna_tujuan=$1', [user], '*', db_list_notfikasi)
             check_query.check_queryset(history);
             debug('get %o', history);
             return {
