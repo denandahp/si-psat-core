@@ -1,4 +1,5 @@
 const debug = require('debug')('app:model:sppb_psat');
+const { or } = require('ip');
 const pool = require('../libs/db');
 
 
@@ -11,7 +12,38 @@ class getSummary {
         try {
             let view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'SPPB-PSAT' as jenis_perizinan, jenis_permohonan,detail_tim_auditor, created,update  FROM sppb_psat.history_all_pengajuan WHERE status_aktif=true AND code_status_proses != 70 OR code_status_proses !=99 ORDER BY update;");
 
-            return view.rows;
+            return view.rows.map(data => {
+                let auditor_name = [""];
+
+                if (data.detail_tim_auditor != null) {
+                    auditor_name = data.detail_tim_auditor.map(detail => {
+
+                        if (detail != null && detail.username != null) {
+                            return detail.username
+                        } else {
+                            return ""
+                        }
+
+                    })
+                }
+                return {
+                    id_pengajuan: data.id_pengajuan,
+                    kode_pengajuan: data.kode_pengajuan,
+                    id_pengguna: data.id_pengguna,
+                    status_proses: data.status_proses,
+                    jenis_perizinan: data.jenis_perizinan,
+                    jenis_permohonan: data.jenis_permohonan,
+                    nama_dagang: data.nama_dagang,
+                    nama_latin: data.nama_latin,
+                    nama_merek: data.nama_merek,
+
+                    detail_tim_auditor: auditor_name,
+                    jenis_kemasan: data.jenis_kemasan,
+
+                    created: data.created,
+                    update: data.update
+                }
+            });
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -23,7 +55,34 @@ class getSummary {
         try {
             let view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'IZIN-EDAR' as jenis_perizinan,  status_pengajuan, nama_dagang, nama_latin, nama_merek, jenis_kemasan, detail_tim_auditor, created,update   FROM izin_edar.history_all_pengajuan WHERE status_aktif=true AND code_status_proses != 70 OR code_status_proses !=99 ORDER BY update;");
 
-            return view.rows;
+            return view.rows.map(data => {
+                let auditor_name = [""];
+                if (data.detail_tim_auditor != null) {
+                    auditor_name = data.detail_tim_auditor.map(detail => {
+                        if (detail != null && detail.username != null) {
+                            return detail.username
+                        } else {
+                            return ""
+                        }
+                    })
+                }
+                return {
+                    id_pengajuan: data.id_pengajuan,
+                    kode_pengajuan: data.kode_pengajuan,
+                    id_pengguna: data.id_pengguna,
+                    status_proses: data.status_proses,
+                    jenis_perizinan: data.jenis_perizinan,
+                    status_pengajuan: data.status_pengajuan,
+                    nama_dagang: data.nama_dagang,
+                    nama_latin: data.nama_latin,
+                    nama_merek: data.nama_merek,
+                    jenis_kemasan: data.jenis_kemasan,
+                    detail_tim_auditor: auditor_name,
+                    created: data.created,
+                    update: data.update
+                }
+
+            });
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
