@@ -81,95 +81,197 @@
     <div class="body">
         <p>Lampiran berikut memuat data teknis Izin Edar Pangan Segar Asal Tumbuhan Produksi Luar Negeri (PSAT-PL):</p>
         <table>
-            <tr class="header">
-                <td class="left">No</td>
-                <td class="center" colspan="2">INFORMASI PRODUK</td>
-                <td class="right">URAIAN</td>
-            </tr>
+            <thead>
+                <tr class="header">
+                    <td class="left">No</td>
+                    <td class="center" colspan="2">INFORMASI PRODUK</td>
+                    <td class="right">URAIAN</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="data">
+                    <td class="left">1.</td>
+                    <td class="center" colspan="2">Nama PSAT:</td>
+                    <td class="right"></td>
+                </tr>
+                <tr class="data">
+                    <td class="left"></td>
+                    <td class="center" colspan="2">1) Jenis PSAT</td>
+                    <td class="right">{{ jenis_psat }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left"></td>
+                    <td class="center" colspan="2">2) Nama Dagang</td>
+                    <td class="right">{{ nama_dagang }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left">2.</td>
+                    <td class="center" colspan="2">Izin edar PSAT-PL</td>
+                    <td class="right"></td>
+                </tr>
+                <tr class="data">
+                    <td class="left"></td>
+                    <td class="center" colspan="2">a. No izin edar PSAT-PL</td>
+                    <td class="right">{{ nomor_izin_edar }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left"></td>
+                    <td class="center" colspan="2">b. Berlaku Sampai dengan</td>
+                    <td class="right">{{ berlaku_sampai }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left">3.</td>
+                    <td class="center" colspan="2">Nama latin</td>
+                    <td class="right">{{ nama_latin }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left">4.</td>
+                    <td class="center" colspan="2">Negara asal</td>
+                    <td class="right">{{ negara_asal }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left">5.</td>
+                    <td class="center" colspan="2">Nama merk</td>
+                    <td class="right">{{ nama_merk }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left" rowspan="2">6.</td>
+                    <td rowspan="2">Jenis Kemasan</td>
+                    <td class="right">Lama</td>
+                    <td class="right">{{ jenis_kemasan_lama }}</td>
+                </tr>
+                <tr class="data">
+                    <td>Baru</td>
+                    <td class="right">{{ jenis_kemasan_baru }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left" rowspan="2">7.</td>
+                    <td rowspan="2">Berat Bersih</td>
+                    <td class="right">Lama</td>
+                    <td class="right">{{ berat_bersih_lama }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="right">Baru</td>
+                    <td class="right">{{ berat_bersih_baru }}</td>
+                </tr>
+            </tbody>
+            <tbody id="data_input"></tbody>
+            <tbody>
+                <tr class="data">
+                    <td class="left">9.</td>
+                    <td class="center" colspan="2">Kelas mutu</td>
+                    <td class="right">{{ kelas_mutu }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left">10.</td>
+                    <td class="center" colspan="2">Jenis klaim</td>
+                    <td class="right">{{ jenis_klaim }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left">11.</td>
+                    <td class="center" colspan="2">Desain kemasan lama</td>
+                    <td class="right">{{ desain_tabel_dan_kemasan }}</td>
+                </tr>
+                <tr class="data">
+                    <td class="left">12.</td>
+                    <td class="center" colspan="2">Desain kemasan baru</td>
+                    <td class="right">{{ desain_tabel_dan_kemasan_baru }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>*Unit penanganan psat ditulis lebih dari satu</p>
+    </div>
+</body>
+
+</html>
+<script>
+    let tab = ''
+    let data =[
+        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
+        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
+        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
+        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
+        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
+        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
+        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
+        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
+        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
+        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
+        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
+        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'}
+         
+    ]
+    /*
+        <tr class="data">
+            <td class="left">8.</td>
+            <td class="center" colspan="2">Unit Penaganan PSAT</td>
+            <td class="right"></td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">1) Nama unit penganganan PSAT</td>
+            <td class="right">{{ nama_unit }}</td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">2) Alamat</td>
+            <td class="right">{{ alamat_unit }}</td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">3) Status kepemilikan (sewa/milik sendiri)</td>
+            <td class="right">{{ status_kepemilikan }}</td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">4)SPPB-PSAT</td>
+            <td class="right"></td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">a. Nomor</td>
+            <td class="right">{{ sppb_psat_nomor }}</td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">b. Level</td>
+            <td class="right">{{ sppb_psat_level }}</td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">c. Masa berlaku</td>
+            <td class="right">{{ sppb_psat_masa_berlaku }}</td>
+        </tr>
+        <tr class="data">
+            <td class="left"></td>
+            <td class="center" colspan="2">d. Ruang lingkup</td>
+            <td class="right">{{ sppb_psat_ruang_lingkup }}</td>
+        </tr>
+    */
+    let number = 1 ;
+    // Loop to access all rows 
+    for (let r of data) {
+        datas = Object.values(r)
+        tab += `
             <tr class="data">
-                <td class="left">1.</td>
-                <td class="center" colspan="2">Nama PSAT:</td>
-                <td class="right"></td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">1) Jenis PSAT</td>
-                <td class="right">{{ jenis_psat }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">2) Nama Dagang</td>
-                <td class="right">{{ nama_dagang }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">2.</td>
-                <td class="center" colspan="2">Izin edar PSAT-PL</td>
-                <td class="right"></td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">a. No izin edar PSAT-PL</td>
-                <td class="right">{{ nomor_izin_edar }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">b. Berlaku Sampai dengan</td>
-                <td class="right">{{ berlaku_sampai }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">3.</td>
-                <td class="center" colspan="2">Nama latin</td>
-                <td class="right">{{ nama_latin }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">4.</td>
-                <td class="center" colspan="2">Negara asal</td>
-                <td class="right">{{ negara_asal }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">5.</td>
-                <td class="center" colspan="2">Nama merk</td>
-                <td class="right">{{ nama_merk }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left" rowspan="2">6.</td>
-                <td rowspan="2">Jenis Kemasan</td>
-                <td class="right">Lama</td>
-                <td class="right">{{ jenis_kemasan_lama }}</td>
-            </tr>
-            <tr class="data">
-                <td>Baru</td>
-                <td class="right">{{ jenis_kemasan_baru }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left" rowspan="2">7.</td>
-                <td rowspan="2">Berat Bersih</td>
-                <td class="right">Lama</td>
-                <td class="right">{{ berat_bersih_lama }}</td>
-            </tr>
-            <tr class="data">
-                <td class="right">Baru</td>
-                <td class="right">{{ berat_bersih_baru }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">8.</td>
+                <td class="left">8.${number}</td>
                 <td class="center" colspan="2">Unit Penaganan PSAT</td>
                 <td class="right"></td>
             </tr>
             <tr class="data">
                 <td class="left"></td>
                 <td class="center" colspan="2">1) Nama unit penganganan PSAT</td>
-                <td class="right">{{ nama_unit }}</td>
+                <td class="right">${datas[0]}</td>
             </tr>
             <tr class="data">
                 <td class="left"></td>
                 <td class="center" colspan="2">2) Alamat</td>
-                <td class="right">{{ alamat_unitt }}</td>
+                <td class="right">${datas[1]}</td>
             </tr>
             <tr class="data">
                 <td class="left"></td>
                 <td class="center" colspan="2">3) Status kepemilikan (sewa/milik sendiri)</td>
-                <td class="right">{{ status_kepemilikan }}</td>
+                <td class="right">${datas[2]}</td>
             </tr>
             <tr class="data">
                 <td class="left"></td>
@@ -178,48 +280,26 @@
             </tr>
             <tr class="data">
                 <td class="left"></td>
-                <td class="center" colspan="2">a. Nomor</td>
-                <td class="right">{{ sppb_psat_nomor }}</td>
+                <td class="center" colspan="2">&nbsp a. Nomor</td>
+                <td class="right">${datas[3]}</td>
             </tr>
             <tr class="data">
                 <td class="left"></td>
-                <td class="center" colspan="2">b. Level</td>
-                <td class="right">{{ sppb_psat_level }}</td>
+                <td class="center" colspan="2">&nbsp b. Level</td>
+                <td class="right">${datas[4]}</td>
             </tr>
             <tr class="data">
                 <td class="left"></td>
-                <td class="center" colspan="2">c. Masa berlaku</td>
-                <td class="right">{{ sppb_psat_masa_berlaku }}</td>
+                <td class="center" colspan="2">&nbsp c. Masa berlaku</td>
+                <td class="right">${datas[5]}</td>
             </tr>
             <tr class="data">
                 <td class="left"></td>
-                <td class="center" colspan="2">d. Ruang lingkup</td>
-                <td class="right">{{ sppb_psat_ruang_lingkup }}</td>
+                <td class="center" colspan="2">&nbsp d. Ruang lingkup</td>
+                <td class="right">${datas[6]}</td>
             </tr>
-            <tr class="data">
-                <td class="left">9.</td>
-                <td class="center" colspan="2">Kelas mutu</td>
-                <td class="right">{{ kelas_mutu }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">10.</td>
-                <td class="center" colspan="2">Jenis klaim</td>
-                <td class="right">{{ jenis_klaim }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">11.</td>
-                <td class="center" colspan="2">Desain kemasan lama</td>
-                <td class="right">{{ desain_tabel_dan_kemasan }}</td>
-            </tr>
-            <tr class="data">
-                <td class="left">12.</td>
-                <td class="center" colspan="2">Desain kemasan baru</td>
-                <td class="right">{{ desain_tabel_dan_kemasan_baru }}</td>
-            </tr>
-
-        </table>
-        <p>*Unit penanganan psat ditulis lebih dari satu</p>
-    </div>
-</body>
-
-</html>
+        `;
+        number += 1;
+    }
+    document.getElementById("data_input").innerHTML = tab;
+</script>
