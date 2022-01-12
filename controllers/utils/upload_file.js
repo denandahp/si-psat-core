@@ -62,10 +62,10 @@ class UploadController {
 
     async display_image(req, res) {
         try {
-            let query_path =  req.query.path;
+            let query_path = req.query.path;
             if (fs.existsSync(query_path)) {
                 res.sendFile(query_path);
-            }else{
+            } else {
                 throw new Error('File not found!')
             };
         } catch (e) {
