@@ -58,6 +58,8 @@ class getSummary {
     async downloadExcel(req, res, next) {
         let filename = req.params.filename;
         try {
+
+
             let filePath;
             if (filename == 'sppb-psat') {
                 filePath = 'summary/sppb-psat-ongoing.xlsx';
@@ -73,12 +75,11 @@ class getSummary {
             res.setHeader('Content-Disposition', `attachment; filename=${readFile[readFile.length-1]}`);
             file.pipe(res);
 
-
-
         } catch (e) {
             res.status(400).json({ error: e.message });
         }
-
     }
 
-    module.exports = new getSummary();
+}
+
+module.exports = new getSummary();
