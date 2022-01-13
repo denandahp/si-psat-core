@@ -179,8 +179,6 @@
                     <tr class="header">
                         <td colspan="9">DATA IZIN EDAR PSAT_PL YANG DIALIHKAN</td>
                     </tr>
-                </thead>
-                <tbody>
                     <tr class="header">
                         <td rowspan="2">No</td>
                         <td rowspan="2">No Izin Edar<br>PSAT-PL</td>
@@ -195,21 +193,59 @@
                         <td>Jenis PSAT</td>
                         <td>Nama/Merk<br>Dagang</td>
                     </tr>
-                    <div class="data" id="data_input">
-                        <tr>
-                            <td>1.</td>
-                            <td>{{ nomor_izin_edar }}</td>
-                            <td>{{ masa_berlaku }}</td>
-                            <td>{{ jenis_psat }}</td>
-                            <td>{{ nama_dagang }}</td>
-                            <td>{{ negara_asal }}</td>
-                            <td>{{ jenis_kemasan }}</td>
-                            <td>{{ berat_bersih}}</td>
-                            <td>{{ kelas_mutu }}</td>
-                        </tr>
-                    </div>
+                </thead>
+                <tbody  id="data_input">
                 </tbody>
             </table>
         </div>
     </body>
 </html>
+<script>
+        let tab = ''
+        let data =[
+            {nomor_izin_edar:'1', masa_berlaku:'2',jenis_psat: '3', nama_dagang: '4', 
+             negara_asal: '5', jenis_kemasan: '6' ,berat_bersih: '7', kelas_mutu: '8'},
+            {nomor_izin_edar:'1', masa_berlaku:'2',jenis_psat: '3', nama_dagang: '4', 
+             negara_asal: '5', jenis_kemasan: '6' ,berat_bersih: '7', kelas_mutu: '8'},
+            {nomor_izin_edar:'1', masa_berlaku:'2',jenis_psat: '3', nama_dagang: '4', 
+             negara_asal: '5', jenis_kemasan: '6' ,berat_bersih: '7', kelas_mutu: '8'},
+            {nomor_izin_edar:'1', masa_berlaku:'2',jenis_psat: '3', nama_dagang: '4', 
+             negara_asal: '5', jenis_kemasan: '6' ,berat_bersih: '7', kelas_mutu: '8'},
+            {nomor_izin_edar:'1', masa_berlaku:'2',jenis_psat: '3', nama_dagang: '4', 
+             negara_asal: '5', jenis_kemasan: '6' ,berat_bersih: '7', kelas_mutu: '8'},
+            {nomor_izin_edar:'1', masa_berlaku:'2',jenis_psat: '3', nama_dagang: '4', 
+             negara_asal: '5', jenis_kemasan: '6' ,berat_bersih: '7', kelas_mutu: '8'}
+             
+        ]
+        // <tr>
+        //     <td>1.</td>
+        //     <td>{{ nomor_izin_edar }}</td>
+        //     <td>{{ masa_berlaku }}</td>
+        //     <td>{{ jenis_psat }}</td>
+        //     <td>{{ nama_dagang }}</td>
+        //     <td>{{ negara_asal }}</td>
+        //     <td>{{ jenis_kemasan }}</td>
+        //     <td>{{ berat_bersih}}</td>
+        //     <td>{{ kelas_mutu }}</td>
+        // </tr>
+        let number = 1 ;
+        // Loop to access all rows 
+        for (let r of data) {
+            datas = Object.values(r)
+            tab += `
+                <tr class="data">
+                    <td>${number}</td>
+                    <td>${datas[0]}</td>
+                    <td>${datas[1]}</td>
+                    <td>${datas[2]}</td>
+                    <td>${datas[3]}</td>
+                    <td>${datas[4]}</td>
+                    <td>${datas[5]}</td>
+                    <td>${datas[6]}</td>
+                    <td>${datas[7]}</td>
+                </tr>
+            `;
+            number += 1;
+        }
+        document.getElementById("data_input").innerHTML = tab;
+</script>

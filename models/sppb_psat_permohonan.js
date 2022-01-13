@@ -1,4 +1,5 @@
 const debug = require('debug')('app:model:sppb_psat');
+const { K } = require('handlebars');
 const pool = require('../libs/db');
 const check_query = require('./param/utils.js');
 
@@ -53,10 +54,13 @@ class SppbPsatPermohonanModel {
             response.info_perusahaan = info_perusahaan.rows[0];
             response.create_sertifikat = create_sertifikat.rows[0];
             let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
+            let send_email = await check_query.send_email(pengajuan.rows[0].id, 'SPPB_PSAT');
+            console.log(k)
             debug('get %o', response);
             return {status: '200', 
                     keterangan: "Permohonan Awal SPPB PSAT",
                     notifikasi: notif,
+                    email: send_email,
                     data: response };
         } catch (ex) {
             if(ex.code == '401'){
@@ -66,7 +70,7 @@ class SppbPsatPermohonanModel {
             await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].info_perusahaan]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].file_permohonan]);
             await pool.query('DELETE FROM ' + db_sertifikat + ' WHERE id_pengajuan = $1 RETURNING *', [pengajuan.rows[0].id]);
-            return { status: '400', Error: ex.message };
+            return { status: '400', Error: '' + ex };
         };
     }
 

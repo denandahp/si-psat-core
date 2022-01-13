@@ -1,5 +1,7 @@
 const pool = require('../../libs/db');
 var moment = require('moment-timezone');
+var nodemailer = require('nodemailer');
+
 
 const db_proses_audit = 'audit.proses_audit';
 const db_pengguna = 'pengguna.pengguna';
@@ -7,6 +9,8 @@ const db_notifikasi = 'notifikasi.notifikasi';
 const db_history_sppb = 'sppb_psat.history_all_pengajuan';
 const db_history_izin_edar = 'izin_edar.history_all_pengajuan';
 const db_sekretariat = 'pengguna.list_sekretariat';
+const db_pelaku_usaha = 'pengguna._listall_pelaku_usaha';
+
 
 
 exports.limit_time = (limit) => {
@@ -199,19 +203,79 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
     };
 }
 
-exports.send_notification = async(id_pengajuan, jenis_pengajuan) => {
-    try {
+exports.plotting_id_pengguna = async (query_pengajuan)=> {
+    function mapping_id(item, index, arr) {
+        arr[index] = item.id
+    }
+
+    let id_pengguna =[];
+
+    //-------------------------- Plotting Id Pengguna ---------------------------------------
+    if(query_pengajuan.rows[0].code_status_proses == 10 ||
+        query_pengajuan.rows[0].code_status_proses == 40 ||
+        query_pengajuan.rows[0].code_status_proses == 50 ||
+        query_pengajuan.rows[0].code_status_proses == 60){
+            superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+            id_pengguna = superadmin.rows
+            id_pengguna.forEach(mapping_id)
+        }else if(query_pengajuan.rows[0].code_status_proses == 20 ||
+                query_pengajuan.rows[0].code_status_proses == 30){
+            id_pengguna = query_pengajuan.rows[0].tim_auditor
+            id_pengguna.concat(query_pengajuan.rows[0].lead_auditor)
+        }else if(query_pengajuan.rows[0].code_status_proses == 70){
+            superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+            id_pengguna = superadmin.rows
+            id_pengguna.forEach(mapping_id)
+            id_pengguna.concat(query_pengajuan.rows[0].id_pengguna)
+        }else{
+            id_pengguna = [query_pengajuan.rows[0].id_pengguna]
+        }
+    return id_pengguna;
+}
+
+exports.plotting_email_pengguna = async (query_pengajuan)=> {
+    function mapping_email(item, index, arr) {
+        arr[index] = item.email
+    }
+    let email_pengguna =[];
+
+    //-------------------------- Plotting Id Pengguna ---------------------------------------
+    if(query_pengajuan.rows[0].code_status_proses == 10 ||
+        query_pengajuan.rows[0].code_status_proses == 40 ||
+        query_pengajuan.rows[0].code_status_proses == 50 ||
+        query_pengajuan.rows[0].code_status_proses == 60){
+            superadmin = await pool.query('SELECT id, email, role FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+            email_pengguna = superadmin.rows
+            email_pengguna.forEach(mapping_email)
+        }else if(query_pengajuan.rows[0].code_status_proses == 20 ||
+                query_pengajuan.rows[0].code_status_proses == 30){
+                    email_pengguna = query_pengajuan.rows[0].tim_auditor
+                    email_pengguna.concat(query_pengajuan.rows[0].lead_auditor)
+        }else if(query_pengajuan.rows[0].code_status_proses == 70){
+            superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+            email_pengguna = superadmin.rows
+            email_pengguna.forEach(mapping_email)
+            pengguna = await pool.query(
+                'SELECT email FROM ' + db_pelaku_usaha + 
+                ' WHERE id=$1 AND role=$2', [query_pengajuan.rows[0].id_pengguna, 'PELAKU_USAHA']);
+                email_pengguna.concat(pengguna.rows[0].email)
+        }else{
+            pengguna = await pool.query(
+                'SELECT email FROM ' + db_pelaku_usaha + 
+                ' WHERE id=$1 AND role=$2', [query_pengajuan.rows[0].id_pengguna, 'PELAKU_USAHA']);
+            email_pengguna = [pengguna.rows[0].email]
+        }
+    return email_pengguna;
+}
+
+exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
+    try{
         function capitalizeFirstLetter(string) {
             let lower_string = string.toLowerCase()
             return lower_string[0].toUpperCase() + lower_string.slice(1);
         }
 
-        function mapping_id(item, index, arr) {
-            arr[index] = item.id
-        }
-
-        let pesan, query_pengajuan, superadmin, id_pengguna = [],
-            jenis_permohonan;
+        let pesan, query_pengajuan, id_pengguna = [], jenis_permohonan;
         //-------------------------- Generate Pesan Notifikasi ---------------------------------------
         if (jenis_pengajuan == 'SPPB_PSAT') {
             query_pengajuan = await pool.query('SELECT * FROM ' + db_history_sppb + ' WHERE id_pengajuan=$1', [id_pengajuan]);
@@ -224,28 +288,8 @@ exports.send_notification = async(id_pengajuan, jenis_pengajuan) => {
                 ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
             jenis_permohonan = query_pengajuan.rows[0].status_pengajuan.toLowerCase();
         }
-
-        //-------------------------- Plotting Id Pengguna ---------------------------------------
-        if (query_pengajuan.rows[0].code_status_proses == 10 ||
-            query_pengajuan.rows[0].code_status_proses == 40 ||
-            query_pengajuan.rows[0].code_status_proses == 50 ||
-            query_pengajuan.rows[0].code_status_proses == 60) {
-            superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
-            id_pengguna = superadmin.rows
-            id_pengguna.forEach(mapping_id)
-        } else if (query_pengajuan.rows[0].code_status_proses == 20 ||
-            query_pengajuan.rows[0].code_status_proses == 30) {
-            id_pengguna = query_pengajuan.rows[0].tim_auditor
-            id_pengguna.concat(query_pengajuan.rows[0].lead_auditor)
-        } else if (query_pengajuan.rows[0].code_status_proses == 70) {
-            superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
-            id_pengguna = superadmin.rows
-            id_pengguna.forEach(mapping_id)
-            id_pengguna.concat(query_pengajuan.rows[0].id_pengguna)
-        } else {
-            id_pengguna = [query_pengajuan.rows[0].id_pengguna]
-        }
-        for (let i = 0; i < id_pengguna.length; i++) {
+        id_pengguna = await this.plotting_id_pengguna(query_pengajuan)
+        for(let i=0;i<id_pengguna.length;i++){
             let data_notifikasi = [id_pengguna[i], id_pengajuan, jenis_pengajuan, jenis_permohonan, pesan, this.date_now(), this.date_now()]
             await pool.query(
                 ' INSERT INTO ' + db_notifikasi + ' (id_pengguna, id_pengajuan, jenis_pengajuan, jenis_permohonan, keterangan, created, update) ' +
@@ -276,3 +320,62 @@ exports.check_data = async(data, data_optional) => {
     var arr_data = Object.keys(data).map((key) => [key, data[key]]);
     arr_data.forEach(mapping_id)
 }
+
+exports.send_email = async (id_pengajuan, jenis_pengajuan)=> {
+    try{
+        function capitalizeFirstLetter(string) {
+            let lower_string = string.toLowerCase()
+            return lower_string[0].toUpperCase() + lower_string.slice(1);
+        }
+
+        let query_pengajuan, subjectReceiver, textReceiver, emailReceiverList = [];
+        //-------------------------- Generate Pesan Email ---------------------------------------
+        if(jenis_pengajuan == 'SPPB_PSAT'){
+            query_pengajuan = await pool.query('SELECT * FROM ' + db_history_sppb + ' WHERE id_pengajuan=$1', [id_pengajuan]);
+            subjectReceiver = capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) + ' ' + query_pengajuan.rows[0].jenis_permohonan.toLowerCase() +
+            ' SPPB PSAT dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
+            textReceiver = 
+                `<h1>${capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) 
+                    + ' ' + query_pengajuan.rows[0].jenis_permohonan.toLowerCase() + ' SPPB PSAT'}</h1>
+                <p>${subjectReceiver}</p>`;
+        }else if (jenis_pengajuan == 'IZIN_EDAR'){
+            query_pengajuan = await pool.query('SELECT * FROM ' + db_history_izin_edar + ' WHERE id_pengajuan=$1', [id_pengajuan]);
+            subjectReceiver = capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) + ' ' + query_pengajuan.rows[0].status_pengajuan.toLowerCase() +
+                              ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
+            textReceiver = 
+                `<h1>${capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) 
+                    + ' ' + query_pengajuan.rows[0].jenis_permohonan.toLowerCase() + ' IZIN EDAR PL'}</h1>
+                <p>${subjectReceiver}</p>`;
+        }
+
+        let emailSender = 'denandahp@gmail.com';
+        let passSender = 'irwpuxsgcquneltv';
+        var sender = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            auth: {
+                user: emailSender,
+                pass: passSender
+            }
+        });
+        await sender.verify().then(console.log('sender verify')).catch(console.error);
+
+        emailReceiverList = await this.plotting_email_pengguna(query_pengajuan)
+        console.log(emailReceiverList)
+        var receiver = {
+            from: emailSender,
+            to: emailReceiverList,
+            subject: subjectReceiver,
+            html: textReceiver
+        };
+        await sender.sendMail(receiver)
+        .then(info => {
+            console.log(info.response);
+        });
+        return subjectReceiver;
+    }catch(err){
+        throw ({pesan:err.message, code:'401'});   
+    }
+}
+
+
