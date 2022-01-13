@@ -32,7 +32,7 @@ class getSummary {
                 view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'SPPB-PSAT' as jenis_perizinan, jenis_permohonan,detail_tim_auditor, nomor_sppb_psat_sebelumnya, masa_berlaku, created, update  FROM sppb_psat.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
             } else {
                 filename = 'summary/sppb-psat-finish.xlsx'
-                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses, 'SPPB-PSAT' as jenis_perizinan, jenis_permohonan, detail_tim_auditor, nomor_sppb_psat_sebelumnya, masa_berlaku, created, update FROM sppb_psat.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 AND status_proses = $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
+                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses, 'SPPB-PSAT' as jenis_perizinan, jenis_permohonan, detail_tim_auditor, nomor_sppb_psat_sebelumnya, masa_berlaku, created, update FROM sppb_psat.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
 
             }
 
@@ -115,7 +115,7 @@ class getSummary {
                 view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'IZIN-EDAR' as jenis_perizinan,  status_pengajuan, nama_dagang, nama_latin, nama_merek, jenis_kemasan, detail_tim_auditor,nomor_izin_edar,expire_sertifikat, created, update  FROM izin_edar.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
             } else {
                 filename = 'summary/izin-edar-finish.xlsx'
-                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'IZIN-EDAR' as jenis_perizinan,  status_pengajuan, nama_dagang, nama_latin, nama_merek, jenis_kemasan, detail_tim_auditor, nomor_izin_edar,expire_sertifikat, created, update  FROM izin_edar.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses = $3 AND status_proses = $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
+                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'IZIN-EDAR' as jenis_perizinan,  status_pengajuan, nama_dagang, nama_latin, nama_merek, jenis_kemasan, detail_tim_auditor, nomor_izin_edar,expire_sertifikat, created, update  FROM izin_edar.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses = $3 OR status_proses = $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
 
             }
             let data = await view.rows.map(data => {
