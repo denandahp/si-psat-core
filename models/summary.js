@@ -26,13 +26,13 @@ class getSummary {
             "diperbaharui"
         ]
         try {
-            let filename;
+            let filename = 'summary/sppb-psat-' + type + '-' + String(year) + '-' + String(month) + '.xlsx';
             let view;
             if (type == 'ongoing') {
-                filename = 'summary/sppb-psat-ongoing-' + year + '-' + month + '.xlsx';
+
+                console.log(filename)
                 view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'SPPB-PSAT' as jenis_perizinan, jenis_permohonan,detail_tim_auditor, nomor_sppb_psat_sebelumnya, masa_berlaku, created, update  FROM sppb_psat.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
             } else {
-                filename = 'summary/sppb-psat-finish-' + year + '-' + month + '.xlsx';
                 view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses, 'SPPB-PSAT' as jenis_perizinan, jenis_permohonan, detail_tim_auditor, nomor_sppb_psat_sebelumnya, masa_berlaku, created, update FROM sppb_psat.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
 
             }
@@ -65,8 +65,9 @@ class getSummary {
                     update: data.update
                 }
             });
-            if (excel == true) {
-                //Write Column Title in Excel file
+            if (excel == 1) {
+                console.log(excel)
+                    //Write Column Title in Excel file
                 let headingColumnIndex = 1;
                 headingColumnNames.forEach(heading => {
                     ws.cell(1, headingColumnIndex++)
@@ -74,7 +75,7 @@ class getSummary {
                 });
                 //Write Data in Excel file
                 let rowIndex = 2;
-                data.forEach(record => {
+                await data.forEach(record => {
                     let columnIndex = 1;
                     Object.keys(record).forEach(columnName => {
                         ws.cell(rowIndex, columnIndex++)
@@ -82,8 +83,10 @@ class getSummary {
                     });
                     rowIndex++;
                 });
-                wb.write(filename);
+
+                await wb.write('summary/sppb-psat-' + type + '-' + year + '-' + month + '.xlsx');
             }
+
             return data;
 
         } catch (ex) {
