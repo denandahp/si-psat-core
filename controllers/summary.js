@@ -91,14 +91,20 @@ class getSummary {
             let filePath = 'summary/' + filename + '-' + jenis + '-' + String(year) + '-' + String(month) + '.xlsx';
 
 
-            let readFile = await filePath.split('/')
-            var file = await fs.createReadStream(filePath);
-            var stat = await fs.statSync(filePath);
-            res.setHeader('Content-Length', stat.size);
-            res.setHeader('Content-Type', 'application/xlsx');
-            res.setHeader('Content-Disposition', `attachment; filename=${readFile[readFile.length-1]}`);
-            file.pipe(res);
-            res.status(200).send('restore')
+            let readFile = await filePath.split('/');
+            if (fs.existsSync(filePath)) {
+                var file = await fs.createReadStream(filePath);
+
+                var stat = await fs.statSync(filePath);
+
+                res.setHeader('Content-Length', stat.size);
+                res.setHeader('Content-Type', 'application/xlsx');
+                res.setHeader('Content-Disposition', `attachment; filename=${readFile[readFile.length-1]}`);
+                file.pipe(res);
+            } else {
+                res.send('No such file ').satus(404)
+            }
+            //res.status(200).send('restore')
         } catch (e) {
             res.status(400).json({ error: e.message });
         }
