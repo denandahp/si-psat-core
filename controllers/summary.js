@@ -5,12 +5,13 @@ const fs = require('fs')
 var path = require('path');
 const express = require('express');
 const app = express();
+
 class getSummary {
     async getSummarySPPB(req, res, next) {
         let callback = async() => {
             try {
                 let detail;
-                detail = await summary.view_sppb(req.params.year, req.params.month, req.params.jenis);
+                detail = await summary.view_sppb(req.params.year, req.params.month, req.params.jenis, false);
                 if (detail.status == '400') { res.status(400).json({ response: detail }); } else { res.status(200).json({ response: detail }); }
             } catch (e) {
                 next(e.detail || e);
@@ -27,7 +28,7 @@ class getSummary {
         let callback = async() => {
             try {
                 let detail;
-                detail = await summary.view_izinedar(req.params.year, req.params.month, req.params.jenis);
+                detail = await summary.view_izinedar(req.params.year, req.params.month, req.params.jenis, false);
 
                 if (detail.status == '400') { res.status(400).json({ response: detail }); } else { res.status(200).json({ response: detail }); }
             } catch (e) {
@@ -57,15 +58,20 @@ class getSummary {
 
     async downloadExcel(req, res, next) {
         let filename = req.params.filename;
+        let jenis = req.params.jenis;
+        let year = req.params.year;
+        let month = req.params.month;
         try {
 
-
+            let detail;
             let filePath;
-            if (filename == 'sppb-psat') {
-                filePath = 'summary/sppb-psat-ongoing.xlsx';
-            } else if (filename == 'izin-edar') {
-                filePath = 'summary/izin-edar-ongoing.xlsx';
 
+            if (filename == 'sppb-psat') {
+                detail = await summary.view_sppb(year, month, jenis, true);
+                filePath = 'summary/sppb-psat-' + jenis + '-' + year + '-' + month + '.xlsx';
+            } else if (filename == 'izin-edar') {
+                detail = await summary.view_izinedar(year, month, jenis, true);
+                filePath = 'summary/izin-edar-' + jenis + '-' + year + '-' + month + '.xlsx';
             }
             let readFile = filePath.split('/')
             var file = fs.createReadStream(filePath);
