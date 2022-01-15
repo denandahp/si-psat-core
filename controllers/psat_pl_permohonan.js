@@ -446,8 +446,10 @@ class PsatPlPermohonanController {
                 let proses_pengajuan = req.query.proses;
                 let role = req.query.role;
                 let search = req.query.search;
+                let page = req.query.page;
+                let limit = req.query.limit;
                 debug('detail %o', user);
-                let detail = await psat_pl.get_history_pengajuan(user, code_proses, role, proses_pengajuan, search);
+                let detail = await psat_pl.get_history_pengajuan(page, limit, user, code_proses, role, proses_pengajuan, search);
                 if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {

@@ -342,7 +342,7 @@ class SppbPsatPermohonanModel {
         };
     }
 
-    async get_history_pengajuan(user, code_proses, role, proses_pengajuan, search) {
+    async get_history_pengajuan_pagination(user, code_proses, role, proses_pengajuan, search) {
         try {
             let history, proses;
             if (user == 'all') {
@@ -460,7 +460,7 @@ class SppbPsatPermohonanModel {
         };
     }
 
-    async get_history_pengajuan_pagination(page, limit, user, code_proses, role, proses_pengajuan) {
+    async get_history_pengajuan(page, limit, user, code_proses, role, proses_pengajuan, search) {
         try {
             let history, proses, query_select;
             if (user == 'all') {
@@ -479,7 +479,7 @@ class SppbPsatPermohonanModel {
                     ' nama_perusahaan, alamat_perusahaan FROM' + db_history_pengajuan + ' ORDER BY created DESC')
             } else {
                 if (code_proses == 'all') {
-                    proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT')
+                    proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT', search)
                     query_select = ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
                                    ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                                    ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
@@ -492,7 +492,7 @@ class SppbPsatPermohonanModel {
                                    ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                                    ' nama_perusahaan, alamat_perusahaan'
                 } else {
-                    proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT');
+                    proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan, 'SPPB_PSAT', search);
                     if (code_proses == '20' || code_proses == '21') {
                         query_select = ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, jenis_permohonan, created, nomor_sppb_psat_baru, status_proses, code_status_proses, ' +
                                        ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +

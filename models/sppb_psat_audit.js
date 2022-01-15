@@ -26,6 +26,11 @@ class PsatPlPerubahanModel {
 
     async permohonan_baru(data) {
         try {
+            if(data.proses == 'REVIEW'){
+                await check_query.check_data(data, ['keterangan', 'hasil_audit'])
+            }else{
+                await check_query.check_data(data)
+            }
             let permohonan_baru, data_permohonan_baru;
             data_permohonan_baru = [
                 data.id_pengajuan, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
@@ -44,6 +49,7 @@ class PsatPlPerubahanModel {
 
     async penunjukkan_auditor(data) {
         try {
+            await check_query.check_data(data)
             let penunjukan_tim_audit;
             let data_penunjukan_tim_audit = [
                 data.id_pengajuan, data.tanggal_penugasan, data.surat_tugas
@@ -62,6 +68,11 @@ class PsatPlPerubahanModel {
     async audit_dokumen(data) {
         try {
             let audit_dokumen, data_audit_dokumen, audit_lapang, data_audit_lapang;
+            if(data.proses == 'REVIEW' || data.proses == 'CLEAR'){
+                await check_query.check_data(data, ['keterangan', 'hasil_audit'])
+            }else{
+                await check_query.check_data(data)
+            }
             if (data.proses == 'CLEAR') {
                 data_audit_dokumen = [data.id_pengajuan, data.id_tim_audit, data.proses];
                 audit_dokumen = await pool.query(format('CALL ' + proc_audit_doc + ' (%L)', data_audit_dokumen));
@@ -84,6 +95,11 @@ class PsatPlPerubahanModel {
 
     async audit_lapang(data) {
         try {
+            if(data.proses == 'REVIEW' || data.proses == 'CLEAR'){
+                await check_query.check_data(data, ['keterangan', 'hasil_audit', 'id_tim_komtek'])
+            }else{
+                await check_query.check_data(data)
+            }
             let audit_lapang, data_audit_lapang, sidang_komtek, data_sidang_komtek;
             if (data.proses == 'CLEAR') {
                 data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses];
@@ -119,6 +135,11 @@ class PsatPlPerubahanModel {
 
     async audit_rekomendasi(data) {
         try {
+            if(data.proses == 'REVIEW' || data.proses == 'CLEAR'){
+                await check_query.check_data(data, ['keterangan', 'hasil_audit', 'id_tim_komtek'])
+            }else{
+                await check_query.check_data(data)
+            }
             let sidang_komtek, data_sidang_komtek;
             data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
@@ -132,6 +153,11 @@ class PsatPlPerubahanModel {
 
     async pembayaran_pnbp(data) {
         try {
+            if(data.proses == 'REVIEW'){
+                await check_query.check_data(data, ['bukti_pembayaran'])
+            }else{
+                await check_query.check_data(data)
+            }            
             let pembayaran_pnbp, data_pembayaran_pnbp;
             data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.keterangan, data.bukti_pembayaran];
 
@@ -150,6 +176,7 @@ class PsatPlPerubahanModel {
 
     async dokumen_ditolak(data) {
         try {
+            await check_query.check_data(data)
             let dokumen_ditolak, data_dokumen_ditolak;
             data_dokumen_ditolak = [data.id_pengajuan, data.proses, data.dokumen_ditolak, data.keterangan];
             dokumen_ditolak = await pool.query(format('CALL ' + proc_dokumen_ditolak + ' (%L)', data_dokumen_ditolak));
