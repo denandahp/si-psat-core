@@ -86,23 +86,20 @@ class getSummary {
                     })
                 }
                 return {
-                    id_pengajuan: data.id_pengajuan,
+
                     kode_pengajuan: data.kode_pengajuan,
-                    id_pengguna: data.id_pengguna,
+                    nama_perusahaan: data.nama_perusahaan,
                     status_proses: data.status_proses,
-                    jenis_perizinan: data.jenis_perizinan,
                     jenis_permohonan: data.jenis_permohonan,
                     detail_tim_auditor: auditor_name,
                     tim_auditor: data.tim_auditor,
                     nomor_sppb_psat: data.nomor_sppb_psat_sebelumnya,
                     masa_berlaku: data.masa_berlaku,
-                    created: data.created,
-                    update: data.update
+
                 }
             });
-
             if (excel == 1) {
-                const headingColumnNames = ["pengajuan", "kode pengajuan", "pengguna", "status proses", "jenis perizinan", "jenis permohonan", "nama auditor", "dibuat", "diperbaharui"]
+                const headingColumnNames = ["kode pengajuan", "nama usaha", "status proses", "jenis permohonan", "nama auditor", "no sppb psat", "masa berlaku"]
                 const filename = 'summary/sppb-psat-' + type + '-' + String(year) + '-' + String(month) + '.xlsx';
                 const worksheetName = "SPPB-PSAT";
                 saveToExcel = await this.generateExcel(data, filename, worksheetName, headingColumnNames);
@@ -177,11 +174,10 @@ class getSummary {
                     })
                 }
                 return {
-                    id_pengajuan: data.id_pengajuan,
+
                     kode_pengajuan: data.kode_pengajuan,
-                    id_pengguna: data.id_pengguna,
                     status_proses: data.status_proses,
-                    jenis_perizinan: data.jenis_perizinan,
+                    nama_perusahaan: data.nama_perusahaan,
                     status_pengajuan: data.status_pengajuan,
                     nama_dagang: data.nama_dagang,
                     nama_latin: data.nama_latin,
@@ -190,14 +186,13 @@ class getSummary {
                     detail_tim_auditor: auditor_name,
                     nomor_izin_edar: data.nomor_izin_edar,
                     masa_berlaku: data.expire_sertifikat,
-                    created: data.created,
-                    update: data.update
+
                 }
 
             });
 
             if (excel == 1) {
-                const headingColumnNames = ["pengajuan", "kode pengajuan", "pengguna", "status proses", "jenis perizinan", "jenis permohonan", "nama dagang", "nama latin", "nama merek", "jenis kemasan", "nama auditor", "dibuat", "diperbaharui"]
+                const headingColumnNames = ["kode pengajuan", "status proses", "nama usaha", "jenis permohonan", "nama dagang", "nama latin", "nama merek", "jenis kemasan", "nama auditor", "nomor izin edar", "masa berlaku"]
                 const filename = 'summary/izin-edar-' + type + '-' + String(year) + '-' + String(month) + '.xlsx';
                 const worksheetName = "IZIN-EDAR";
                 saveToExcel = await this.generateExcel(data, filename, worksheetName, headingColumnNames);
