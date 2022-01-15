@@ -92,10 +92,15 @@ exports.proses_code_all = (user, code_proses, role, proses_pengajuan, pengajuan,
             data_history = [user, proses_pengajuan];
         }
     }
-
-    if (search !== undefined) {
-        proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR nomor_sppb_psat_baru LIKE '%${search}%' `
-    }
+    if (pengajuan == 'SPPB_PSAT') {
+        if (search !== undefined) {
+            proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR nomor_sppb_psat_baru LIKE '%${search}%' `
+        }
+    } else {
+        if (search !== undefined) {
+            proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR sertifikat_izin_edar_sebelumnya LIKE '%${search}%' `
+        }
+    };
     return {
         filter: proses,
         data: data_history,
@@ -146,9 +151,15 @@ exports.proses_code = async(user, code_proses, role, proses_pengajuan, pengajuan
     let query_code = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE code=$1', [code_proses]);
     code = query_code.rows[0].status;
 
-    if (search !== undefined) {
-        proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR nomor_sppb_psat_baru LIKE '%${search}%' `
-    }
+    if (pengajuan == 'SPPB_PSAT') {
+        if (search !== undefined) {
+            proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR nomor_sppb_psat_baru LIKE '%${search}%' `
+        }
+    } else {
+        if (search !== undefined) {
+            proses = proses + ` AND kode_pengajuan LIKE '%${search}%' OR sertifikat_izin_edar_sebelumnya LIKE '%${search}%' `
+        }
+    };
     return {
         filter: proses,
         data: data_history,

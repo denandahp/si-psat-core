@@ -227,9 +227,11 @@ class SppbPsatController {
                 let code_proses = req.query.code;
                 let proses_pengajuan = req.query.proses;
                 let role = req.query.role;
+                let page = req.query.page;
+                let limit = req.query.limit;
                 let search = req.query.search;
                 debug('detail %o', user);
-                let detail = await sppb_psat.get_history_pengajuan(user, code_proses, role, proses_pengajuan, search);
+                let detail = await sppb_psat.get_history_pengajuan(page, limit, user, code_proses, role, proses_pengajuan, search);
                 if (detail.status == '400') {res.status(400).json({ detail });}
                 else { res.status(200).json({ detail });}
             } catch (e) {
