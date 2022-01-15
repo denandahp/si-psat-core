@@ -66,7 +66,7 @@ class getSummary {
                     history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 } else {
-                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) AND' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 }
             }
@@ -157,7 +157,7 @@ class getSummary {
                     history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 } else {
-                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 }
             }
