@@ -1,10 +1,10 @@
 const debug = require('debug')('app:model:sppb_psat');
+const check_query = require('./param/utils.js');
 const { or } = require('ip');
 const pool = require('../libs/db');
 const xl = require('excel4node');
 const { string } = require('pg-format');
-const wb = new xl.Workbook();
-const ws = wb.addWorksheet('Worksheet Name');
+
 
 
 
@@ -13,31 +13,65 @@ date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
 
 class getSummary {
-    async view_sppb(year, month, type, excel) {
-        const headingColumnNames = [
-            "pengajuan",
-            "kode pengajuan",
-            "pengguna",
-            "status proses",
-            "jenis perizinan",
-            "jenis permohonan",
-            "nama auditor",
-            "dibuat",
-            "diperbaharui"
-        ]
+
+    async generateExcel(data, filename, worksheetName, headingColumnNames) {
+        const wb = new xl.Workbook();
+        const ws = wb.addWorksheet(worksheetName);
+
+        //Write Column Title in Excel file
+        let headingColumnIndex = 1;
+        headingColumnNames.forEach(heading => {
+            ws.cell(1, headingColumnIndex++)
+                .string(heading)
+        });
+        //Write Data in Excel file
+        let rowIndex = 2;
+        data.forEach(record => {
+            let columnIndex = 1;
+            Object.keys(record).forEach(columnName => {
+                ws.cell(rowIndex, columnIndex++)
+                    .string(String(record[columnName]))
+            });
+            rowIndex++;
+        });
+
+        wb.write(filename);
+        return "Saved";
+    }
+    async view_sppb(year, month, type, excel, page, limit, username) {
+
+
+
         try {
-            let filename = 'summary/sppb-psat-' + type + '-' + String(year) + '-' + String(month) + '.xlsx';
-            let view;
-            if (type == 'ongoing') {
+            let history;
+            let count;
+            let saveToExcel;
+            if (excel == 1) {
+                count = await pool.query('SELECT COUNT (*) FROM' + "  sppb_psat.history_all_pengajuan " + 'WHERE  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 ', [year, month]);
+                page = 1;
+                limit = count.rows[0].count
+            }
+            if (username == null) {
 
-                console.log(filename)
-                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'SPPB-PSAT' as jenis_perizinan, jenis_permohonan,detail_tim_auditor, nomor_sppb_psat_sebelumnya, masa_berlaku, created, update  FROM sppb_psat.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
+                if (type == 'ongoing') {
+                    history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " sppb_psat.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " sppb_psat.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                }
             } else {
-                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses, 'SPPB-PSAT' as jenis_perizinan, jenis_permohonan, detail_tim_auditor, nomor_sppb_psat_sebelumnya, masa_berlaku, created, update FROM sppb_psat.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
-
+                console.log(username)
+                if (type == 'ongoing') {
+                    history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                }
             }
 
-            let data = await view.rows.map(data => {
+            let data = await history.query.map(data => {
                 let auditor_name = [""];
 
                 if (data.detail_tim_auditor != null) {
@@ -59,72 +93,79 @@ class getSummary {
                     jenis_perizinan: data.jenis_perizinan,
                     jenis_permohonan: data.jenis_permohonan,
                     detail_tim_auditor: auditor_name,
+                    tim_auditor: data.tim_auditor,
                     nomor_sppb_psat: data.nomor_sppb_psat_sebelumnya,
                     masa_berlaku: data.masa_berlaku,
                     created: data.created,
                     update: data.update
                 }
             });
-            if (excel == 1) {
-                console.log(excel)
-                    //Write Column Title in Excel file
-                let headingColumnIndex = 1;
-                headingColumnNames.forEach(heading => {
-                    ws.cell(1, headingColumnIndex++)
-                        .string(heading)
-                });
-                //Write Data in Excel file
-                let rowIndex = 2;
-                await data.forEach(record => {
-                    let columnIndex = 1;
-                    Object.keys(record).forEach(columnName => {
-                        ws.cell(rowIndex, columnIndex++)
-                            .string(String(record[columnName]))
-                    });
-                    rowIndex++;
-                });
 
-                await wb.write('summary/sppb-psat-' + type + '-' + year + '-' + month + '.xlsx');
+            if (excel == 1) {
+                const headingColumnNames = ["pengajuan", "kode pengajuan", "pengguna", "status proses", "jenis perizinan", "jenis permohonan", "nama auditor", "dibuat", "diperbaharui"]
+                const filename = 'summary/sppb-psat-' + type + '-' + String(year) + '-' + String(month) + '.xlsx';
+                const worksheetName = "SPPB-PSAT";
+                saveToExcel = await this.generateExcel(data, filename, worksheetName, headingColumnNames);
+            } else {
+                saveToExcel = "Not Saved";
             }
 
-            return data;
+
+            return {
+                next: {
+                    page: history.next.page,
+                    limit: history.next.limit
+                },
+
+                previous: {
+                    page: history.previous.page,
+                    limit: history.previous.limit
+                },
+                total_query: history.total_query,
+                max_page: history.max_page,
+                query: data,
+                saveToExcel
+            };
 
         } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
+
             return { status: '400', Error: "" + ex };
         };
     }
 
 
-    async view_izinedar(year, month, type, excel) {
-        const headingColumnNames = [
-            "pengajuan",
-            "kode pengajuan",
-            "pengguna",
-            "status proses",
-            "jenis perizinan",
-            "jenis permohonan",
-            "nama dagang",
-            "nama latin",
-            "nama merek",
-            "jenis kemasan",
-            "nama auditor",
-            "dibuat",
-            "diperbaharui"
-        ]
+    async view_izinedar(year, month, type, excel, page, limit, username) {
+
 
         try {
-            let filename;
-            let view;
-            if (type == 'ongoing') {
-                filename = 'summary/izin-edar-ongoing-' + year + '-' + month + '.xlsx';
-                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'IZIN-EDAR' as jenis_perizinan,  status_pengajuan, nama_dagang, nama_latin, nama_merek, jenis_kemasan, detail_tim_auditor,nomor_izin_edar,expire_sertifikat, created, update  FROM izin_edar.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
-            } else {
-                filename = 'summary/izin-edar-finish-' + year + '-' + month + '.xlsx';
-                view = await pool.query("SELECT id_pengajuan,kode_pengajuan,id_pengguna,status_proses,  'IZIN-EDAR' as jenis_perizinan,  status_pengajuan, nama_dagang, nama_latin, nama_merek, jenis_kemasan, detail_tim_auditor, nomor_izin_edar,expire_sertifikat, created, update  FROM izin_edar.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses = $3 OR status_proses = $4) ORDER BY update;", [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak']);
-
+            let history;
+            let count;
+            let saveToExcel;
+            if (excel == 1) {
+                count = await pool.query('SELECT COUNT (*) FROM' + "  izin_edar.history_all_pengajuan " + 'WHERE  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 ', [year, month]);
+                page = 1;
+                limit = count.rows[0].count
             }
-            let data = await view.rows.map(data => {
+
+            if (username == null) {
+                if (type == 'ongoing') {
+                    history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " izin_edar.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " izin_edar.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                }
+            } else {
+                if (type == 'ongoing') {
+                    history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                }
+            }
+
+            let data = await history.query.map(data => {
                 let auditor_name = [""];
                 if (data.detail_tim_auditor != null) {
                     auditor_name = data.detail_tim_auditor.map(detail => {
@@ -155,26 +196,30 @@ class getSummary {
 
             });
 
-            if (excel == true) {
-                //Write Column Title in Excel file
-                let headingColumnIndex = 1;
-                headingColumnNames.forEach(heading => {
-                    ws.cell(1, headingColumnIndex++)
-                        .string(heading)
-                });
-                //Write Data in Excel file
-                let rowIndex = 2;
-                data.forEach(record => {
-                    let columnIndex = 1;
-                    Object.keys(record).forEach(columnName => {
-                        ws.cell(rowIndex, columnIndex++)
-                            .string(String(record[columnName]))
-                    });
-                    rowIndex++;
-                });
-                wb.write(filename);
+            if (excel == 1) {
+                const headingColumnNames = ["pengajuan", "kode pengajuan", "pengguna", "status proses", "jenis perizinan", "jenis permohonan", "nama dagang", "nama latin", "nama merek", "jenis kemasan", "nama auditor", "dibuat", "diperbaharui"]
+                const filename = 'summary/izin-edar-' + type + '-' + String(year) + '-' + String(month) + '.xlsx';
+                const worksheetName = "IZIN-EDAR";
+                saveToExcel = await this.generateExcel(data, filename, worksheetName, headingColumnNames);
+            } else {
+                saveToExcel = "Not Saved";
             }
-            return data
+
+            return {
+                next: {
+                    page: history.next.page,
+                    limit: history.next.limit
+                },
+
+                previous: {
+                    page: history.previous.page,
+                    limit: history.previous.limit
+                },
+                total_query: history.total_query,
+                max_page: history.max_page,
+                query: data,
+                saveToExcel
+            };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -182,12 +227,17 @@ class getSummary {
     }
 
 
-    async total_by_graph(year) {
+    async total_by_graph(year, user) {
         const date_val = ['', 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DESEMBER']
 
         try {
+            let view
+            if (user == null) {
+                view = await pool.query('SELECT EXTRACT(MONTH FROM created) as month, status_proses, count(*) from pengguna.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 GROUP BY  status_proses, EXTRACT(MONTH FROM created) ORDER BY EXTRACT(MONTH FROM created) ', [year])
+            } else {
+                view = await pool.query('SELECT EXTRACT(MONTH FROM created) as month, status_proses, tim_auditor, count(*) from pengguna.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 ' + `AND  $2=ANY(${'tim_auditor'}) ` + ' GROUP BY  status_proses,tim_auditor,  EXTRACT(MONTH FROM created) ORDER BY EXTRACT(MONTH FROM created) ', [year, user])
 
-            let view = await pool.query('SELECT EXTRACT(MONTH FROM created) as month, status_proses, count(*) from pengguna.history_all_pengajuan WHERE EXTRACT(YEAR FROM created) = $1 GROUP BY  status_proses, EXTRACT(MONTH FROM created) ORDER BY EXTRACT(MONTH FROM created) ', [year])
+            }
             let data = view.rows
             let result = [];
             for (let i = 1; i < 13; i++) {

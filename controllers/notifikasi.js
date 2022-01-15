@@ -9,8 +9,7 @@ class NotifikasiController {
                 let datas = req.body;
                 debug('detail %o', datas);
                 let detail = await notifikasi.read_notifikasi(datas);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -29,8 +28,7 @@ class NotifikasiController {
                 let limit = req.query.limit;
                 debug('detail %o', user);
                 let detail = await notifikasi.history_notifikasi(user, page, limit);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
