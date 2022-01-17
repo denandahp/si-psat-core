@@ -74,7 +74,7 @@ class PsatPlPerubahanModel {
                 await check_query.check_data(data)
             }
             if (data.proses == 'CLEAR') {
-                data_audit_dokumen = [data.id_pengajuan, data.id_tim_audit, data.proses];
+                data_audit_dokumen = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit];
                 audit_dokumen = await pool.query(format('CALL ' + proc_audit_doc + ' (%L)', data_audit_dokumen));
 
                 data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, 'REVIEW'];
@@ -102,7 +102,7 @@ class PsatPlPerubahanModel {
             }
             let audit_lapang, data_audit_lapang, sidang_komtek, data_sidang_komtek;
             if (data.proses == 'CLEAR') {
-                data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses];
+                data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit];
                 audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
 
                 data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, 'REVIEW', data.bahan_komtek];

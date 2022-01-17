@@ -250,7 +250,7 @@ exports.plotting_email_pengguna = async (query_pengajuan)=> {
     }
     let email_pengguna =[];
 
-    //-------------------------- Plotting Id Pengguna ---------------------------------------
+    //-------------------------- Plotting Email Pengguna ---------------------------------------
     if(query_pengajuan.rows[0].code_status_proses == 10 ||
         query_pengajuan.rows[0].code_status_proses == 40 ||
         query_pengajuan.rows[0].code_status_proses == 50 ||
@@ -285,7 +285,6 @@ exports.send_notification = async (id_pengajuan, jenis_pengajuan)=> {
             let lower_string = string.toLowerCase()
             return lower_string[0].toUpperCase() + lower_string.slice(1);
         }
-
         let pesan, query_pengajuan, id_pengguna = [], jenis_permohonan;
         //-------------------------- Generate Pesan Notifikasi ---------------------------------------
         if (jenis_pengajuan == 'SPPB_PSAT') {
