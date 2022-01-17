@@ -371,7 +371,6 @@ exports.send_email = async(id_pengajuan, jenis_pengajuan) => {
         await sender.verify().then(console.log('sender verify')).catch(console.error);
 
         emailReceiverList = await this.plotting_email_pengguna(query_pengajuan)
-        console.log(emailReceiverList)
         var receiver = {
             from: emailSender,
             to: emailReceiverList,
