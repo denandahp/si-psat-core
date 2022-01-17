@@ -1,4 +1,5 @@
 const debug = require('debug')('app:controller:sppb_psat');
+
 const authUtils = require('./utils/auth');
 const summary = require('../models/summary');
 const fs = require('fs')
@@ -11,7 +12,15 @@ class getSummary {
         let callback = async() => {
             try {
                 let detail;
-                detail = await summary.view_sppb(req.params.year, req.params.month, req.params.jenis, 1);
+                let page = req.query.page;
+                let limit = req.query.limit;
+                let user = req.query.user;
+
+                if (page != null || limit != null) {
+                    detail = await summary.view_sppb(req.params.year, req.params.month, req.params.jenis, 0, page, limit, user);
+                } else {
+                    detail = await summary.view_sppb(req.params.year, req.params.month, req.params.jenis, 1, page, limit, user);
+                }
                 if (detail.status == '400') { res.status(400).json({ response: detail }); } else { res.status(200).json({ response: detail }); }
             } catch (e) {
                 next(e.detail || e);
@@ -28,7 +37,15 @@ class getSummary {
         let callback = async() => {
             try {
                 let detail;
-                detail = await summary.view_izinedar(req.params.year, req.params.month, req.params.jenis, 1);
+                let page = req.query.page;
+                let limit = req.query.limit;
+                let user = req.query.user;
+
+                if (page != null || limit != null) {
+                    detail = await summary.view_izinedar(req.params.year, req.params.month, req.params.jenis, 0, page, limit, user);
+                } else {
+                    detail = await summary.view_izinedar(req.params.year, req.params.month, req.params.jenis, 1, page, limit, user);
+                }
 
                 if (detail.status == '400') { res.status(400).json({ response: detail }); } else { res.status(200).json({ response: detail }); }
             } catch (e) {
@@ -44,7 +61,8 @@ class getSummary {
         let callback = async() => {
             try {
                 let year = req.params.year
-                let detail = await summary.total_by_graph(year);
+                let user = req.query.user;
+                let detail = await summary.total_by_graph(year, user);
                 if (detail.status == '400') { res.status(400).json({ response: detail }); } else { res.status(200).json({ response: detail }); }
             } catch (e) {
                 next(e.detail || e);
@@ -89,6 +107,7 @@ class getSummary {
             let year = req.params.year;
             let month = req.params.month;
             let filePath = 'summary/' + filename + '-' + jenis + '-' + String(year) + '-' + String(month) + '.xlsx';
+            console.log(filePath)
 
 
             let readFile = await filePath.split('/');

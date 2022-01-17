@@ -14,15 +14,15 @@ class SppbPsatModel {
     async read_notifikasi(data) {
         try {
             let data_notifikasi, notifikasi;
-            if(data.id_notifikasi == 'all'){
+            if (data.id_notifikasi == 'all') {
                 data_notifikasi = ['READ', date];
                 notifikasi = await pool.query(format(
-                    'UPDATE' + db_notfikasi + ' SET (status, update) = (%L) '+
+                    'UPDATE' + db_notfikasi + ' SET (status, update) = (%L) ' +
                     `WHERE id_pengguna=${data.id_pengguna} RETURNING *`, data_notifikasi));
-            }else{
+            } else {
                 data_notifikasi = ['READ', date];
                 notifikasi = await pool.query(format(
-                    'UPDATE' + db_notfikasi + ' SET (status, update) = (%L) '+
+                    'UPDATE' + db_notfikasi + ' SET (status, update) = (%L) ' +
                     `WHERE id=${data.id_notifikasi} AND id_pengguna=${data.id_pengguna} RETURNING *`, data_notifikasi));
             }
             check_query.check_queryset(notifikasi);
@@ -37,7 +37,7 @@ class SppbPsatModel {
     async history_notifikasi(user, page, limit) {
         try {
             let unread_count = await pool.query(
-                'SELECT COUNT (*) FROM' + db_list_notfikasi + 'WHERE id_pengguna_tujuan=$1 AND status=$2', [user,'UNREAD']);
+                'SELECT COUNT (*) FROM' + db_list_notfikasi + 'WHERE id_pengguna_tujuan=$1 AND status=$2', [user, 'UNREAD']);
             let history = await check_query.pagination(page, limit, 'id_pengguna_tujuan=$1', [user], '*', db_list_notfikasi)
             check_query.check_queryset(history);
             debug('get %o', history);
