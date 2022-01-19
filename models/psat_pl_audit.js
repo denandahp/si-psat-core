@@ -35,6 +35,9 @@ class PsatPlPerubahanModel {
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: `${data.proses} Permohonan Baru Izin Edar `,  notifikasi: notif, data: permohonan_baru.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -54,6 +57,9 @@ class PsatPlPerubahanModel {
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: "Penunjukkan Tim Audit PSAT PL",  notifikasi: notif, data: penunjukan_tim_audit.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -82,6 +88,9 @@ class PsatPlPerubahanModel {
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: `${data.proses} AUDIT DOCUMENT PSAT PL`,  notifikasi: notif, data: audit_dokumen.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -100,6 +109,9 @@ class PsatPlPerubahanModel {
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             return { status: '200', ketarangan: `${data.proses} SIDANG KOMTEK PSAT PL`,  notifikasi: notif, data: sidang_komtek.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -122,6 +134,9 @@ class PsatPlPerubahanModel {
                 notifikasi: notif,
                 data: pembayaran_pnbp.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
@@ -140,6 +155,9 @@ class PsatPlPerubahanModel {
                 notifikasi: notif,
                 data: dokumen_ditolak.rows[0] };
         } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
