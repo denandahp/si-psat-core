@@ -1,7 +1,7 @@
 const pool = require('../../libs/db');
 var moment = require('moment-timezone');
 var nodemailer = require('nodemailer');
-var content = require('./content_email')
+var content = require('./content_email');
 
 
 const db_proses_audit = 'audit.proses_audit';

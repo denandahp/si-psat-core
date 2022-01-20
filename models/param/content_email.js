@@ -1,3 +1,4 @@
+const pool = require('../../libs/db');
 
 let head =`
     <head>
