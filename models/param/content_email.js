@@ -18,7 +18,7 @@ let head =`
     </style>
     </head>
 `
-let footer = `    
+let footer = `
     <body>
         <div class="footer">
             <p><b><u>OKKPP-Badan Ketahanan Pangan</u></b></p>
@@ -51,12 +51,12 @@ exports.content_auditor = async(pengajuan) => {
         ${head}
         <body>
             <div class="body">
-                    <p>Salam Hangat,</p>
-                    <p>Berdasarkan Penugasan Pimpinan Anda ditugaskan untuk menindaklanjuti ${pengajuan.status_proses.toLowerCase()} ${pengajuan.permohonan} ${pengajuan.nama_perusahaan}.</p>
-                    <p>
-                        Silakan <a href="#">login</a> untuk melanjutkan proses audit, semoga layanan
-                        ini dapat memberikan kenyamanan bagi Bapak/Ibu.
-                    </p>
+                <p>Salam Hangat,</p>
+                <p>Berdasarkan Penugasan Pimpinan Anda ditugaskan untuk menindaklanjuti ${pengajuan.status_proses.toLowerCase()} ${pengajuan.permohonan} ${pengajuan.nama_perusahaan}.</p>
+                <p>
+                    Silakan <a href="#">login</a> untuk melanjutkan proses audit, semoga layanan
+                    ini dapat memberikan kenyamanan bagi Bapak/Ibu.
+                </p>
             </div>
             <div class="footer">
                 <p>Hormat kami,</p>
