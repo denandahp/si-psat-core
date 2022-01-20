@@ -316,10 +316,10 @@ exports.send_email = async(id_pengajuan, jenis_pengajuan) => {
                 ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
         }
 
-        // let emailSender = 'keamananpangansegar@gmail.com';
-        // let passSender = 'xpvrqpxmyrlinbek';
-        let emailSender = 'denandahp@gmail.com';
-        let passSender = 'irwpuxsgcquneltv';
+        let emailSender = 'keamananpangansegar@gmail.com';
+        let passSender = 'xpvrqpxmyrlinbek';
+        // let emailSender = 'denandahp@gmail.com';
+        // let passSender = 'irwpuxsgcquneltv';
         var sender = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 587,
