@@ -245,7 +245,6 @@ exports.plotting_id_pengguna = async(query_pengajuan) => {
     return id_pengguna;
 }
 
-
 exports.send_notification = async(id_pengajuan, jenis_pengajuan) => {
     try {
         function capitalizeFirstLetter(string) {
@@ -317,6 +316,8 @@ exports.send_email = async(id_pengajuan, jenis_pengajuan) => {
                 ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
         }
 
+        // let emailSender = 'keamananpangansegar@gmail.com';
+        // let passSender = 'xpvrqpxmyrlinbek';
         let emailSender = 'denandahp@gmail.com';
         let passSender = 'irwpuxsgcquneltv';
         var sender = nodemailer.createTransport({
@@ -329,7 +330,11 @@ exports.send_email = async(id_pengajuan, jenis_pengajuan) => {
         });
         await sender.verify().then(console.log('sender verify')).catch(console.error);
         emailReceiverList = await this.plotting_email_pengguna(query_pengajuan, sender, subjectReceiver, emailSender)
-        return subjectReceiver;
+        if (emailReceiverList == true){
+            return subjectReceiver;
+        }else{
+            throw ({ pesan: err.message, code: '401' });
+        }
     } catch (err) {
         throw ({ pesan: err.message, code: '401' });
     }
@@ -340,14 +345,15 @@ exports.plotting_email_pengguna = async(query_pengajuan, sender, subjectReceiver
         arr[index] = item.email
     }
 
-    async function send_email_sekretariat(email, pelaku_usaha, role){
+    async function send_email(email, pengajuan, role){
         let textReceiver 
         if(role == 'SUPERADMIN'){
-            textReceiver = content.content_superadmin(pelaku_usaha)
+            textReceiver = content.content_superadmin(pengajuan)
         } else if (role == 'AUDITOR'){
-            textReceiver = content.content_auditor(pelaku_usaha)
+            textReceiver = content.content_auditor(pengajuan)
+        } else{
+            textReceiver = content.content_pelaku_usaha(pengajuan)
         }
-
         var receiver = {
             from: emailSender,
             to: email,
@@ -370,7 +376,16 @@ exports.plotting_email_pengguna = async(query_pengajuan, sender, subjectReceiver
         superadmin = await pool.query('SELECT id, email, role FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
         email_pengguna = superadmin.rows
         email_pengguna.forEach(mapping_email)
-        await send_email_superadmin(email_pengguna, query_pengajuan.rows[0], 'SUPERADMIN')
+        await send_email(email_pengguna, query_pengajuan.rows[0], 'SUPERADMIN')
+
+        if(query_pengajuan.rows[0].code_status_proses == 40 ||
+           query_pengajuan.rows[0].code_status_proses == 60){
+            pengguna = await pool.query(
+                'SELECT email FROM ' + db_pelaku_usaha +
+                ' WHERE id=$1 AND role=$2', [query_pengajuan.rows[0].id_pengguna, 'PELAKU_USAHA']);
+            email_pengguna = [pengguna.rows[0].email]
+            await send_email(email_pengguna, query_pengajuan.rows[0], 'PELAKU_USAHA')
+        }
 
     } else if (query_pengajuan.rows[0].code_status_proses == 20 ||
         query_pengajuan.rows[0].code_status_proses == 30) {
@@ -379,21 +394,26 @@ exports.plotting_email_pengguna = async(query_pengajuan, sender, subjectReceiver
         auditor = await pool.query('SELECT * FROM ' + db_sekretariat + ` WHERE id=ANY(ARRAY${id_auditor}) AND role='AUDITOR' AND is_deleted='false'`)
         email_pengguna = auditor.rows
         email_pengguna.forEach(mapping_email)
-        await send_email_sekretariat(email_pengguna, query_pengajuan.rows[0], 'AUDITOR')
+        await send_email(email_pengguna, query_pengajuan.rows[0], 'AUDITOR')
 
     } else if (query_pengajuan.rows[0].code_status_proses == 70) {
-        superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+        superadmin = await pool.query('SELECT id, email, role FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
         email_pengguna = superadmin.rows
         email_pengguna.forEach(mapping_email)
+        await send_email(email_pengguna, query_pengajuan.rows[0], 'SUPERADMIN')
         pengguna = await pool.query(
             'SELECT email FROM ' + db_pelaku_usaha +
             ' WHERE id=$1 AND role=$2', [query_pengajuan.rows[0].id_pengguna, 'PELAKU_USAHA']);
-        email_pengguna.concat(pengguna.rows[0].email)
+        email_pengguna = pengguna.rows[0].email
+        await send_email(email_pengguna, query_pengajuan.rows[0], 'PELAKU_USAHA')
+
     } else {
         pengguna = await pool.query(
             'SELECT email FROM ' + db_pelaku_usaha +
             ' WHERE id=$1 AND role=$2', [query_pengajuan.rows[0].id_pengguna, 'PELAKU_USAHA']);
         email_pengguna = [pengguna.rows[0].email]
+        await send_email(email_pengguna, query_pengajuan.rows[0], 'PELAKU_USAHA')
+
     }
-    return email_pengguna;
+    return true;
 }
