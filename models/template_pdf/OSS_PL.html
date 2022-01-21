@@ -1,86 +1,87 @@
 <br>
-    <head>
-        <meta http-equiv=Content-Type content="text/html">
-        <title>Sertifikat Izin Edar PSAT PL</title>
-        <style>
-            p,
-            br {
-                line-height: 115%;
-                font-family: "Bookman Old Style", serif;
-                font-size: 12pt;
-                margin: 0;
-            }
-            
-            .title p {
-                font-weight: bold;
-                text-align: center;
-            }
-            
-            .title .logo {
-                text-align: center;
-                margin-bottom: 24pt;
-            }
-            
-            .logo img {
-                width: 87;
-                height: 87;
-            }
-            
-            .body p {
-                margin-bottom: 6pt;
-            }
-            
-            table {
-                text-indent: initial;
-                white-space: normal;
-                line-height: 150%;
-                font-weight: normal;
-                font-size: 10pt;
-                font-family: "Bookman Old Style", serif;
-                font-style: normal;
-                color: -internal-quirk-inherit;
-                text-align: start;
-                border-spacing: 2px;
-                font-variant: normal;
-                margin-left: 5.4pt;
-                border-collapse: collapse
-            }
-            
-            tr.header {
-                text-align: center;
-            }
-            
-            tr.data td.left {
-                text-align: center;
-            }
-            
-            td {
-                border: solid 1pt;
-                padding: 0cm 5.4pt 0cm 5.4pt;
-                height: 1.5pt;
-            }
-            
-            td.left {
-                width: 21.25pt;
-            }
-            
-            td.center {
-                width: 297.7pt;
-            }
-            
-            td.right {
-                width: 6cm;
-            }
-        </style>
-    </head>
-    <br>
-        <p>PEMERINTAH REPUBLIK INDONESIA</p>
-        <p>PERIZINAN BERUSAHA UNTUK MENUNJANG KEGIATAN USAHA</p>
-        <p>IZIN EDAR PANGAN SEGAR ASAL TUMBUHAN</p>
-        <p>PRODUKSI LUAR NEGERI (PSAT-PL)</p>
-        <p>LAMPIRAN</p>
-        <p>PBUMKU: {{pbumku}}</p>
-    </br>
+
+<head>
+    <meta http-equiv=Content-Type content="text/html">
+    <title>Sertifikat Izin Edar PSAT PL</title>
+    <style>
+        p,
+        br {
+            line-height: 115%;
+            font-family: "Bookman Old Style", serif;
+            font-size: 12pt;
+            margin: 0;
+        }
+        
+        .title p {
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .title .logo {
+            text-align: center;
+            margin-bottom: 24pt;
+        }
+        
+        .logo img {
+            width: 87;
+            height: 87;
+        }
+        
+        .body p {
+            margin-bottom: 6pt;
+        }
+        
+        table {
+            text-indent: initial;
+            white-space: normal;
+            line-height: 150%;
+            font-weight: normal;
+            font-size: 10pt;
+            font-family: "Bookman Old Style", serif;
+            font-style: normal;
+            color: -internal-quirk-inherit;
+            text-align: start;
+            border-spacing: 2px;
+            font-variant: normal;
+            margin-left: 5.4pt;
+            border-collapse: collapse
+        }
+        
+        tr.header {
+            text-align: center;
+        }
+        
+        tr.data td.left {
+            text-align: center;
+        }
+        
+        td {
+            border: solid 1pt;
+            padding: 0cm 5.4pt 0cm 5.4pt;
+            height: 1.5pt;
+        }
+        
+        td.left {
+            width: 21.25pt;
+        }
+        
+        td.center {
+            width: 297.7pt;
+        }
+        
+        td.right {
+            width: 6cm;
+        }
+    </style>
+</head>
+<br>
+<p>PEMERINTAH REPUBLIK INDONESIA</p>
+<p>PERIZINAN BERUSAHA UNTUK MENUNJANG KEGIATAN USAHA</p>
+<p>IZIN EDAR PANGAN SEGAR ASAL TUMBUHAN</p>
+<p>PRODUKSI LUAR NEGERI (PSAT-PL)</p>
+<p>LAMPIRAN</p>
+<p>PBUMKU: {{pbumku}}</p>
+</br>
 </br>
 <div class="body">
     <p>Lampiran berikut memuat data teknis Izin Edar Pangan Segar Asal Tumbuhan Produksi Luar Negeri (PSAT-PL):</p>
@@ -149,7 +150,7 @@
                 <td class="right">{{berat_bersih}}</td>
             </tr>
         </tbody>
-        <tbody id="data_input"></tbody>
+
 
 
     </table>
@@ -157,122 +158,3 @@
 </body>
 
 </html>
-<script>
-    let tab = ''
-    let data =[
-        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
-        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
-        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
-        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
-        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
-        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
-        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
-        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
-        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
-        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'},
-        {nama_unit:'1', alamat_unit:'2',status_kepemilikan: '3', sppb_psat_nomor: '4', 
-        sppb_psat_level: '5', sppb_psat_masa_berlaku: '6' ,sppb_psat_ruang_lingkup: '7'}
-         
-    ]
-    /*
-        <tr class="data">
-            <td class="left">8.</td>
-            <td class="center" colspan="2">Unit Penaganan PSAT</td>
-            <td class="right"></td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">1) Nama unit penganganan PSAT</td>
-            <td class="right">{{ nama_unit }}</td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">2) Alamat</td>
-            <td class="right">{{ alamat_unit }}</td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">3) Status kepemilikan (sewa/milik sendiri)</td>
-            <td class="right">{{ status_kepemilikan }}</td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">4)SPPB-PSAT</td>
-            <td class="right"></td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">a. Nomor</td>
-            <td class="right">{{ sppb_psat_nomor }}</td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">b. Level</td>
-            <td class="right">{{ sppb_psat_level }}</td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">c. Masa berlaku</td>
-            <td class="right">{{ sppb_psat_masa_berlaku }}</td>
-        </tr>
-        <tr class="data">
-            <td class="left"></td>
-            <td class="center" colspan="2">d. Ruang lingkup</td>
-            <td class="right">{{ sppb_psat_ruang_lingkup }}</td>
-        </tr>
-    */
-    let number = 1 ;
-    // Loop to access all rows 
-    for (let r of data) {
-        datas = Object.values(r)
-        tab += `
-            <tr class="data">
-                <td class="left">8.${number}</td>
-                <td class="center" colspan="2">Unit Penaganan PSAT</td>
-                <td class="right"></td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">1) Nama unit penganganan PSAT</td>
-                <td class="right">${datas[0]}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">2) Alamat</td>
-                <td class="right">${datas[1]}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">3) Status kepemilikan (sewa/milik sendiri)</td>
-                <td class="right">${datas[2]}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">4)SPPB-PSAT</td>
-                <td class="right"></td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">&nbsp a. Nomor</td>
-                <td class="right">${datas[3]}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">&nbsp b. Level</td>
-                <td class="right">${datas[4]}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">&nbsp c. Masa berlaku</td>
-                <td class="right">${datas[5]}</td>
-            </tr>
-            <tr class="data">
-                <td class="left"></td>
-                <td class="center" colspan="2">&nbsp d. Ruang lingkup</td>
-                <td class="right">${datas[6]}</td>
-            </tr>
-        `;
-        number += 1;
-    }
-    document.getElementById("data_input").innerHTML = tab;
-</script>
