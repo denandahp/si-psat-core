@@ -59,6 +59,32 @@ class izinedarGenerator {
     }
     async perubahandata(sertifikat_pl, unit_produksi, def, requstType) {
         let data;
+        let detail_unit = unit_produksi.map(data_prod => {
+            return {
+                nama_unit: data_prod.nama_unit,
+                alamat_unit: data_prod.alamat_unit,
+                status_kepemilikan: data_prod.status_kepemilikan,
+
+                sppb_psat_nomor: data_prod.sppb_psat_nomor,
+                sppb_psat_level: data_prod.sppb_psat_level,
+                sppb_psat_masa_berlaku: data_prod.sppb_psat_masa_berlaku,
+                sppb_psat_ruang_lingkup: data_prod.sppb_psat_ruang_lingkup
+            }
+        })
+
+
+        let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + unit_produksi[0].id_pengguna + '.pdf'
+        const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL_UNIT.html')
+        const content = await ReadFile(templatePath, 'utf8')
+
+        const template = Handlebars.compile(content)
+        const pdf = await generatePdf.pdf(template(detail_unit), filename);
+        let sertifikat_unit_penanganan = url + filename
+        let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, sertifikat_unit_penanganan, date];
+        let pengajuan = await pool.query(
+            'UPDATE ' + db_pengajuan_izin_edar +
+            ' SET (sertifikat_unit_penanganan, update) = ($4, $5) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
+            'RETURNING id, id_pengguna, status_pengajuan, status_proses, sertifikat_unit_penanganan', data_pengajuan);
 
         if (requstType == "GET") {
             data = {
@@ -77,19 +103,11 @@ class izinedarGenerator {
                 "berat_bersih_lama": sertifikat_pl.berat_bersih,
                 "jenis_kemasan_baru": null,
                 "berat_bersih_baru": null,
-                "unit_penanganan": " ",
-                "nama_unit": unit_produksi.nama_unit,
-                "alamat_unit": unit_produksi.alamat_unit,
-                "status_kepemilikan": unit_produksi.status_kepemilikan,
-                "sppb_psat": " ",
-                "sppb_psat_nomor": unit_produksi.sppb_psat_nomor,
-                "sppb_psat_level": unit_produksi.sppb_psat_level,
-                "sppb_psat_masa_berlaku": unit_produksi.sppb_psat_masa_berlaku,
-                "sppb_psat_ruang_lingkup": unit_produksi.sppb_psat_ruang_lingkup,
                 "kelas_mutu": sertifikat_pl.kelas_mutu,
                 "jenis_klaim": sertifikat_pl.jenis_klaim,
                 "desain_tabel_dan_kemasan": sertifikat_pl.desain_tabel_dan_kemasan,
-                "desain_tabel_dan_kemasan_baru": null
+                "desain_tabel_dan_kemasan_baru": null,
+                "sertifikat_unit_penanganan": sertifikat_unit_penanganan
 
             }
 
@@ -129,7 +147,8 @@ class izinedarGenerator {
                 "kelas_mutu": def.kelas_mutu,
                 "jenis_klaim": def.jenis_klaim,
                 "desain_tabel_dan_kemasan": def.desain_tabel_dan_kemasan,
-                "desain_tabel_dan_kemasan_baru": def.desain_tabel_dan_kemasan_baru
+                "desain_tabel_dan_kemasan_baru": def.desain_tabel_dan_kemasan_baru,
+                "sertifikat_unit_penanganan": def.sertifikat_unit_penanganan
 
             }
 
@@ -166,12 +185,6 @@ class izinedarGenerator {
                 ' SET (jenis_psat, nama_dagang, nama_latin, negara_asal, nama_merek, jenis_kemasan, berat_bersih, kelas_mutu, jenis_klaim, desain_tabel_dan_kemasan) = ($2, $3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id=$1' +
                 'RETURNING *', data_produk);
 
-            let data_produksi = [sertifikat_pl.id_pengguna, def.nama_unit, def.alamat_unit, def.status_kepemilikan, def.sppb_psat_nomor, def.sppb_psat_level, def.sppb_psat_masa_berlaku, def.sppb_psat_ruang_lingkup];
-            let unit_produksi = await pool.query(
-                'UPDATE izin_edar.unit_produksi' +
-                ' SET (nama_unit, alamat_unit, status_kepemilikan, sppb_psat_nomor, sppb_psat_level, sppb_psat_masa_berlaku, sppb_psat_ruang_lingkup) = ($2, $3, $4, $5, $6, $7, $8) WHERE id_pengguna=$1' +
-                'RETURNING *', data_produksi);
-
 
             // res.set("Content-Type", "application/pdf");
             var pdfsToMerge = []
@@ -188,8 +201,8 @@ class izinedarGenerator {
             if (def.desain_tabel_dan_kemasan != null) {
                 pdfsToMerge.push(fs.readFileSync(def.desain_tabel_dan_kemasan))
             }
-            if (def.desain_tabel_dan_kemasan != null) {
-                pdfsToMerge.push(fs.readFileSync(def.desain_tabel_dan_kemasan_baru))
+            if (def.sertifikat_unit_penanganan != null) {
+                pdfsToMerge.push(fs.readFileSync(def.sertifikat_unit_penanganan))
             }
 
 
