@@ -33,7 +33,7 @@ class PsatPlPerubahanModel {
             }
             let permohonan_baru, data_permohonan_baru;
             data_permohonan_baru = [
-                data.id_pengajuan, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
+                data.id_pengajuan, data.proses, data.hasil_audit, data.keterangan
             ];
             permohonan_baru = await pool.query(format('CALL ' + proc_permohonan_baru + ' (%L)', data_permohonan_baru));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
@@ -63,7 +63,7 @@ class PsatPlPerubahanModel {
             ];
             penunjukan_tim_audit = await pool.query(
                 format('CALL ' + proc_tim_audit + `(%L,'{${data.lead_auditor}}' , '{${data.tim_auditor}}', ` +
-                    ` '${JSON.stringify(data.keterangan)}' )`, data_penunjukan_tim_audit));
+                    ` '${data.keterangan}' )`, data_penunjukan_tim_audit));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
             return {status: '200', ketarangan: "Penunjukkan Tim Audit", 
@@ -92,7 +92,7 @@ class PsatPlPerubahanModel {
                 audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
             } else {
                 data_audit_dokumen = [
-                    data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
+                    data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, data.keterangan
                 ];
                 audit_dokumen = await pool.query(format('CALL ' + proc_audit_doc + ' (%L)', data_audit_dokumen));
             }
@@ -127,7 +127,7 @@ class PsatPlPerubahanModel {
                 data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, 'REVIEW', data.bahan_komtek];
                 sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             } else {
-                data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)];
+                data_audit_lapang = [data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, data.keterangan];
                 audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
             }
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
@@ -173,7 +173,7 @@ class PsatPlPerubahanModel {
                 await check_query.check_data(data)
             }
             let sidang_komtek, data_sidang_komtek;
-            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
+            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.bahan_komtek, data.hasil_audit, data.keterangan];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
