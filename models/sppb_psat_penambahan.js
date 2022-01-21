@@ -148,6 +148,7 @@ class SppbPsatModel {
                     ' code_status_proses, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
                     ' jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
                     ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_audit_lapang, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                     'produk, unit_produksi, created, update FROM' + db_history_pengajuan + ' WHERE jenis_permohonan=$1', ["PENAMBAHAN"])
@@ -158,6 +159,7 @@ class SppbPsatModel {
                     ' code_status_proses, ruang_lingkup, masa_berlaku, surat_pemeliharaan_psat, diagram_alir_psat, '+
                     ' jenis_permohonan, sop_psat, bukti_penerapan_sop, surat_permohonan, sertifikat_jaminan_keamanan_pangan, status_proses, status_aktif, '+
                     ' hasil_audit_dokumen, hasil_audit_lapang, hasil_sidang_komtek, bahan_sidang_komtek, ' +
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_audit_lapang, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, '+
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, '+
                     'produk, unit_produksi, created, update FROM' + db_history_pengajuan + 
