@@ -2,6 +2,8 @@ const pool = require('../../libs/db');
 var moment = require('moment-timezone');
 var nodemailer = require('nodemailer');
 var content = require('./content_email');
+const dotenv = require('dotenv');
+dotenv.config();
 
 
 const db_proses_audit = 'audit.proses_audit';
@@ -316,8 +318,8 @@ exports.send_email = async(id_pengajuan, jenis_pengajuan) => {
                 ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
         }
 
-        let emailSender = 'keamananpangansegar@gmail.com';
-        let passSender = 'xpvrqpxmyrlinbek';
+        let emailSender = process.env.EMAIL_USER;
+        let passSender = process.env.EMAIL_PASSWORD;
         // let emailSender = 'denandahp@gmail.com';
         // let passSender = 'irwpuxsgcquneltv';
         var sender = nodemailer.createTransport({

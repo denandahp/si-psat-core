@@ -37,10 +37,12 @@ class PsatPlPerubahanModel {
             ];
             permohonan_baru = await pool.query(format('CALL ' + proc_permohonan_baru + ' (%L)', data_permohonan_baru));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
             return {
                 status: '200',
                 ketarangan: `${data.proses} Permohonan Baru SPPB PSAT `,
                 notifikasi: notif,
+                email: send_email,
                 data: permohonan_baru.rows[0]
             };
         } catch (ex) {
@@ -63,7 +65,11 @@ class PsatPlPerubahanModel {
                 format('CALL ' + proc_tim_audit + `(%L,'{${data.lead_auditor}}' , '{${data.tim_auditor}}', ` +
                     ` '${JSON.stringify(data.keterangan)}' )`, data_penunjukan_tim_audit));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
-            return { status: '200', ketarangan: "Penunjukkan Tim Audit", notifikasi: notif, data: penunjukan_tim_audit.rows[0] };
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
+            return {status: '200', ketarangan: "Penunjukkan Tim Audit", 
+                    notifikasi: notif, 
+                    email: send_email,
+                    data: penunjukan_tim_audit.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -91,7 +97,12 @@ class PsatPlPerubahanModel {
                 audit_dokumen = await pool.query(format('CALL ' + proc_audit_doc + ' (%L)', data_audit_dokumen));
             }
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
-            return { status: '200', ketarangan: `${data.proses} AUDIT DOCUMENT `, notifikasi: notif, data: audit_dokumen.rows[0] };
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
+            return {status: '200',
+                    ketarangan: `${data.proses} AUDIT DOCUMENT `,
+                    notifikasi: notif,
+                    email: send_email,
+                    data: audit_dokumen.rows[0] };
         } catch (ex) {
             if(ex.code == '401'){
                 return { status: '400', Error: ex.pesan };
@@ -120,7 +131,12 @@ class PsatPlPerubahanModel {
                 audit_lapang = await pool.query(format('CALL ' + proc_audit_lapang + ' (%L)', data_audit_lapang));
             }
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
-            return { status: '200', ketarangan: `${data.proses} AUDIT LAPANG `, notifikasi: notif, data: audit_lapang.rows[0] };
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
+            return {status: '200',
+                    ketarangan: `${data.proses} AUDIT LAPANG `,
+                    notifikasi: notif, 
+                    email: send_email,
+                    data: audit_lapang.rows[0] };
         } catch (ex) {
             if(ex.code == '401'){
                 return { status: '400', Error: ex.pesan };
@@ -137,7 +153,12 @@ class PsatPlPerubahanModel {
             penunjukan_tim_komtek = await pool.query(
                 format('CALL ' + proc_tim_komtek + ` (%L, '{${data.lead_komtek}}', '{${data.tim_komtek}}')`, data_penunjukan_tim_komtek));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
-            return { status: '200', ketarangan: "Penunjukkan Tim Komtek", notifikasi: notif, data: penunjukan_tim_komtek.rows[0] };
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
+            return {status: '200',
+                    ketarangan: "Penunjukkan Tim Komtek",
+                    notifikasi: notif,
+                    email: send_email,
+                    data: penunjukan_tim_komtek.rows[0] };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -155,7 +176,12 @@ class PsatPlPerubahanModel {
             data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
-            return { status: '200', ketarangan: `${data.proses} SIDANG KOMTEK `, notifikasi: notif, data: sidang_komtek.rows[0] };
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
+            return {status: '200',
+                    ketarangan: `${data.proses} SIDANG KOMTEK `,
+                    notifikasi: notif,
+                    email: send_email,
+                    data: sidang_komtek.rows[0] };
         } catch (ex) {
             if(ex.code == '401'){
                 return { status: '400', Error: ex.pesan };
@@ -177,10 +203,12 @@ class PsatPlPerubahanModel {
 
             pembayaran_pnbp = await pool.query(format('CALL ' + proc_pembayaran_pnbp + ' (%L)', data_pembayaran_pnbp));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
             return {
                 status: '200',
                 ketarangan: `${data.proses} PEMBAYARAN PNBP SPPB PSAT id ${data.id_pengajuan}`,
                 notifikasi: notif,
+                email: send_email,
                 data: pembayaran_pnbp.rows[0]
             };
         } catch (ex) {
@@ -199,10 +227,12 @@ class PsatPlPerubahanModel {
             data_dokumen_ditolak = [data.id_pengajuan, data.proses, data.dokumen_ditolak, data.keterangan];
             dokumen_ditolak = await pool.query(format('CALL ' + proc_dokumen_ditolak + ' (%L)', data_dokumen_ditolak));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
+            let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
             return {
                 status: '200',
                 ketarangan: `${data.proses} DOKUMEN SPPB PSAT DITOLAK id ${data.id_pengajuan}`,
                 notifikasi: notif,
+                email: send_email,
                 data: dokumen_ditolak.rows[0]
             };
         } catch (ex) {

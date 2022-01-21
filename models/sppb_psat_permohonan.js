@@ -54,7 +54,7 @@ class SppbPsatPermohonanModel {
             response.info_perusahaan = info_perusahaan.rows[0];
             response.create_sertifikat = create_sertifikat.rows[0];
             let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
-            let send_email = await check_query.send_email(223, 'SPPB_PSAT');
+            let send_email = await check_query.send_email(pengajuan.rows[0].id, 'SPPB_PSAT');
             debug('get %o', response);
             return {status: '200', 
                     keterangan: "Permohonan Awal SPPB PSAT",
