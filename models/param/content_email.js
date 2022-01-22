@@ -33,6 +33,12 @@ let footer = `
 `
 
 exports.content_superadmin = (pengajuan) => {
+    let jenis_permohonan;
+    if(pengajuan.permohonan == 'IZIN EDAR PL'){
+        jenis_permohonan = pengajuan.status_pengajuan.toLowerCase()
+    } else if (pengajuan.permohonan == 'SPPB PSAT'){
+        jenis_permohonan = pengajuan.jenis_permohonan.toLowerCase()
+    }
     let template = 
     `<html>
         ${head}
@@ -40,7 +46,7 @@ exports.content_superadmin = (pengajuan) => {
             <div class="body">
                 <p>Salam Hangat,</p>
                 <p>${pengajuan.nama_perusahaan} telah mengajukan 
-                ${pengajuan.status_proses.toLowerCase()} ${pengajuan.jenis_permohonan.toLowerCase()} 
+                ${pengajuan.status_proses.toLowerCase()} ${jenis_permohonan} 
                 ${pengajuan.permohonan}
                 dengan kode pengajuan ${pengajuan.kode_pengajuan}. Silakan <a href="#">login</a> untuk melanjutkan proses selanjutnya.</p>
             </div>
@@ -56,12 +62,18 @@ exports.content_superadmin = (pengajuan) => {
 }
 
 exports.content_auditor = (pengajuan) => {
+    let jenis_permohonan;
+    if(pengajuan.permohonan == 'IZIN EDAR PL'){
+        jenis_permohonan = pengajuan.status_pengajuan.toLowerCase()
+    } else if (pengajuan.permohonan == 'SPPB PSAT'){
+        jenis_permohonan = pengajuan.jenis_permohonan.toLowerCase()
+    }
     return `<html>
         ${head}
         <body>
             <div class="body">
                 <p>Salam Hangat,</p>
-                <p>Berdasarkan Penugasan Pimpinan Anda ditugaskan untuk menindaklanjuti ${pengajuan.status_proses.toLowerCase()} ${pengajuan.jenis_permohonan.toLowerCase()} ${pengajuan.permohonan} ${pengajuan.nama_perusahaan}.</p>
+                <p>Berdasarkan Penugasan Pimpinan Anda ditugaskan untuk menindaklanjuti ${pengajuan.status_proses.toLowerCase()} ${jenis_permohonan} ${pengajuan.permohonan} ${pengajuan.nama_perusahaan}.</p>
                 <p>
                     Silakan <a href="#">login</a> untuk melanjutkan proses audit, semoga layanan
                     ini dapat memberikan kenyamanan bagi Bapak/Ibu.
@@ -78,12 +90,18 @@ exports.content_auditor = (pengajuan) => {
 }
 
 exports.content_pelaku_usaha = (pengajuan) => {
-    let template, body;
+    
+    let template, body, jenis_permohonan;
+    if(pengajuan.permohonan == 'IZIN EDAR PL'){
+        jenis_permohonan = pengajuan.status_pengajuan.toLowerCase()
+    } else if (pengajuan.permohonan == 'SPPB PSAT'){
+        jenis_permohonan = pengajuan.jenis_permohonan.toLowerCase()
+    }
     if(pengajuan.code_status_proses == 11){
         body = 
         `<div class="body">
             <p>Salam Hangat,</p>
-            <p>Mohon perbaiki ${pengajuan.jenis_permohonan.toLowerCase()} ${pengajuan.permohonan} yang anda ajukan dengan kode ${pengajuan.kode_pengajuan}.</p>
+            <p>Mohon perbaiki ${jenis_permohonan} ${pengajuan.permohonan} yang anda ajukan dengan kode ${pengajuan.kode_pengajuan}.</p>
             <p>
                 Silakan <a href="#">login</a> untuk melanjutkan proses selanjutnya, semoga layanan
                 ini dapat memberikan kenyamanan bagi Bapak/Ibu.
@@ -94,7 +112,7 @@ exports.content_pelaku_usaha = (pengajuan) => {
         body = 
         `<div class="body">
             <p>Salam Hangat,</p>
-            <p>Proses ${pengajuan.status_proses.toLowerCase()} pada kode pengajuan ${pengajuan.kode_pengajuan} belum dapat dilanjutkan. 
+            <p>Proses ${jenis_permohonan} pada kode pengajuan ${pengajuan.kode_pengajuan} belum dapat dilanjutkan. 
                Silakan melakukan perbaikan dokumen yang tidak sesuai, semoga layanan
                ini dapat memberikan kenyamanan bagi Bapak/Ibu.
             </p>
@@ -103,7 +121,7 @@ exports.content_pelaku_usaha = (pengajuan) => {
         body = 
         `<div class="body">
             <p>Salam Hangat,</p>
-            <p>Terima kasih ${pengajuan.jenis_permohonan.toLowerCase()} ${pengajuan.permohonan} Anda akan disidangkan pada Sidang Komisi Teknis (Komtek) oleh Tim Komtek. Semoga layanan
+            <p>Terima kasih ${jenis_permohonan} ${pengajuan.permohonan} Anda akan disidangkan pada Sidang Komisi Teknis (Komtek) oleh Tim Komtek. Semoga layanan
                 ini dapat memberikan kenyamanan bagi Bapak/Ibu.
             </p>
         </div>`
@@ -117,7 +135,7 @@ exports.content_pelaku_usaha = (pengajuan) => {
     } else if(pengajuan.code_status_proses == 70){
         body = 
         `<div class="body">
-            <p>Sertifikat ${pengajuan.jenis_permohonan.toLowerCase()} ${pengajuan.permohonan} dengan kode pengajuan ${pengajuan.kode_pengajuan} telah diterbitkan.
+            <p>Sertifikat ${jenis_permohonan} ${pengajuan.permohonan} dengan kode pengajuan ${pengajuan.kode_pengajuan} telah diterbitkan.
                Semoga layanan ini dapat memberikan kenyamanan bagi Bapak/Ibu.
             </p>
         </div>`

@@ -62,6 +62,7 @@ class PsatPlPerubahanModel {
                 data_penunjukan_tim_audit));
             let notif = await check_query.send_notification(data.id_pengajuan, 'IZIN_EDAR');
             let send_email = await check_query.send_email(data.id_pengajuan, 'IZIN_EDAR');
+            console.log(send_email)
             return {
                 status: '200',
                 ketarangan: "Penunjukkan Tim Audit PSAT PL",

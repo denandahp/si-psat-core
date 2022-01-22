@@ -220,7 +220,7 @@ class PsatPlPengalihanModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
-                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_audit_lapang, keterangan_sidang_komtek, '+
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PENGALIHAN"])
@@ -228,7 +228,7 @@ class PsatPlPengalihanModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
-                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_audit_lapang, keterangan_sidang_komtek, '+
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1 AND id_pengajuan=$2 AND id_pengguna=$3', ["PENGALIHAN", id, user])
