@@ -317,7 +317,6 @@ exports.send_email = async(id_pengajuan, jenis_pengajuan) => {
             subjectReceiver = capitalizeFirstLetter(query_pengajuan.rows[0].status_proses) + ' ' + query_pengajuan.rows[0].status_pengajuan.toLowerCase() +
                 ' IZIN EDAR PL dengan kode pengajuan ' + query_pengajuan.rows[0].kode_pengajuan
         }
-
         let emailSender = process.env.EMAIL_USER;
         let passSender = process.env.EMAIL_PASSWORD;
         // let emailSender = 'denandahp@gmail.com';
@@ -392,8 +391,8 @@ exports.plotting_email_pengguna = async(query_pengajuan, sender, subjectReceiver
     } else if (query_pengajuan.rows[0].code_status_proses == 20 ||
         query_pengajuan.rows[0].code_status_proses == 30) {
         id_auditor = query_pengajuan.rows[0].tim_auditor
-        id_auditor.concat(query_pengajuan.rows[0].lead_auditor)
-        auditor = await pool.query('SELECT * FROM ' + db_sekretariat + ` WHERE id=ANY(ARRAY${id_auditor}) AND role='AUDITOR' AND is_deleted='false'`)
+        id_auditor = id_auditor.concat(query_pengajuan.rows[0].lead_auditor)
+        auditor = await pool.query('SELECT * FROM ' + db_sekretariat + ` WHERE id=ANY (ARRAY[${String(id_auditor)}]) AND role='AUDITOR' AND is_deleted='false'`)
         email_pengguna = auditor.rows
         email_pengguna.forEach(mapping_email)
         await send_email(email_pengguna, query_pengajuan.rows[0], 'AUDITOR')

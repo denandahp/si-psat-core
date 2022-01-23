@@ -408,6 +408,7 @@ class PsatPlPermohonanModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, id_pengguna, status_aktif, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' +
@@ -416,6 +417,7 @@ class PsatPlPermohonanModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, id_pengguna, status_aktif, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM ' +

@@ -29,7 +29,7 @@ class PsatPlPerubahanModel {
             }
             let permohonan_baru, data_permohonan_baru;
             data_permohonan_baru = [
-                data.id_pengajuan, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
+                data.id_pengajuan, data.proses, data.hasil_audit, data.keterangan
             ];
             permohonan_baru = await pool.query(format('CALL ' + proc_permohonan_baru + ' (%L)', data_permohonan_baru));
             let notif = await check_query.send_notification(data.id_pengajuan, 'IZIN_EDAR');
@@ -58,10 +58,11 @@ class PsatPlPerubahanModel {
             ];
             penunjukan_tim_audit = await pool.query(
                 format('CALL ' + proc_tim_audit + 
-                `(%L,'{${data.lead_auditor}}', '{${data.tim_auditor}}', '${JSON.stringify(data.keterangan)}')`, 
+                `(%L,'{${data.lead_auditor}}', '{${data.tim_auditor}}', '${data.keterangan}')`, 
                 data_penunjukan_tim_audit));
             let notif = await check_query.send_notification(data.id_pengajuan, 'IZIN_EDAR');
             let send_email = await check_query.send_email(data.id_pengajuan, 'IZIN_EDAR');
+            console.log(send_email)
             return {
                 status: '200',
                 ketarangan: "Penunjukkan Tim Audit PSAT PL",
@@ -93,7 +94,7 @@ class PsatPlPerubahanModel {
                 sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             } else {
                 data_audit_dokumen = [
-                    data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, JSON.stringify(data.keterangan)
+                    data.id_pengajuan, data.id_tim_audit, data.proses, data.hasil_audit, data.keterangan
                 ];
                 audit_dokumen = await pool.query(format('CALL ' + proc_audit_doc + ' (%L)', data_audit_dokumen));
             }
@@ -122,7 +123,7 @@ class PsatPlPerubahanModel {
                 await check_query.check_data(data)
             }
             let sidang_komtek, data_sidang_komtek;
-            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses,  data.bahan_komtek, data.hasil_audit, JSON.stringify(data.keterangan)];
+            data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses,  data.bahan_komtek, data.hasil_audit, data.keterangan];
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             let notif = await check_query.send_notification(data.id_pengajuan, 'IZIN_EDAR');
             let send_email = await check_query.send_email(data.id_pengajuan, 'IZIN_EDAR');
