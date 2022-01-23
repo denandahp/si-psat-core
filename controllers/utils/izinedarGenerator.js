@@ -48,7 +48,7 @@ class izinedarGenerator {
 
 
 
-            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + unit_produksi[0].id_pengguna + '.pdf'
+            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + sertifikat_pl.id_pengajuan + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL_UNIT.html')
             const content = await ReadFile(templatePath, 'utf8')
 
@@ -73,11 +73,10 @@ class izinedarGenerator {
                 berlaku_sampai: sertifikat_pl.expire_sertifikat,
                 nama_latin: sertifikat_pl.nama_latin,
                 negara_asal: sertifikat_pl.negara_asal,
-                nama_merk: sertifikat_pl.nama_merek,
+                nama_merek: sertifikat_pl.nama_merek,
                 jenis_kemasan: sertifikat_pl.jenis_kemasan,
                 berat_bersih: sertifikat_pl.berat_bersih,
                 kelas_mutu: sertifikat_pl.kelas_mutu,
-
                 detail_unit: detail_unit
 
             }
@@ -100,10 +99,11 @@ class izinedarGenerator {
                     berlaku_sampai: def.berlaku_sampai,
                     nama_latin: def.nama_latin,
                     negara_asal: def.negara_asal,
-                    nama_merk: def.nama_merek,
+                    nama_merek: def.nama_merek,
                     jenis_kemasan: def.jenis_kemasan,
                     berat_bersih: def.berat_bersih,
-                    kelas_mutu: def.kelas_mutu
+                    kelas_mutu: def.kelas_mutu,
+                    sertifikat_unit_penanganan: def.sertifikat_unit_penanganan
 
 
                 }
@@ -164,6 +164,7 @@ class izinedarGenerator {
         }
     }
     async perubahandata(sertifikat_pl, unit_produksi, def, requstType) {
+
         let data;
         let detail_unit = unit_produksi.map(data_prod => {
             return {
@@ -179,7 +180,7 @@ class izinedarGenerator {
         })
 
 
-        let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + unit_produksi[0].id_pengguna + '.pdf'
+        let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + sertifikat_pl.id_pengajuan + '.pdf'
         const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL_UNIT.html')
         const content = await ReadFile(templatePath, 'utf8')
 
@@ -204,7 +205,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": sertifikat_pl.nama_latin,
                 "negara_asal": sertifikat_pl.negara_asal,
-                "nama_merk": sertifikat_pl.nama_merek,
+                "nama_merek": sertifikat_pl.nama_merek,
                 "jenis_kemasan_lama": sertifikat_pl.jenis_kemasan,
                 "berat_bersih_lama": sertifikat_pl.berat_bersih,
                 "jenis_kemasan_baru": null,
@@ -213,7 +214,9 @@ class izinedarGenerator {
                 "jenis_klaim": sertifikat_pl.jenis_klaim,
                 "desain_tabel_dan_kemasan": sertifikat_pl.desain_tabel_dan_kemasan,
                 "desain_tabel_dan_kemasan_baru": null,
-                "sertifikat_unit_penanganan": sertifikat_unit_penanganan
+                "sertifikat_unit_penanganan": sertifikat_unit_penanganan,
+                detail_unit: detail_unit
+
 
             }
 
@@ -236,7 +239,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": def.nama_latin,
                 "negara_asal": def.negara_asal,
-                "nama_merk": def.nama_merek,
+                "nama_merek": def.nama_merek,
                 "jenis_kemasan_lama": def.jenis_kemasan_lama,
                 "berat_bersih_lama": def.berat_bersih_lama,
                 "jenis_kemasan_baru": def.jenis_kemasan_baru,
@@ -360,7 +363,7 @@ class izinedarGenerator {
 
 
 
-            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + unit_produksi[0].id_pengguna + '.pdf'
+            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + sertifikat_pl.id_pengajuan + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL_UNIT.html')
             const content = await ReadFile(templatePath, 'utf8')
 
@@ -383,7 +386,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": sertifikat_pl.nama_latin,
                 "negara_asal": sertifikat_pl.negara_asal,
-                "nama_merk": sertifikat_pl.nama_merek,
+                "nama_merek": sertifikat_pl.nama_merek,
                 "jenis_kemasan": sertifikat_pl.jenis_kemasan,
                 "berat_bersih": sertifikat_pl.berat_bersih,
                 "kelas_mutu": sertifikat_pl.kelas_mutu,
@@ -415,7 +418,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": def.nama_latin,
                 "negara_asal": def.negara_asal,
-                "nama_merk": def.nama_merek,
+                "nama_merek": def.nama_merek,
                 "jenis_kemasan": def.jenis_kemasan,
                 "berat_bersih": def.berat_bersih,
                 "unit_penanganan": " ",

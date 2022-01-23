@@ -26,9 +26,30 @@ var date = new Date(Date.now());
 date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 let masa_berlaku = new Date(new Date().setFullYear(new Date().getFullYear() + 5))
 class sppbGenerator {
-    async sppb_pengalihan(sertifikat_psat, def, requstType) {
+    async sppb_pengalihan(sertifikat_psat, unit_produksi, def, requstType) {
         let data
         if (requstType == "GET") {
+            let detail_unit = unit_produksi.map(data_prod => {
+
+                return {
+                    nama_unit: data_prod.nama_unit,
+                    alamat_unit: data_prod.alamat_unit,
+                    status_kepemilikan: data_prod.status_kepemilikan,
+
+                    nomor_sppb_psat: data_prod.nomor_sppb_psat,
+                    level: data_prod.level,
+                    masa_sewa_berakhir: data_prod.masa_sewa_berakhir,
+                    ruang_lingkup: data_prod.ruang_lingkup
+                }
+            })
+            let filename = await 'sertifikat/sppb-psat/permohonan-unit-penanganan-' + sertifikat_psat.id_pengajuan + '.pdf'
+            const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_UNIT.html')
+            const content = await ReadFile(templatePath, 'utf8')
+
+            const template = Handlebars.compile(content)
+            const pdf = await generatePdf.pdf(template(detail_unit), filename);
+            let sertifikat_unit_penanganan = url + filename
+
             data = {
                 nama_pemilik_lama: sertifikat_psat.nama_pemilik_lama,
                 alamat_pemilik_lama: sertifikat_psat.alamat_pemilik_lama,
@@ -36,13 +57,8 @@ class sppbGenerator {
                 nama_pemilik_baru: sertifikat_psat.nama_pemilik_baru,
                 alamat_pemilik_baru: sertifikat_psat.alamat_pemilik_baru,
                 nama_perusahaan: sertifikat_psat.nama_perusahaan,
-                nama_unit_penanganan: sertifikat_psat.nama_unit_penanganan,
-                alamat_unit_penanganan: sertifikat_psat.alamat_unit_penanganan,
-                status_kepemilikan: sertifikat_psat.status_kepemilikan,
-                nomor_sppb_psat: sertifikat_psat.nomor_sppb_psat,
-                level: sertifikat_psat.level,
-                ruang_lingkup: sertifikat_psat.ruang_lingkup,
-                masa_berlaku: sertifikat_psat.masa_berlaku
+                sertifikat_unit_penanganan: sertifikat_unit_penanganan,
+                detail_unit: detail_unit
 
 
             }
@@ -61,13 +77,7 @@ class sppbGenerator {
                 nama_pemilik_baru: def.nama_pemilik_baru,
                 alamat_pemilik_baru: def.alamat_pemilik_baru,
                 nama_perusahaan: def.nama_perusahaan,
-                nama_unit_penanganan: def.nama_unit_penanganan,
-                alamat_unit_penanganan: def.alamat_unit_penanganan,
-                status_kepemilikan: def.status_kepemilikan,
-                nomor_sppb_psat: def.nomor_sppb_psat,
-                level: def.level,
-                ruang_lingkup: def.ruang_lingkup,
-                masa_berlaku: masa_berlaku
+                sertifikat_unit_penanganan: def.sertifikat_unit_penanganan
 
 
             }
@@ -75,7 +85,7 @@ class sppbGenerator {
             ////////////////////////////////////////////////////
             // EXPORT TO PDF //
             ///////////////////////////////////////////////////
-            let filename = await 'sertifikat/sppb-psat/pengalihan-' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '-' + def.nomor_sppb_psat + '.pdf'
+            let filename = await 'sertifikat/sppb-psat/pengalihan-' + sertifikat_psat.id_pengguna + '-' + sertifikat_psat.id_pengajuan + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_PSAT_PENGALIHAN_KEPEMILIKAN.html')
 
             const content = await ReadFile(templatePath, 'utf8')
@@ -100,6 +110,32 @@ class sppbGenerator {
                 'UPDATE  ' + db_perusahaan_sppb_psat +
                 ' SET (nama_pemilik_lama, alamat_pemilik_lama, nama_perusahaan, nama_pemilik_baru, alamat_pemilik_baru, status_kepemilikan,  update) = ($3, $4, $5, $6, $7,$8, $9) WHERE id=$1 AND id_pengguna=$2  ' +
                 'RETURNING *', data_perushaaan);
+
+
+            var pdfsToMerge = []
+            pdfsToMerge.push(fs.readFileSync(filename))
+            if (def.sertifikat_unit_penanganan != null) {
+                pdfsToMerge.push(fs.readFileSync(def.sertifikat_unit_penanganan))
+            }
+            const mergedPdf = await PDFDocument.create();
+            for (const pdfBytes of pdfsToMerge) {
+                const pdf = await PDFDocument.load(pdfBytes);
+                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                copiedPages.forEach((page) => {
+                    mergedPdf.addPage(page);
+                });
+            }
+
+            const buf = await mergedPdf.save(); // Uint8Array
+
+            let path = filename;
+            fs.open(path, 'w', function(err, fd) {
+                fs.write(fd, buf, 0, buf.length, null, function(err) {
+                    fs.close(fd, function() {
+                        console.log('wrote the file successfully');
+                    });
+                });
+            });
 
             return {
                 view_only: false,
