@@ -36,11 +36,13 @@ class sppbGenerator {
                     alamat_unit: data_prod.alamat_unit,
                     status_kepemilikan: data_prod.status_kepemilikan,
 
-                    nomor_sppb_psat: data_prod.nomor_sppb_psat,
-                    level: data_prod.level,
-                    masa_sewa_berakhir: data_prod.masa_sewa_berakhir,
-                    ruang_lingkup: data_prod.ruang_lingkup
+                    sppb_psat_nomor: data_prod.nomor_sppb_psat,
+                    sppb_psat_level: data_prod.level,
+                    sppb_psat_masa_berlaku: data_prod.masa_berlaku,
+                    sppb_psat_ruang_lingkup: data_prod.ruang_lingkup
                 }
+
+
             })
             let filename = await 'sertifikat/sppb-psat/permohonan-unit-penanganan-' + sertifikat_psat.id_pengajuan + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_SPPB_UNIT.html')
