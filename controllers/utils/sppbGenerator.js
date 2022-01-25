@@ -8,24 +8,24 @@ const Path = require('path')
 const Util = require('util')
 const ReadFile = Util.promisify(Fs.readFile)
 const generatePdf = require("../../models/generatePdf.js")
-const sppb_psat_view = require('../../models/sppb_psat_view.js')
-const sppb_pl_view = require('../../models/sppb_pl_view.js')
-const authUtils = require('./auth');
-const PDFMerge = require('pdf-merge');
-const PDFDocument = require('pdf-lib').PDFDocument;
-const { query } = require('../../libs/db');
 
-const url = '/root/si-psat-core/'
+
+const PDFDocument = require('pdf-lib').PDFDocument;
+
+const model_update_status_sertif = require('../../models/sppb_psat_permohonan')
 
 const db_pengajuan_sppb_psat = 'sppb_psat.sertifikat_psat';
 const db_perusahaan_sppb_psat = 'sppb_psat.info_perusahaan';
-const db_pengajuan_izin_edar = 'izin_edar.pengajuan';
 
+
+
+const url = '/root/si-psat-core/'
 
 var date = new Date(Date.now());
 date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 let masa_berlaku = new Date(new Date().setFullYear(new Date().getFullYear() + 5))
 class sppbGenerator {
+
     async sppb_pengalihan(sertifikat_psat, unit_produksi, def, requstType) {
         let data
         if (requstType == "GET") {
@@ -101,18 +101,25 @@ class sppbGenerator {
             //////////////////////////////////////////////////
             // UPDATE DATA //
             /////////////////////////////////////////////////
-            let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.level, def.ruang_lingkup, masa_berlaku, date, def.nama_unit_penanganan, def.alamat_unit_penanganan];
+
             let pengajuan = await pool.query(
                 'UPDATE ' + db_pengajuan_sppb_psat +
                 ' SET (final_sertifikat, level, ruang_lingkup, masa_berlaku, update, nama_unit_penanganan, alamat_unit_penanganan) = ($3, $4, $5, $6, $7, $8, $9) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
-                'RETURNING *', data_pengajuan);
+                'RETURNING *', [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.level, def.ruang_lingkup, masa_berlaku, date, def.nama_unit_penanganan, def.alamat_unit_penanganan]);
 
-            let data_perushaaan = [sertifikat_psat.id_info_perusahaan, sertifikat_psat.id_pengguna, def.nama_pemilik_lama, def.alamat_pemilik_lama, def.nama_perusahaan, def.nama_pemilik_baru, def.alamat_pemilik_baru, def.status_kepemilikan, date];
+
             let pengajuan_perushaan = await pool.query(
                 'UPDATE  ' + db_perusahaan_sppb_psat +
                 ' SET (nama_pemilik_lama, alamat_pemilik_lama, nama_perusahaan, nama_pemilik_baru, alamat_pemilik_baru, status_kepemilikan,  update) = ($3, $4, $5, $6, $7,$8, $9) WHERE id=$1 AND id_pengguna=$2  ' +
-                'RETURNING *', data_perushaaan);
+                'RETURNING *', [sertifikat_psat.id_info_perusahaan, sertifikat_psat.id_pengguna, def.nama_pemilik_lama, def.alamat_pemilik_lama, def.nama_perusahaan, def.nama_pemilik_baru, def.alamat_pemilik_baru, def.status_kepemilikan, date]);
 
+            const update_data = {
+                id_pengguna: sertifikat_psat.id_pengguna,
+                id_pengajuan: sertifikat_psat.id_pengajuan,
+                nomor_sppb_psat: pengajuan.rows[0].nomor_sppb_psat
+            }
+
+            let kode_terbit = await (await model_update_status_sertif.update_nomor_sppb_psat(update_data)).keterangan
 
             var pdfsToMerge = []
             pdfsToMerge.push(fs.readFileSync(filename))
@@ -144,6 +151,7 @@ class sppbGenerator {
                 message: "Sertifikat SPPB-PSAT",
                 type: 'PENGALIHAN',
                 path: path_sertifikat,
+                kode_terbit: kode_terbit,
                 data: data
             }
         }
@@ -217,24 +225,35 @@ class sppbGenerator {
             // UPDATE DATA //
             /////////////////////////////////////////////////
 
-            let data_pengajuan = [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.nomor_sppb_psat, def.level, def.ruang_lingkup, masa_berlaku, date, def.nama_unit_penanganan, def.alamat_unit_penanganan];
             let pengajuan = await pool.query(
                 'UPDATE ' + db_pengajuan_sppb_psat +
                 ' SET (final_sertifikat, nomor_sppb_psat, level, ruang_lingkup, masa_berlaku, update, nama_unit_penanganan, alamat_unit_penanganan) = ($3, $4, $5, $6, $7, $8, $9, $10) WHERE id_pengguna=$1 AND id_pengajuan=$2  ' +
-                'RETURNING *', data_pengajuan);
+                'RETURNING *', [sertifikat_psat.id_pengguna, sertifikat_psat.id_pengajuan, path_sertifikat, def.nomor_sppb_psat, def.level, def.ruang_lingkup, masa_berlaku, date, def.nama_unit_penanganan, def.alamat_unit_penanganan]);
 
-            let data_perushaaan = [sertifikat_psat.id_info_perusahaan, sertifikat_psat.id_pengguna, def.status_kepemilikan, date];
+
             let pengajuan_perushaan = await pool.query(
                 'UPDATE  ' + db_perusahaan_sppb_psat +
                 ' SET (status_kepemilikan, update) = ($3, $4) WHERE id=$1 AND id_pengguna=$2  ' +
-                'RETURNING *', data_perushaaan);
+                'RETURNING *', [sertifikat_psat.id_info_perusahaan, sertifikat_psat.id_pengguna, def.status_kepemilikan, date]);
 
+
+            //////////////////////////////////////////////////
+            // UPDATE STATUS TELAH TERBIT SERTIF //
+            /////////////////////////////////////////////////
+
+            const update_data = {
+                id_pengguna: sertifikat_psat.id_pengguna,
+                id_pengajuan: sertifikat_psat.id_pengajuan,
+                nomor_sppb_psat: def.nomor_sppb_psat
+            }
+            let kode_terbit = await (await model_update_status_sertif.update_nomor_sppb_psat(update_data)).keterangan
 
             return {
                 view_only: false,
                 message: "Sertifikat SPPB-PSAT",
                 type: 'PERMOHONAN',
                 path: path_sertifikat,
+                kode_terbit: kode_terbit,
                 data: data_new
             }
 

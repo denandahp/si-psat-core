@@ -21,7 +21,7 @@ class PsatPlPermohonanModel {
         try {
             let response = {};
             await check_query.check_data(data)
-            //Create new file pemohonan
+                //Create new file pemohonan
             let data_file_permohonan = [data.id_pengguna, data.surat_permohonan_izin_edar, date, date];
             file_permohonan = await pool.query(
                 format('INSERT INTO ' + db_file_permohonan +
@@ -42,7 +42,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', response);
             return { status: '200', permohohan: "Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", notifikasi: notif, data: response };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
@@ -85,7 +85,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Daftar Pemasok", data: daftar_pemasok.rows[0] };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -104,7 +104,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -130,7 +130,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Add Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -140,6 +140,7 @@ class PsatPlPermohonanModel {
 
     async update_nomor_izin_edar_pl(data) {
         try {
+
             await check_query.check_data(data)
             let code_proses = await pool.query('SELECT * FROM ' + db_proses_audit + ' WHERE status=$1', ['Terbit Sertifikat']);
             let data_pengajuan = [data.id_pengajuan, data.id_pengguna, data.status_pengajuan, data.nomor_izin_edar, code_proses.rows[0].code, date];
@@ -148,10 +149,10 @@ class PsatPlPermohonanModel {
                 ' SET (nomor_izin_edar, status_proses, update) = ($4, $5, $6) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
                 'RETURNING id, id_pengguna, status_pengajuan, status_proses, nomor_izin_edar', data_pengajuan);
             check_query.check_queryset(pengajuan);
-            // debug('get %o', pengajuan);
+
             return { status: '200', keterangan: `Update  ${data.status_pengajuan} Nomor SPPB PSAT ${data.nomor_izin_edar}`, data: pengajuan.rows[0] };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -187,7 +188,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', response);
             return { status: '200', permohohan: "Update Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", data: response };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -229,7 +230,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Daftar Pemasok", data: daftar_pemasok.rows[0] };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -249,7 +250,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Daftar Pelanggan", data: daftar_pelanggan.rows[0] };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -277,7 +278,7 @@ class PsatPlPermohonanModel {
             // debug('get %o', res);
             return { status: '200', permohohan: "Update Info Produk", data: info_produk.rows[0] };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -408,7 +409,7 @@ class PsatPlPermohonanModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, id_pengguna, status_aktif, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
-                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM' +
@@ -417,7 +418,7 @@ class PsatPlPermohonanModel {
                 permohonan = await pool.query(
                     'SELECT id_pengajuan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, id_pengguna, status_aktif, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
-                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
+                    ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, ' +
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
                     ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek, ' +
                     'status_pengajuan, id_file_permohonan, surat_permohonan_izin_edar, produk, created, update FROM ' +
@@ -516,7 +517,7 @@ class PsatPlPermohonanModel {
             } else {
                 if (code_proses == 'all') {
                     proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'IZIN_EDAR', search);
-                    query_select = 
+                    query_select =
                         ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                         ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                         ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
@@ -529,7 +530,7 @@ class PsatPlPermohonanModel {
                     proses = await check_query.proses_code(user, code_proses, role, proses_pengajuan, 'IZIN_EDAR', search);
 
                     if (code_proses == '10' || code_proses == '11') {
-                        query_select = 
+                        query_select =
                             ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                             ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen'
@@ -539,7 +540,8 @@ class PsatPlPermohonanModel {
                             ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                             ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
                             ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
-                            ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'                } else if (code_proses == '40' || code_proses == '41') {
+                            ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'
+                    } else if (code_proses == '40' || code_proses == '41') {
                         query_select =
                             ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, ' +
@@ -551,7 +553,7 @@ class PsatPlPermohonanModel {
                             ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp '
                     } else if (code_proses == '99') {
-                        query_select = 
+                        query_select =
                             ' id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_audit'
                     } else {
