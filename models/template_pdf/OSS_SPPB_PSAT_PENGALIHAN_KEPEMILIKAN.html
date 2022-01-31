@@ -135,76 +135,7 @@
         </table>
     </div>
     <br><br>
-    <div class="body">
-        <table>
-            <thead>
-                <tr class="header">
-                    <td colspan="8">DATA PENGALIHAN KEPEMILIKA SPPB-PSAT</td>
-                </tr>
-                <tr class="header">
-                    <td class="left">No</td>
-                    <td class="sub_header">Nama Unit <br> Penanganan<br>PSAT yang<br>Dialihkan</td>
-                    <td class="left">Alamat Unit <br>Penanganan<br>PSAT yang<br> Dialihkan</td>
-                    <td class="left">Status<br>Kepemilikan<br>(sewa/milik sendiri)</td>
-                    <td class="left">Nomor<br>SPPB-PSAT</td>
-                    <td class="left">Level<br>SPPB-PSAT</td>
-                    <td class="left">Ruang<br>Lingkup</td>
-                    <td class="left">Berlaku<br>Sampai<br>Dengan</td>
-                </tr>
-            </thead>
-            <tbody id="data_input"></tbody >
-        </table>
-    </div>
+
 </body>
 
 </html>
-<script>
-    let tab = ''
-    //ini hanya contoh data querynya
-    let data =[
-        {nama_unit_penanganan:'1', alamat_unit_penanganan:'2',status_kepemilikan: '3', 
-        nomor_sppb_psat: '4',level: '5', ruang_lingkup: '6' ,masa_berlaku: '7'},
-        {nama_unit_penanganan:'1', alamat_unit_penanganan:'2',status_kepemilikan: '3',
-         nomor_sppb_psat: '4', level: '5', ruang_lingkup: '6' ,masa_berlaku: '7'},
-        {nama_unit_penanganan:'1', alamat_unit_penanganan:'2',status_kepemilikan: '3',
-         nomor_sppb_psat: '4', level: '5', ruang_lingkup: '6' ,masa_berlaku: '7'},
-        {nama_unit_penanganan:'1', alamat_unit_penanganan:'2',status_kepemilikan: '3',
-         nomor_sppb_psat: '4', level: '5', ruang_lingkup: '6' ,masa_berlaku: '7'},
-        {nama_unit_penanganan:'1', alamat_unit_penanganan:'2',status_kepemilikan: '3',
-         nomor_sppb_psat: '4', level: '5', ruang_lingkup: '6' ,masa_berlaku: '7'},
-        {nama_unit_penanganan:'1', alamat_unit_penanganan:'2',status_kepemilikan: '3',
-         nomor_sppb_psat: '4', level: '5', ruang_lingkup: '6' ,masa_berlaku: '7'}
-         
-    ]
-    /*
-        <tr>
-            <td>1.</td>
-            <td>{{ nama_unit_penanganan }}</td>
-            <td>{{ alamat_unit_penanganan }}</td>
-            <td>{{ status_kepemilikan }}</td>
-            <td>{{ nomor_sppb_psat }}</td>
-            <td>{{ level }}</td>
-            <td>{{ ruang_lingkup }}</td>
-            <td>{{ masa_berlaku }}</td>
-        </tr>
-    */
-    let number = 1 ;
-    // Loop to access all rows 
-    for (let r of data) {
-        datas = Object.values(r)
-        tab += `
-            <tr class="data">
-                <td>${number}</td>
-                <td>${datas[0]}</td>
-                <td>${datas[1]}</td>
-                <td>${datas[2]}</td>
-                <td>${datas[3]}</td>
-                <td>${datas[4]}</td>
-                <td>${datas[5]}</td>
-                <td>${datas[6]}</td>
-            </tr>
-        `;
-        number += 1;
-    }
-    document.getElementById("data_input").innerHTML = tab;
-</script>

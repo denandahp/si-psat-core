@@ -104,7 +104,7 @@
             </tr>
             <tr class="data">
                 <td class="left">2. </td>
-                <td class="center">Pemilik baru</td>
+                <td class="center">Pemilik Baru</td>
                 <td class="right"></td>
             </tr>
             <tr class="data">
@@ -119,48 +119,49 @@
                 <td class="right">{{alamat_pemilik_baru}}</td>
             </tr>
 
+            <tr class="data">
+                <td class="left">3</td>
+                <td class="center">Data Izin Edar yang Dialihkan</td>
+                <td class="right"></td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center">No Izin Edar PSAT-PL</td>
+                <td class="right">{{ nomor_izin_edar }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center">Masa Berlaku</td>
+                <td class="right">{{ berlaku_sampai }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center">Negara Asal</td>
+                <td class="right">{{ negara_asal }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center">Nama Merk</td>
+                <td class="right">{{ nama_merek }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center">Jenis Kemasan</td>
+                <td class="right">{{ jenis_kemasan }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center">Berat Bersih</td>
+                <td class="right">{{ berat_bersih }}</td>
+            </tr>
+            <tr class="data">
+                <td class="left"></td>
+                <td class="center">Kelas Mutu</td>
+                <td class="right">{{ kelas_mutu }}</td>
+            </tr>
         </table>
 
-    </div>
-    <br>
-    <div class="body">
-        <table>
-            <thead>
-                <tr class="header">
-                    <td colspan="7">DATA IZIN EDAR PSAT_PL YANG DIALIHKAN</td>
-                </tr>
-                <tr class="header">
 
-                    <td rowspan="1">No Izin Edar<br>PSAT-PL</td>
-                    <td rowspan="1">Masa <br>Berlaku</td>
-
-                    <td rowspan="1">Negara<br>Asal</td>
-                    <td rowspan="1">Nama<br>Merk</td>
-                    <td rowspan="1">Jenis<br>Kemasan</td>
-                    <td rowspan="1">Berat<br>Bersih</td>
-                    <td rowspan="1">Kelas<br>Mutu</td>
-                </tr>
-                <tr class="header">
-
-                </tr>
-
-                <tr>
-
-
-                    <td>{{ nomor_izin_edar }}</td>
-                    <td>{{ berlaku_sampai }}</td>
-                    <td>{{ negara_asal }}</td>
-                    <td>{{ nama_merk }}</td>
-                    <td>{{ jenis_kemasan }}</td>
-                    <td>{{ berat_bersih}}</td>
-                    <td>{{ kelas_mutu }}</td>
-                </tr>
-
-            </thead>
-            <tbody id="data_input">
-            </tbody>
-        </table>
-    </div>
 </body>
 
 </html>

@@ -23,5 +23,15 @@ class SppbPsatModel {
         };
     }
 
+    async view_unitproduksi(param) {
+        try {
+            let view_sertif = await pool.query('SELECT * FROM sppb_psat.unit_produksi WHERE ' + `  id = ANY ($1) `, [param]);
+            return view_sertif.rows;
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
 }
 module.exports = new SppbPsatModel();

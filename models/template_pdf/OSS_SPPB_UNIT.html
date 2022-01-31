@@ -1,0 +1,113 @@
+<br>
+
+
+<head>
+    <meta http-equiv=Content-Type content="text/html">
+    <title>Sertifikat Izin Edar PSAT PL</title>
+    <style>
+        p,
+        br {
+            line-height: 115%;
+            font-family: "Bookman Old Style", serif;
+            font-size: 12pt;
+            margin: 0;
+        }
+        
+        .title p {
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .title .logo {
+            text-align: center;
+            margin-bottom: 24pt;
+        }
+        
+        .logo img {
+            width: 87;
+            height: 87;
+        }
+        
+        .body p {
+            margin-bottom: 6pt;
+        }
+        
+        table {
+            text-indent: initial;
+            white-space: normal;
+            font-weight: normal;
+            font-size: 10pt;
+            font-family: "Bookman Old Style", serif;
+            font-style: normal;
+            color: -internal-quirk-inherit;
+            text-align: start;
+            border-spacing: 2px;
+            font-variant: normal;
+            margin-left: 5.4pt;
+            border-collapse: collapse
+        }
+        
+        tr.header {
+            text-align: center;
+        }
+        
+        tr.data td.left {
+            text-align: center;
+        }
+        
+        td {
+            border: solid 1pt;
+            padding: 0cm 5.4pt 0cm 5.4pt;
+            height: 1.5pt;
+        }
+        
+        td.left {
+            width: 21.25pt;
+        }
+        
+        td.center {
+            width: 297.7pt;
+        }
+        
+        td.right {
+            width: 6cm;
+        }
+    </style>
+</head>
+
+</br>
+<div class="body">
+    <p>DATA PENGALIHAN KEPEMILIKA SPPB-PSAT:</p>
+    <table>
+        <thead>
+            <tr class="header">
+                <th>Nama unit</th>
+                <th>Alamat unit</th>
+                <th>Status</th>
+                <th>No. SPPB</th>
+                <th>Level</th>
+                <th>Ruang lingkup</th>
+                <th>Masa berlaku</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each this}}
+            <tr class="data">
+                <td>{{nama_unit}}</td>
+                <td>{{alamat_unit}}</td>
+                <td>{{status_kepemilikan}}</td>
+                <td>{{sppb_psat_nomor}}</td>
+                <td>{{sppb_psat_level}}</td>
+                <td>{{sppb_psat_ruang_lingkup}}</td>
+                <td>{{sppb_psat_masa_berlaku}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+
+
+    </table>
+</div>
+</body>
+
+</html>

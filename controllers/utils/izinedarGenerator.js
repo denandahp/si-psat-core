@@ -1,25 +1,19 @@
 const pool = require('../../libs/db');
-var format = require('pg-format');
+
 const fs = require('fs');
-const puppeteer = require('puppeteer');
 const Handlebars = require('handlebars');
 const Fs = require('fs')
 const Path = require('path')
 const Util = require('util')
 const ReadFile = Util.promisify(Fs.readFile)
 const generatePdf = require("../../models/generatePdf.js")
-const sppb_psat_view = require('../../models/sppb_psat_view.js')
-const sppb_pl_view = require('../../models/sppb_pl_view.js')
-const authUtils = require('./auth');
-const PDFMerge = require('pdf-merge');
+
 const PDFDocument = require('pdf-lib').PDFDocument;
-const { query } = require('../../libs/db');
+
 
 const url = '/root/si-psat-core/'
-
-const db_pengajuan_sppb_psat = 'sppb_psat.sertifikat_psat';
-const db_perusahaan_sppb_psat = 'sppb_psat.info_perusahaan';
 const db_pengajuan_izin_edar = 'izin_edar.pengajuan';
+const model_update_status_sertif = require('../../models/psat_pl_permohonan')
 
 var date = new Date(Date.now());
 date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
@@ -48,7 +42,7 @@ class izinedarGenerator {
 
 
 
-            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + unit_produksi[0].id_pengguna + '.pdf'
+            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + sertifikat_pl.id_pengajuan + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL_UNIT.html')
             const content = await ReadFile(templatePath, 'utf8')
 
@@ -73,11 +67,10 @@ class izinedarGenerator {
                 berlaku_sampai: sertifikat_pl.expire_sertifikat,
                 nama_latin: sertifikat_pl.nama_latin,
                 negara_asal: sertifikat_pl.negara_asal,
-                nama_merk: sertifikat_pl.nama_merek,
+                nama_merek: sertifikat_pl.nama_merek,
                 jenis_kemasan: sertifikat_pl.jenis_kemasan,
                 berat_bersih: sertifikat_pl.berat_bersih,
                 kelas_mutu: sertifikat_pl.kelas_mutu,
-
                 detail_unit: detail_unit
 
             }
@@ -100,10 +93,11 @@ class izinedarGenerator {
                     berlaku_sampai: def.berlaku_sampai,
                     nama_latin: def.nama_latin,
                     negara_asal: def.negara_asal,
-                    nama_merk: def.nama_merek,
+                    nama_merek: def.nama_merek,
                     jenis_kemasan: def.jenis_kemasan,
                     berat_bersih: def.berat_bersih,
-                    kelas_mutu: def.kelas_mutu
+                    kelas_mutu: def.kelas_mutu,
+                    sertifikat_unit_penanganan: def.sertifikat_unit_penanganan
 
 
                 }
@@ -125,11 +119,12 @@ class izinedarGenerator {
             //////////////////////////////////////////////////
             // UPDATE DATA //
             /////////////////////////////////////////////////
-            let data_produk = [sertifikat_pl.produk[0], def.nama_pemilik_lama, def.alamat_pemilik_lama, def.nama_pemilik_baru, def.alamat_pemilik_baru];
             let info_produk = await pool.query(
                 'UPDATE izin_edar.info_produk' +
                 ' SET (nama_pemilik_lama, alamat_pemilik_lama, nama_pemilik_baru, alamat_pemilik_baru) = ($2, $3, $4, $5) WHERE id=$1' +
-                'RETURNING *', data_produk);
+                'RETURNING *', [sertifikat_pl.produk[0], def.nama_pemilik_lama, def.alamat_pemilik_lama, def.nama_pemilik_baru, def.alamat_pemilik_baru]);
+
+            let kode_terbit = await (await model_update_status_sertif.update_nomor_izin_edar_pl(update_data)).keterangan
             var pdfsToMerge = []
             pdfsToMerge.push(fs.readFileSync(filename))
             if (def.sertifikat_unit_penanganan != null) {
@@ -159,11 +154,13 @@ class izinedarGenerator {
                 message: "Sertifikat PSAT PL",
                 type: 'PENGALIHAN KEPEMILIKAN',
                 path: path_sertifikat,
+                kode_terbit: kode_terbit,
                 data: data
             }
         }
     }
     async perubahandata(sertifikat_pl, unit_produksi, def, requstType) {
+
         let data;
         let detail_unit = unit_produksi.map(data_prod => {
             return {
@@ -179,7 +176,7 @@ class izinedarGenerator {
         })
 
 
-        let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + unit_produksi[0].id_pengguna + '.pdf'
+        let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + sertifikat_pl.id_pengajuan + '.pdf'
         const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL_UNIT.html')
         const content = await ReadFile(templatePath, 'utf8')
 
@@ -204,7 +201,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": sertifikat_pl.nama_latin,
                 "negara_asal": sertifikat_pl.negara_asal,
-                "nama_merk": sertifikat_pl.nama_merek,
+                "nama_merek": sertifikat_pl.nama_merek,
                 "jenis_kemasan_lama": sertifikat_pl.jenis_kemasan,
                 "berat_bersih_lama": sertifikat_pl.berat_bersih,
                 "jenis_kemasan_baru": null,
@@ -213,7 +210,9 @@ class izinedarGenerator {
                 "jenis_klaim": sertifikat_pl.jenis_klaim,
                 "desain_tabel_dan_kemasan": sertifikat_pl.desain_tabel_dan_kemasan,
                 "desain_tabel_dan_kemasan_baru": null,
-                "sertifikat_unit_penanganan": sertifikat_unit_penanganan
+                "sertifikat_unit_penanganan": sertifikat_unit_penanganan,
+                detail_unit: detail_unit
+
 
             }
 
@@ -236,7 +235,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": def.nama_latin,
                 "negara_asal": def.negara_asal,
-                "nama_merk": def.nama_merek,
+                "nama_merek": def.nama_merek,
                 "jenis_kemasan_lama": def.jenis_kemasan_lama,
                 "berat_bersih_lama": def.berat_bersih_lama,
                 "jenis_kemasan_baru": def.jenis_kemasan_baru,
@@ -278,24 +277,28 @@ class izinedarGenerator {
             /////////////////////////////////////////////////
 
 
-            let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date, def.nomor_izin_edar, berlaku_sampai];
             let pengajuan = await pool.query(
                 'UPDATE ' + db_pengajuan_izin_edar +
                 ' SET (final_sertifikat, update, nomor_izin_edar, expire_sertifikat) = ($4, $5, $6, $7) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
-                'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
+                'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date, def.nomor_izin_edar, berlaku_sampai]);
 
-
-            let data_produk = [sertifikat_pl.produk[0], def.jenis_psat, def.nama_dagang, def.nama_latin, def.negara_asal, def.nama_merek, def.jenis_kemasan_baru, def.berat_bersih_baru, def.kelas_mutu, def.jenis_klaim, def.desain_tabel_dan_kemasan];
             let info_produk = await pool.query(
                 'UPDATE izin_edar.info_produk' +
                 ' SET (jenis_psat, nama_dagang, nama_latin, negara_asal, nama_merek, jenis_kemasan, berat_bersih, kelas_mutu, jenis_klaim, desain_tabel_dan_kemasan) = ($2, $3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id=$1' +
-                'RETURNING *', data_produk);
+                'RETURNING *', [sertifikat_pl.produk[0], def.jenis_psat, def.nama_dagang, def.nama_latin, def.negara_asal, def.nama_merek, def.jenis_kemasan_baru, def.berat_bersih_baru, def.kelas_mutu, def.jenis_klaim, def.desain_tabel_dan_kemasan]);
 
+            const update_data = {
+                id_pengguna: pengajuan.rows[0].id_pengguna,
+                id_pengajuan: pengajuan.rows[0].id,
+                status_pengajuan: pengajuan.rows[0].status_pengajuan,
+                nomor_izin_edar: pengajuan.rows[0].nomor_izin_edar
+            }
 
-            // res.set("Content-Type", "application/pdf");
+            let kode_terbit = await (await model_update_status_sertif.update_nomor_izin_edar_pl(update_data)).keterangan
+
             var pdfsToMerge = []
             pdfsToMerge.push(fs.readFileSync(filename))
-                //	    pdfsToMerge.push(fs.readFileSync(filename))
+
 
             if (def.kelas_mutu != null) {
                 pdfsToMerge.push(fs.readFileSync(def.kelas_mutu))
@@ -337,6 +340,7 @@ class izinedarGenerator {
                 message: "Sertifikat PSAT PL",
                 type: 'PERUBAHAN DATA',
                 path: path_sertifikat,
+                kode_terbit: kode_terbit,
                 data: data
             }
         }
@@ -360,7 +364,7 @@ class izinedarGenerator {
 
 
 
-            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + unit_produksi[0].id_pengguna + '.pdf'
+            let filename = await 'sertifikat/psat-pl/permohonan-unit-penanganan-' + sertifikat_pl.id_pengajuan + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL_UNIT.html')
             const content = await ReadFile(templatePath, 'utf8')
 
@@ -383,7 +387,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": sertifikat_pl.nama_latin,
                 "negara_asal": sertifikat_pl.negara_asal,
-                "nama_merk": sertifikat_pl.nama_merek,
+                "nama_merek": sertifikat_pl.nama_merek,
                 "jenis_kemasan": sertifikat_pl.jenis_kemasan,
                 "berat_bersih": sertifikat_pl.berat_bersih,
                 "kelas_mutu": sertifikat_pl.kelas_mutu,
@@ -415,7 +419,7 @@ class izinedarGenerator {
                 "berlaku_sampai": berlaku_sampai,
                 "nama_latin": def.nama_latin,
                 "negara_asal": def.negara_asal,
-                "nama_merk": def.nama_merek,
+                "nama_merek": def.nama_merek,
                 "jenis_kemasan": def.jenis_kemasan,
                 "berat_bersih": def.berat_bersih,
                 "unit_penanganan": " ",
@@ -433,25 +437,32 @@ class izinedarGenerator {
 
             let path_sertifikat = url + filename
 
-            let data_pengajuan = [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date, def.nomor_izin_edar, berlaku_sampai];
+
             let pengajuan = await pool.query(
                 'UPDATE ' + db_pengajuan_izin_edar +
                 ' SET (final_sertifikat, update, nomor_izin_edar, expire_sertifikat) = ($4, $5, $6, $7) WHERE id=$1 AND id_pengguna=$2 AND status_pengajuan=$3 ' +
-                'RETURNING id, id_pengguna, status_pengajuan, status_proses, final_sertifikat', data_pengajuan);
+                'RETURNING *', [sertifikat_pl.id_pengajuan, sertifikat_pl.id_pengguna, sertifikat_pl.status_pengajuan, path_sertifikat, date, def.nomor_izin_edar, berlaku_sampai]);
 
 
-            let data_produk = [sertifikat_pl.produk[0], def.jenis_psat, def.nama_dagang, def.nama_latin, def.negara_asal, def.nama_merek, def.jenis_kemasan, def.berat_bersih, def.kelas_mutu, def.jenis_klaim, def.desain_tabel_dan_kemasan];
+
             let info_produk = await pool.query(
                 'UPDATE izin_edar.info_produk' +
                 ' SET (jenis_psat, nama_dagang, nama_latin, negara_asal, nama_merek, jenis_kemasan, berat_bersih, kelas_mutu, jenis_klaim, desain_tabel_dan_kemasan) = ($2, $3, $4, $5, $6, $7, $8, $9, $10, $11) WHERE id=$1' +
-                'RETURNING *', data_produk);
+                'RETURNING *', [sertifikat_pl.produk[0], def.jenis_psat, def.nama_dagang, def.nama_latin, def.negara_asal, def.nama_merek, def.jenis_kemasan, def.berat_bersih, def.kelas_mutu, def.jenis_klaim, def.desain_tabel_dan_kemasan]);
+
+            const update_data = {
+                id_pengguna: pengajuan.rows[0].id_pengguna,
+                id_pengajuan: pengajuan.rows[0].id,
+                status_pengajuan: pengajuan.rows[0].status_pengajuan,
+                nomor_izin_edar: pengajuan.rows[0].nomor_izin_edar
+            }
+
+            let kode_terbit = await (await model_update_status_sertif.update_nomor_izin_edar_pl(update_data)).keterangan
 
 
-
-            // res.set("Content-Type", "application/pdf");
             var pdfsToMerge = []
             pdfsToMerge.push(fs.readFileSync(filename))
-                //	    pdfsToMerge.push(fs.readFileSync(filename))
+
 
             if (def.kelas_mutu != null) {
 
@@ -496,6 +507,7 @@ class izinedarGenerator {
                 message: "Sertifikat PSAT PL",
                 type: 'PERMOHONAN',
                 path: path_sertifikat,
+                kode_terbit: kode_terbit,
                 data: data_new
             }
         }
