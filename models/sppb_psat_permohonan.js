@@ -15,6 +15,8 @@ const db_info_perusahaan = schema + '.' + '"info_perusahaan"';
 const db_history_pengajuan = schema + '.' + '"history_all_pengajuan"';
 const db_all_history_pengajuan = schema_pengguna + '.' + '"history_all_pengajuan"';
 const db_proses_audit = schema_audit + '.' + '"proses_audit"';
+const proc_verif_pvtpp = schema_audit + '.' + '"verifikasi_pvtpp_psat"';
+
 
 var date = check_query.date_now();
 
@@ -36,7 +38,7 @@ class SppbPsatPermohonanModel {
                 'INSERT INTO ' + db_file_permohonan +
                 ' (id_pengguna, denah_ruangan_psat, diagram_alir_psat, sop_psat, bukti_penerapan_sop, surat_permohonan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *', data_file_pemohonan);
-            let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', 10, data.status_aktif, data.ruang_lingkup,
+            let data_pengajuan = [data.id_pengguna, 'PERMOHONAN', 1, data.status_aktif, data.ruang_lingkup,
                 file_permohonan.rows[0].id, data.unit_produksi, info_perusahaan.rows[0].id, date, date
             ];
             pengajuan = await pool.query(
@@ -48,11 +50,12 @@ class SppbPsatPermohonanModel {
                 'INSERT INTO ' + db_sertifikat +
                 ' (id_pengguna, id_pengajuan)' +
                 ' VALUES ($1, $2) RETURNING *', [data.id_pengguna, pengajuan.rows[0].id]);
-
+            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
             response.create_sertifikat = create_sertifikat.rows[0];
+            response.verifikasi_pvtpp = verifikasi_pvtpp.rows[0];
             let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
             let send_email = await check_query.send_email(pengajuan.rows[0].id, 'SPPB_PSAT');
             debug('get %o', response);

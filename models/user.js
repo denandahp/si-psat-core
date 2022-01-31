@@ -148,6 +148,34 @@ class UserModel {
     };
   }
 
+  async register_pvtpp(data) {
+    try {
+        let response = {};
+        await check_query.check_username(data);
+        let data_pvtpp = [
+          data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
+          data.alamat, true, date ,date];
+        let info_pvtpp = await pool.query(format(
+          'INSERT INTO ' + db_sekretariat + '(nama, photo, email, no_telp, duduk_lembaga, alamat, '+
+          'status, created, update) VALUES (%L) RETURNING *', data_pvtpp)
+        );
+        let data_pengguna = [info_pvtpp.rows[0].id, data.username, data.password, 'PVTPP', date, date];
+        let pengguna = await pool.query(format(
+          'INSERT INTO ' + db_pengguna + '(info_sekretariat, username, password, role, created, update)' +
+          'VALUES (%L) RETURNING *', data_pengguna));
+        response.pengguna = pengguna.rows[0];
+        response.detail = info_pvtpp.rows[0];
+        debug('get %o', response);
+        return {status:200, keterangan: `Register pvtpp ${info_pvtpp.rows[0].nama}`, data: response};
+    } catch (ex) {
+        console.log('Enek seng salah iki ' + ex);
+        if(ex.message == '401'){
+          return { status: '401', Error: `Username ${data.username} telah digunakan` };
+        }
+        return { status: '400', Error: "" + ex };
+    };
+  }
+
   async update_pelaku_usaha(data) {
     try {
         let response = {};
@@ -250,12 +278,39 @@ class UserModel {
     };
   }
 
+  async update_pvtpp(data) {
+    try {
+      let response = {};
+      let data_pengguna = [data.username, data.password, date];
+      let pengguna = await pool.query(format(
+        'UPDATE ' + db_pengguna + ' SET (username, password, update)' +
+        `= (%L) WHERE id=${data.id_user} AND role='PVTPP' RETURNING *`, data_pengguna));
+      check_query.check_queryset(pengguna);
+      let data_pvtpp = [
+        data.nama, data.photo, data.email, data.no_telp, data.duduk_lembaga,
+        data.alamat, data.status ,date];
+      let info_pvtpp = await pool.query(format(
+        'UPDATE ' + db_sekretariat + ' SET (nama, photo, email, no_telp, duduk_lembaga, alamat, '+
+        `status, update) = (%L) WHERE id=${pengguna.rows[0].info_sekretariat} RETURNING *`, data_pvtpp)
+      );
+      check_query.check_queryset(info_pvtpp);
+      response.pengguna = pengguna.rows[0];
+      response.detail = info_pvtpp.rows[0];
+      debug('get %o', response);
+      return {status:200, keterangan: `Update data pvtpp ${info_pvtpp.rows[0].nama}`, data: response};
+    } catch (ex) {
+        console.log('Enek seng salah iki ' + ex);
+        return { status: '400', Error: "" + ex };
+    };
+  }
+
+
   async index_sekretariat(id, role) {
       try {
         let user;
         if(id == 'all'){
           if(role == 'list'){
-            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN') AND is_deleted='false'`)
+            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN', 'PVTPP') AND is_deleted='false'`)
           }else{
             user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role=$1 AND is_deleted='false'` , [role])
           };

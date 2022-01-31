@@ -35,9 +35,10 @@ class PsatPlPengalihanModel {
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengalihan_data)
             );
-
+            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
             response.pengalihan_data = pengalihan_data.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
+            response.verifikasi_pvtpp = verifikasi_pvtpp.rows[0];
             let notif = await check_query.send_notification(pengalihan_data.rows[0].id, 'IZIN_EDAR');
             // debug('get %o', response);
             return { status: '200', permohohan: "Pengalihan Kepemilikan Izin Edar PSAT PL", notifikasi: notif, data: response };

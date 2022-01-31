@@ -33,11 +33,14 @@ let footer = `
 `
 
 exports.content_superadmin = (pengajuan) => {
-    let jenis_permohonan;
+    let jenis_permohonan, perusahaan;
     if(pengajuan.permohonan == 'IZIN EDAR PL'){
         jenis_permohonan = pengajuan.status_pengajuan.toLowerCase()
+        perusahaan = pengajuan.nama_pemilik_lama
     } else if (pengajuan.permohonan == 'SPPB PSAT'){
         jenis_permohonan = pengajuan.jenis_permohonan.toLowerCase()
+        perusahaan = pengajuan.nama_perusahaan
+
     }
     let template = 
     `<html>
@@ -45,7 +48,7 @@ exports.content_superadmin = (pengajuan) => {
         <body>
             <div class="body">
                 <p>Salam Hangat,</p>
-                <p>${pengajuan.nama_perusahaan} telah mengajukan 
+                <p>${perusahaan} telah mengajukan 
                 ${pengajuan.status_proses.toLowerCase()} ${jenis_permohonan} 
                 ${pengajuan.permohonan}
                 dengan kode pengajuan ${pengajuan.kode_pengajuan}. Silakan <a href="#">login</a> untuk melanjutkan proses selanjutnya.</p>
@@ -62,18 +65,20 @@ exports.content_superadmin = (pengajuan) => {
 }
 
 exports.content_auditor = (pengajuan) => {
-    let jenis_permohonan;
+    let jenis_permohonan, perusahaan;
     if(pengajuan.permohonan == 'IZIN EDAR PL'){
         jenis_permohonan = pengajuan.status_pengajuan.toLowerCase()
+        perusahaan = pengajuan.nama_pemilik_lama
     } else if (pengajuan.permohonan == 'SPPB PSAT'){
         jenis_permohonan = pengajuan.jenis_permohonan.toLowerCase()
+        perusahaan = pengajuan.nama_perusahaan
     }
     return `<html>
         ${head}
         <body>
             <div class="body">
                 <p>Salam Hangat,</p>
-                <p>Berdasarkan Penugasan Pimpinan Anda ditugaskan untuk menindaklanjuti ${pengajuan.status_proses.toLowerCase()} ${jenis_permohonan} ${pengajuan.permohonan} ${pengajuan.nama_perusahaan}.</p>
+                <p>Berdasarkan Penugasan Pimpinan Anda ditugaskan untuk menindaklanjuti ${pengajuan.status_proses.toLowerCase()} ${jenis_permohonan} ${pengajuan.permohonan} ${perusahaan}.</p>
                 <p>
                     Silakan <a href="#">login</a> untuk melanjutkan proses audit, semoga layanan
                     ini dapat memberikan kenyamanan bagi Bapak/Ibu.
@@ -91,11 +96,13 @@ exports.content_auditor = (pengajuan) => {
 
 exports.content_pelaku_usaha = (pengajuan) => {
     
-    let template, body, jenis_permohonan;
+    let template, body, jenis_permohonan, perusahaan;
     if(pengajuan.permohonan == 'IZIN EDAR PL'){
         jenis_permohonan = pengajuan.status_pengajuan.toLowerCase()
+        perusahaan = pengajuan.nama_pemilik_lama
     } else if (pengajuan.permohonan == 'SPPB PSAT'){
         jenis_permohonan = pengajuan.jenis_permohonan.toLowerCase()
+        perusahaan = pengajuan.nama_perusahaan
     }
     if(pengajuan.code_status_proses == 11){
         body = 
@@ -145,7 +152,7 @@ exports.content_pelaku_usaha = (pengajuan) => {
         ${head}
         <body>
             <div class="header">
-                <p>Yth. ${pengajuan.nama_perusahaan}</p>
+                <p>Yth. ${perusahaan}</p>
             </div>
             ${body}
             <div class="footer">

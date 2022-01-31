@@ -76,6 +76,25 @@ class UserController {
     }
     authUtils.processRequestWithJWT(req, callback, fallback);
   }
+
+  async register_pvtpp(req, res, next) {
+    let callback = async() => {
+        try {
+            let datas = req.body;
+            debug('detail %o', datas);
+            let detail = await user.register_pvtpp(datas);
+            if (detail.status == '400') {res.status(400).json({ response: detail });}
+            else if (detail.status == '401') {res.status(401).json({ response: detail });}
+            else { res.status(200).json({ response: detail });}
+        } catch (e) {
+            next(e.detail || e);
+        }
+    };
+    let fallback = (err) => {
+        next(err);
+    }
+    authUtils.processRequestWithJWT(req, callback, fallback);
+  }
   
   async register_pelaku_usaha(req, res, next) {
     let callback = async() => {
@@ -157,6 +176,24 @@ class UserController {
             let datas = req.body;
             debug('detail %o', datas);
             let detail = await user.update_superadmin(datas);
+            if (detail.status == '400') {res.status(400).json({ response: detail });}
+            else { res.status(200).json({ response: detail });}
+        } catch (e) {
+            next(e.detail || e);
+        }
+    };
+    let fallback = (err) => {
+        next(err);
+    }
+    authUtils.processRequestWithJWT(req, callback, fallback);
+  }
+
+  async update_pvtpp(req, res, next) {
+    let callback = async() => {
+        try {
+            let datas = req.body;
+            debug('detail %o', datas);
+            let detail = await user.update_pvtpp(datas);
             if (detail.status == '400') {res.status(400).json({ response: detail });}
             else { res.status(200).json({ response: detail });}
         } catch (e) {

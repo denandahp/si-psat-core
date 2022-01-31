@@ -33,16 +33,17 @@ class PsatPlPerubahanModel {
             );
 
             //Create pengajuan
-            let data_perubahan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 10, 
+            let data_perubahan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 1, 
                                        data.expire_sertifikat_lama, data.nomor_sertifikat_lama, date, date]
             perubahan_data = await pool.query(
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, expire_sertifikat_lama, nomor_sertifikat_lama, `+
                     `created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_perubahan_data)
             );
-
+            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
             response.perubahan_data = perubahan_data.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
+            response.verifikasi_pvtpp = verifikasi_pvtpp.rows[0];
             let notif = await check_query.send_notification(perubahan_data.rows[0].id, 'IZIN_EDAR');
             // debug('get %o', response);
             return { status: '200', permohohan: "Perubahan Data Izin Edar PSAT PL", notifikasi: notif, data: response };

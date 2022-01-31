@@ -3,6 +3,7 @@ const audit = require('../controllers/sppb_psat_audit.js');
 
 
 Router.post('/audit/penunjukkan_auditor', audit.penunjukkan_auditor)
+      .post('/audit/verifikasi_pvtpp', audit.verifikasi_pvtpp)
       .post('/audit/permohonan_baru', audit.permohonan_baru)
       .post('/audit/dokumen', audit.audit_dokumen)
       .post('/audit/lapang', audit.audit_lapang)

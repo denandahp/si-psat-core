@@ -11,6 +11,7 @@ const proc_sidang_komtek = schemapet + '.' + '"sidang_komtek_izinedar_sekretaria
 const proc_pembayaran_pnbp = schemapet + '.' + '"pembayaran_pnbp_izinedar"';
 const proc_dokumen_ditolak = schemapet + '.' + '"dokumen_izinedar_ditolak"';
 const db_history_audit = schemapet + '.' + '"history_audit_izinedar"';
+const proc_verifikasi_pvtpp = schemapet + '.' + '"verifikasi_pvtpp_izinedar"';
 const db_history_pengajuan_izin_edar = schema_izin_edar + '.' + '"history_all_pengajuan"';
 const db_proses_audit = schemapet + '.' + '"proses_audit"';
 
@@ -19,6 +20,28 @@ date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 
 
 class PsatPlPerubahanModel {
+    async verifikasi_pvtpp(data) {
+        try {
+            let verifikasi_pvtpp, data_verifikasi_pvtpp;
+            data_verifikasi_pvtpp = [data.id_pengajuan, 'CLEAR', data.keterangan];
+            verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verifikasi_pvtpp + ' (%L)', data_verifikasi_pvtpp));
+            let notif = await check_query.send_notification(data.id_pengajuan, 'IZIN_EDAR');
+            let send_email = await check_query.send_email(data.id_pengajuan, 'IZIN_EDAR');
+            return {
+                status: '200',
+                ketarangan: `${data.proses} Permohonan Baru SPPB PSAT `,
+                notifikasi: notif,
+                email: send_email,
+                data: verifikasi_pvtpp.rows[0]
+            };
+        } catch (ex) {
+            if(ex.code == '401'){
+                return { status: '400', Error: ex.pesan };
+            }
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
 
     async permohonan_baru(data) {
         try {

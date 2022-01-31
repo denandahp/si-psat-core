@@ -222,7 +222,7 @@ exports.plotting_id_pengguna = async(query_pengajuan) => {
         arr[index] = item.id
     }
 
-    let id_pengguna = [];
+    let id_pengguna = [], pvtpp, superadmin;
 
     //-------------------------- Plotting Id Pengguna ---------------------------------------
     if (query_pengajuan.rows[0].code_status_proses == 10 ||
@@ -232,15 +232,21 @@ exports.plotting_id_pengguna = async(query_pengajuan) => {
         superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
         id_pengguna = superadmin.rows
         id_pengguna.forEach(mapping_id)
+    } else if(query_pengajuan.rows[0].code_status_proses == 1){
+        superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+        id_pengguna = superadmin.rows
+        id_pengguna.forEach(mapping_id)
+        pvtpp = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['PVTPP']);
+        id_pengguna = id_pengguna.concat(pvtpp.rows[0].id)
     } else if (query_pengajuan.rows[0].code_status_proses == 20 ||
         query_pengajuan.rows[0].code_status_proses == 30) {
         id_pengguna = query_pengajuan.rows[0].tim_auditor
-        id_pengguna.concat(query_pengajuan.rows[0].lead_auditor)
+        id_pengguna = id_pengguna.concat(query_pengajuan.rows[0].lead_auditor)
     } else if (query_pengajuan.rows[0].code_status_proses == 70) {
         superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
         id_pengguna = superadmin.rows
         id_pengguna.forEach(mapping_id)
-        id_pengguna.concat(query_pengajuan.rows[0].id_pengguna)
+        id_pengguna = id_pengguna.concat(query_pengajuan.rows[0].id_pengguna)
     } else {
         id_pengguna = [query_pengajuan.rows[0].id_pengguna]
     }
@@ -348,7 +354,7 @@ exports.plotting_email_pengguna = async(query_pengajuan, sender, subjectReceiver
 
     async function send_email(email, pengajuan, role){
         let textReceiver 
-        if(role == 'SUPERADMIN'){
+        if(role == 'SUPERADMIN' || role == 'PVTPP'){
             textReceiver = content.content_superadmin(pengajuan)
         } else if (role == 'AUDITOR'){
             textReceiver = content.content_auditor(pengajuan)
@@ -374,21 +380,31 @@ exports.plotting_email_pengguna = async(query_pengajuan, sender, subjectReceiver
         query_pengajuan.rows[0].code_status_proses == 40 ||
         query_pengajuan.rows[0].code_status_proses == 50 ||
         query_pengajuan.rows[0].code_status_proses == 60) {
-        superadmin = await pool.query('SELECT id, email, role FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
-        email_pengguna = superadmin.rows
-        email_pengguna.forEach(mapping_email)
-        await send_email(email_pengguna, query_pengajuan.rows[0], 'SUPERADMIN')
+            superadmin = await pool.query('SELECT id, email, role FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+            email_pengguna = superadmin.rows
+            email_pengguna.forEach(mapping_email)
+            await send_email(email_pengguna, query_pengajuan.rows[0], 'SUPERADMIN')
 
-        if(query_pengajuan.rows[0].code_status_proses == 40 ||
-           query_pengajuan.rows[0].code_status_proses == 60){
-            pengguna = await pool.query(
-                'SELECT email FROM ' + db_pelaku_usaha +
-                ' WHERE id=$1 AND role=$2', [query_pengajuan.rows[0].id_pengguna, 'PELAKU_USAHA']);
-            email_pengguna = [pengguna.rows[0].email]
-            await send_email(email_pengguna, query_pengajuan.rows[0], 'PELAKU_USAHA')
-        }
+            if(query_pengajuan.rows[0].code_status_proses == 40 ||
+            query_pengajuan.rows[0].code_status_proses == 60){
+                pengguna = await pool.query(
+                    'SELECT email FROM ' + db_pelaku_usaha +
+                    ' WHERE id=$1 AND role=$2', [query_pengajuan.rows[0].id_pengguna, 'PELAKU_USAHA']);
+                email_pengguna = pengguna.rows[0].email;
+                await send_email(email_pengguna, query_pengajuan.rows[0], 'PELAKU_USAHA');
+            }
 
-    } else if (query_pengajuan.rows[0].code_status_proses == 20 ||
+    }else if(query_pengajuan.rows[0].code_status_proses == 1){
+        superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+        email_pengguna = superadmin.rows;
+        email_pengguna.forEach(mapping_email);
+        await send_email(email_pengguna, query_pengajuan.rows[0], 'SUPERADMIN');
+
+        pvtpp = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['PVTPP']);
+        email_pengguna = pvtpp.rows[0].email;
+        await send_email(email_pengguna, query_pengajuan.rows[0], 'PVTPP');
+    } 
+    else if (query_pengajuan.rows[0].code_status_proses == 20 ||
         query_pengajuan.rows[0].code_status_proses == 30) {
         id_auditor = query_pengajuan.rows[0].tim_auditor
         id_auditor = id_auditor.concat(query_pengajuan.rows[0].lead_auditor)

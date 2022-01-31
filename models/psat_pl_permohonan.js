@@ -12,6 +12,8 @@ const db_pengajuan = schemapet + '.' + '"pengajuan"';
 const db_unit_produksi = schemapet + '.' + '"unit_produksi"';
 const db_history_pengajuan = schemapet + '.' + '"history_all_pengajuan"';
 const db_proses_audit = schema_audit + '.' + '"proses_audit"';
+const proc_verif_pvtpp = schema_audit + '.' + '"verifikasi_pvtpp_izinedar"';
+
 
 var date = check_query.date_now();
 
@@ -29,14 +31,15 @@ class PsatPlPermohonanModel {
             );
 
             //Create pengajuan
-            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 10, date, date]
+            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 1, date, date]
             pengajuan = await pool.query(
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengajuan)
             );
-
+            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
+            response.verifikasi_pvtpp = verifikasi_pvtpp.rows[0];
             let notif = await check_query.send_notification(pengajuan.rows[0].id, 'IZIN_EDAR');
 
             // debug('get %o', response);

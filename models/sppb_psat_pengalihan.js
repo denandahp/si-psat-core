@@ -28,7 +28,7 @@ class SppbPsatModel {
                 ' (id_pengguna, surat_permohonan_pengalihan, surat_pernyataan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5) RETURNING *', data_file_permohonan);
             let data_pengajuan = [
-                data.id_pengguna, 'PENGALIHAN', 10, data.status_aktif, file_permohonan.rows[0].id,
+                data.id_pengguna, 'PENGALIHAN', 1, data.status_aktif, file_permohonan.rows[0].id,
                 data.info_perusahaan, data.unit_produksi, date, date];
             pengajuan = await pool.query(
                 'INSERT INTO ' + db_pengalihan + 
@@ -39,10 +39,11 @@ class SppbPsatModel {
                 'INSERT INTO ' + db_sertifikat +
                 ' (id_pengguna, id_pengajuan)' +
                 ' VALUES ($1, $2) RETURNING *', [data.id_pengguna, pengajuan.rows[0].id]);
-
+            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.create_sertifikat = create_sertifikat.rows[0];
+            response.verifikasi_pvtpp = verifikasi_pvtpp.rows[0];
             let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
             debug('get %o',response);
             return { status: '200', keterangan:"Pengalihan Kepemilikan SPPB PSAT", notifikasi: notif, data: response };

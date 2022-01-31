@@ -46,10 +46,12 @@ class SppbPsatModel {
                 'INSERT INTO ' + db_pengajuan +
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, info_perusahaan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *', data_pengajuan);
+            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.sertifikat = sertifikat.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
+            response.verifikasi_pvtpp = verifikasi_pvtpp.rows[0];
             let notif = await check_query.send_notification(pengajuan.rows[0].id, 'SPPB_PSAT');
             debug('get %o', response);
             return { status: '200', keterangan:"Penambahan Ruang Lingkup SPPB PSAT", notifikasi: notif, data: response };
