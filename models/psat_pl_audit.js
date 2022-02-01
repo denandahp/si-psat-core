@@ -22,14 +22,16 @@ date.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
 class PsatPlPerubahanModel {
     async verifikasi_pvtpp(data) {
         try {
-            let verifikasi_pvtpp, data_verifikasi_pvtpp;
+            let verifikasi_pvtpp, data_verifikasi_pvtpp, permohonan_baru, data_permohonan_baru;
             data_verifikasi_pvtpp = [data.id_pengajuan, 'CLEAR', data.keterangan];
             verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verifikasi_pvtpp + ' (%L)', data_verifikasi_pvtpp));
+            data_permohonan_baru = [data.id_pengajuan, 'REVIEW'];
+            permohonan_baru = await pool.query(format('CALL ' + proc_permohonan_baru + ' (%L)', data_permohonan_baru));
             let notif = await check_query.send_notification(data.id_pengajuan, 'IZIN_EDAR');
             let send_email = await check_query.send_email(data.id_pengajuan, 'IZIN_EDAR');
             return {
                 status: '200',
-                ketarangan: `${data.proses} Permohonan Baru SPPB PSAT `,
+                ketarangan: `CLEAR Permohonan Baru SPPB PSAT `,
                 notifikasi: notif,
                 email: send_email,
                 data: verifikasi_pvtpp.rows[0]

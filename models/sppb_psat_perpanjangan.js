@@ -49,7 +49,7 @@ class SppbPsatModel {
                 'INSERT INTO ' + db_pengajuan +
                 ' (id_pengguna, jenis_permohonan, status_proses, status_aktif, produk, file_permohonan, sertifikat, unit_produksi, info_perusahaan, created, update)' +
                 ' VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *', data_pengajuan);
-            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
+            let verifikasi_pvtpp = await pool.query('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.sertifikat = sertifikat.rows[0];
@@ -59,15 +59,20 @@ class SppbPsatModel {
             debug('get %o', response);
             return { status: '200', keterangan: "Perpanjangan Masa Berlaku SPPB PSAT", notifikasi: notif, data: response };
         } catch (ex) {
-            if (ex.code == '401') {
+            let response={};
+            if (ex.code == '402') {
                 return { status: '400', Error: ex.pesan };
+            }else if(ex.code == '401'){
+                response = { status: '400', Error: ex.pesan };
+            }else{
+                response = { status: '400', Error: '' + ex }
             }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
             await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].info_perusahaan]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
             await pool.query('DELETE FROM ' + db_sertifikat + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].sertifikat]);
             console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
+            return response;
         };
     }
 

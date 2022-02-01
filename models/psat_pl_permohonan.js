@@ -36,7 +36,7 @@ class PsatPlPermohonanModel {
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengajuan)
             );
-            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
+            let verifikasi_pvtpp = await pool.query('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.verifikasi_pvtpp = verifikasi_pvtpp.rows[0];
@@ -45,13 +45,18 @@ class PsatPlPermohonanModel {
             // debug('get %o', response);
             return { status: '200', permohohan: "Permohonan izin edar PSAT PL/perpanjangan izin edar PSAT PL", notifikasi: notif, data: response };
         } catch (ex) {
-            if (ex.code == '401') {
+            let response={};
+            if (ex.code == '402') {
                 return { status: '400', Error: ex.pesan };
+            }else if(ex.code == '401'){
+                response = { status: '400', Error: ex.pesan };
+            }else{
+                response = { status: '400', Error: '' + ex }
             }
             let delete_pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [delete_pengajuan.rows[0].file_permohonan]);
             console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
+            return response;
         };
     }
 

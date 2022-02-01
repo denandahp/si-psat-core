@@ -50,7 +50,7 @@ class SppbPsatPermohonanModel {
                 'INSERT INTO ' + db_sertifikat +
                 ' (id_pengguna, id_pengajuan)' +
                 ' VALUES ($1, $2) RETURNING *', [data.id_pengguna, pengajuan.rows[0].id]);
-            let verifikasi_pvtpp = await pool.query(format('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']));
+            let verifikasi_pvtpp = await pool.query('CALL ' + proc_verif_pvtpp + ' ($1, $2)', [pengajuan.rows[0].id, 'REVIEW']);
             response.pengajuan = pengajuan.rows[0];
             response.file_permohonan = file_permohonan.rows[0];
             response.info_perusahaan = info_perusahaan.rows[0];
@@ -67,14 +67,19 @@ class SppbPsatPermohonanModel {
                 data: response
             };
         } catch (ex) {
-            if (ex.code == '401') {
+            let response={};
+            if (ex.code == '402') {
                 return { status: '400', Error: ex.pesan };
+            }else if(ex.code == '401'){
+                response = { status: '400', Error: ex.pesan };
+            }else{
+                response = { status: '400', Error: '' + ex }
             }
             pengajuan = await pool.query('DELETE FROM ' + db_pengajuan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].id]);
             await pool.query('DELETE FROM ' + db_info_perusahaan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].info_perusahaan]);
             await pool.query('DELETE FROM ' + db_file_permohonan + ' WHERE id = $1 RETURNING *', [pengajuan.rows[0].file_permohonan]);
             await pool.query('DELETE FROM ' + db_sertifikat + ' WHERE id_pengajuan = $1 RETURNING *', [pengajuan.rows[0].id]);
-            return { status: '400', Error: '' + ex };
+            return response;
         };
     }
 

@@ -298,7 +298,7 @@ exports.check_data = async(data, data_optional) => {
         }
         if (item[1] == undefined || item[1] == "" || item[1] == " " || item[1] == null) {
             pesan = `${var_name} tidak boleh kosong`
-            throw ({ pesan: pesan, code: '401' });
+            throw ({ pesan: pesan, code: '402' });
         }
     }
     var arr_data = Object.keys(data).map((key) => [key, data[key]]);
@@ -395,13 +395,14 @@ exports.plotting_email_pengguna = async(query_pengajuan, sender, subjectReceiver
             }
 
     }else if(query_pengajuan.rows[0].code_status_proses == 1){
-        superadmin = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
+        superadmin = await pool.query('SELECT id, email, role FROM ' + db_sekretariat + ' WHERE role=$1', ['SUPERADMIN']);
         email_pengguna = superadmin.rows;
         email_pengguna.forEach(mapping_email);
         await send_email(email_pengguna, query_pengajuan.rows[0], 'SUPERADMIN');
 
-        pvtpp = await pool.query('SELECT id FROM ' + db_sekretariat + ' WHERE role=$1', ['PVTPP']);
-        email_pengguna = pvtpp.rows[0].email;
+        pvtpp = await pool.query('SELECT id, email, role FROM ' + db_sekretariat + ' WHERE role=$1', ['PVTPP']);
+        email_pengguna = pvtpp.rows;
+        email_pengguna.forEach(mapping_email);
         await send_email(email_pengguna, query_pengajuan.rows[0], 'PVTPP');
     } 
     else if (query_pengajuan.rows[0].code_status_proses == 20 ||
