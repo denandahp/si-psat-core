@@ -116,6 +116,7 @@ class sppbGenerator {
             const update_data = {
                 id_pengguna: sertifikat_psat.id_pengguna,
                 id_pengajuan: sertifikat_psat.id_pengajuan,
+                status_proses: sertifikat_psat.status_proses,
                 nomor_sppb_psat: pengajuan.rows[0].nomor_sppb_psat
             }
 
@@ -244,6 +245,7 @@ class sppbGenerator {
             const update_data = {
                 id_pengguna: sertifikat_psat.id_pengguna,
                 id_pengajuan: sertifikat_psat.id_pengajuan,
+                status_proses: sertifikat_psat.status_proses,
                 nomor_sppb_psat: def.nomor_sppb_psat
             }
             let kode_terbit = await (await model_update_status_sertif.update_nomor_sppb_psat(update_data)).keterangan
