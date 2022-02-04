@@ -55,7 +55,7 @@ class OSSModel {
         let token = sha1(data.username + data.password + data.formattedDate)
         return {
             data: data,
-            token
+            user_key
         };
     }
 
