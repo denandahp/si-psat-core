@@ -4,14 +4,29 @@ const oss = require('../models/oss.js');
 
 
 class OSSController {
+    async generate_key(req, res, next) {
+        let callback = async() => {
+            // try {
+            let data = req.headers;
+            debug('detail %o', data);
+            let detail = await oss.generate_user_key(data);
+            if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
+            // } catch (e) {
+            //     next(e.detail || e);
+            // }
+        };
+        let fallback = (err) => {
+            next(err);
+        };
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
     async pelaku_usaha(req, res, next) {
         let callback = async() => {
             try {
                 let data = req.headers;
                 debug('detail %o', data);
                 let detail = await oss.pelaku_usaha(data);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ response : 200, data: detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -29,8 +44,7 @@ class OSSController {
                 let token = req.headers.Token;
                 debug('detail %o', data);
                 let detail = await oss.receive_nib(data, token);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({responreceiveNIB: detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveNIB: detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -48,8 +62,7 @@ class OSSController {
                 let user_key = req.headers.user_key;
                 debug('detail %o', body);
                 let detail = await oss.send_license(body, user_key);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({responreceiveLicense: detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveLicense: detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -67,8 +80,7 @@ class OSSController {
                 let user_key = req.headers.user_key;
                 debug('detail %o', body);
                 let detail = await oss.send_license_final(body, user_key);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({responreceiveNIB: detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveNIB: detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
