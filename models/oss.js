@@ -49,10 +49,11 @@ class OSSModel {
         let data = {
             username: process.env.OSS_USERNAME,
             password: md5(process.env.OSS_PASSWORD),
+            type: 'userinfo',
             formattedDate: converte_date()
         }
 
-        let user_key = sha1(data.username + data.password + data.formattedDate)
+        let user_key = sha1(data.username + data.password + data.type + data.formattedDate)
         return {
             data: data,
             user_key
@@ -78,10 +79,11 @@ class OSSModel {
         try {
             let response = {};
             let query_data, user_info, process_data, process, pengguna;
-            const url = 'https://api-prd.oss.go.id/v1/sso/users/userinfo-token';
+            const url = 'https://api-stg.oss.go.id/v1/sso/users/userinfo-token';
             const auth = data.authorization;
-            console.log(data)
+            console.log("hai")
             let oss = await oss_param.user_info(url, auth, data.user_key);
+
             let check_last_izin = await pool.query(
                 'Select * FROM ' + db_oss + 'WHERE kode_izin = $1 AND id_izin = $2 AND created >= $3', [data.kd_izin, data.id_izin, date]);
             if (check_last_izin.rowCount <= 0) {
@@ -129,7 +131,7 @@ class OSSModel {
             response.user_detail = query_data.rows[0];
             response.receiveNIB = process.rows[0];
             debug('get %o', response);
-            return response;
+            return oss;
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
