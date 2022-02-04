@@ -23,7 +23,7 @@ var date = format_date.date_now();
 class OSSModel {
 
 
-    async generate_user_key() {
+    async generate_user_key(type) {
 
         function sha1(val) {
             return crypto.createHash("sha1").update(val, "binary").digest("hex");
@@ -42,14 +42,10 @@ class OSSModel {
             return formattedDate
         }
 
-
-
-
-
         let data = {
             username: process.env.OSS_USERNAME,
             password: md5(process.env.OSS_PASSWORD),
-            type: 'userinfo',
+            type: type,
             formattedDate: converte_date()
         }
 
@@ -74,16 +70,33 @@ class OSSModel {
             return { status: '400', Error: "" + ex };
         };
     }
+    async validate_token(data) {
+        try {
+
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/validateToken';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.user_info(url, auth, x_sm_key, data.user_key, data.token);
+            return oss;
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
 
     async pelaku_usaha(data) {
         try {
             let response = {};
             let query_data, user_info, process_data, process, pengguna;
-            const url = 'https://api-stg.oss.go.id/v1/sso/users/userinfo-token';
-            const auth = data.authorization;
-            console.log("hai")
-            let oss = await oss_param.user_info(url, auth, data.user_key);
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/userInfoToken';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.user_info(url, auth, x_sm_key, data.user_key, data.token);
 
+            if (oss.OSS_result.status == 401) {
+                return {
+                    status: 400,
+                    oss
+                }
+            }
             let check_last_izin = await pool.query(
                 'Select * FROM ' + db_oss + 'WHERE kode_izin = $1 AND id_izin = $2 AND created >= $3', [data.kd_izin, data.id_izin, date]);
             if (check_last_izin.rowCount <= 0) {
@@ -131,7 +144,7 @@ class OSSModel {
             response.user_detail = query_data.rows[0];
             response.receiveNIB = process.rows[0];
             debug('get %o', response);
-            return oss;
+            return response;
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };

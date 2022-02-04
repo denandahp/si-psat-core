@@ -1,22 +1,34 @@
 const axios = require('axios');
 
 
-exports.user_info = async(url, auth, user) => {
-    var param = {
-        'method': 'GET',
-        'url': url,
-        'headers': {
-            'Accept': '*/*',
-            'Connection': 'keep-alive',
-            'Host': 'api-stg.oss.go.id',
-            'Authorization': auth,
-            'user_key': user
-        }
-    };
-    const result = await axios(param);
-    let oss = result.data.data;
-    console.log(oss)
-    return oss;
+exports.user_info = async(url, auth, x_sm_key, user, token) => {
+
+
+
+    let val = axios.get(url, {
+            params: {
+                username: 'psat',
+                token: user,
+                kd_izin: '018000000244'
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                'x-sm-key': x_sm_key
+            },
+            data: {
+                token: token
+            }
+        })
+        .then(function(response) {
+
+            return response.data
+        }).catch(function(error) {
+            console.log(error)
+            return error
+        });
+
+    return val
+
 }
 
 exports.send_license = async(url, body, user) => {
