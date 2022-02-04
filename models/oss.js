@@ -52,7 +52,7 @@ class OSSModel {
             formattedDate: converte_date()
         }
 
-        let token = sha1(data.username + data.password + data.formattedDate)
+        let user_key = sha1(data.username + data.password + data.formattedDate)
         return {
             data: data,
             user_key
@@ -80,6 +80,7 @@ class OSSModel {
             let query_data, user_info, process_data, process, pengguna;
             const url = 'https://api-prd.oss.go.id/v1/sso/users/userinfo-token';
             const auth = data.authorization;
+            console.log(data)
             let oss = await oss_param.user_info(url, auth, data.user_key);
             let check_last_izin = await pool.query(
                 'Select * FROM ' + db_oss + 'WHERE kode_izin = $1 AND id_izin = $2 AND created >= $3', [data.kd_izin, data.id_izin, date]);

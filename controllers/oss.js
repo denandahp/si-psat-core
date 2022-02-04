@@ -22,16 +22,16 @@ class OSSController {
     }
     async pelaku_usaha(req, res, next) {
         let callback = async() => {
-            try {
-                let data = req.headers;
-                debug('detail %o', data);
-                let detail_key = await oss.generate_user_key(data);
-                data.user_key = detail_key.user_key
-                let detail = await oss.pelaku_usaha(data);
-                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
-            } catch (e) {
-                next(e.detail || e);
-            }
+            // try {
+            let data = req.headers;
+            debug('detail %o', data);
+            let detail_key = await oss.generate_user_key(data);
+            data.user_key = detail_key.user_key
+            let detail = await oss.pelaku_usaha(data);
+            if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
+            // } catch (e) {
+            //     next(e.detail || e);
+            // }
         };
         let fallback = (err) => {
             next(err);
