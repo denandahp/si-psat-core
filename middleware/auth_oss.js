@@ -40,7 +40,20 @@ module.exports = auth = async(req, res, next) => {
         const username = process.env.OSS_USERNAME
         let kd_izin = req.query.kd_izin
         let validate_token_oss = await oss_param.validate_token(url, access_token, token, x_sm_key, username, kd_izin);
-        req.user = validate_token_oss;
+        if (validate_token_oss.OSS_result.status == 401){
+            return res.status(401).send({
+                auth: false,
+                message: validate_token_oss.OSS_result.message,
+                detail: validate_token_oss.OSS_result
+            });
+        } else if (validate_token_oss.status == false){
+            return res.status(401).send({
+                auth: false,
+                message: validate_token_oss.message,
+                detail: validate_token_oss
+            });
+        }
+        req.validateToken = validate_token_oss;
         next();
         return;
 
