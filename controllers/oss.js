@@ -27,7 +27,6 @@ class OSSController {
             try {
                 let data =  req.query;
                 let expired_token =  req.validateToken.OSS_result.expired_aToken;
-                console.log(expired_token)
                 let access_token = req.headers.authorization.split('Bearer ')[1];
                 let detail = await oss.pelaku_usaha(data, access_token, expired_token);
 
