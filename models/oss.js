@@ -65,7 +65,7 @@ class OSSModel {
         };
     }
 
-    async pelaku_usaha(data, access_token) {
+    async pelaku_usaha(data, access_token, expired_token) {
         try {
             let response = {};
             let token = await oss_param.generate_token('userinfo')
@@ -113,6 +113,7 @@ class OSSModel {
                     '= ($1, $2, $3) WHERE info_kepemilikan=$1 RETURNING ' +
                     'id, info_kepemilikan, role, created', [query_data.rows[0].id, 'PELAKU_USAHA', date]);
             }
+            response.expired_token = expired_token
             response.user = pengguna.rows[0];
             response.user_detail = query_data.rows[0];
             debug('get %o', response);
