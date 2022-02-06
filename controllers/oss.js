@@ -8,8 +8,9 @@ class OSSController {
         let callback = async() => {
             try {
                 let data = req.headers;
+                let type = req.headers.type;
                 debug('detail %o', data);
-                let detail = await oss.generate_user_key('userinfo');
+                let detail = await oss.generate_user_key(type);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
             } catch (e) {
                 next(e.detail || e);
@@ -20,34 +21,13 @@ class OSSController {
         };
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
+
     async pelaku_usaha(req, res, next) {
         let callback = async() => {
             try {
-                let data = req.body;
-
-                let detail_key = await oss.generate_user_key('userinfo');
-                data.user_key = detail_key.user_key
-                let detail = await oss.pelaku_usaha(data);
-
-                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
-            } catch (e) {
-                next(e.detail || e);
-            }
-        };
-        let fallback = (err) => {
-            next(err);
-        };
-        authUtils.processRequestWithJWT(req, callback, fallback);
-    }
-
-    async validate_token(req, res, next) {
-        let callback = async() => {
-            try {
-                let data = req.body;
-
-                let detail_key = await oss.generate_user_key('validate');
-                data.user_key = detail_key.user_key
-                let detail = await oss.validate_token(data);
+                let data =  req.query;
+                let access_token = req.headers.authorization.split('Bearer ')[1];
+                let detail = await oss.pelaku_usaha(data, access_token);
 
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
             } catch (e) {
@@ -64,7 +44,7 @@ class OSSController {
         let callback = async() => {
             try {
                 let data = req.body;
-                let token = req.headers.Token;
+                let token = req.query.token;
                 debug('detail %o', data);
                 let detail = await oss.receive_nib(data, token);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveNIB: detail }); }
@@ -165,6 +145,24 @@ class OSSController {
         let fallback = (err) => {
             next(err);
         };
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async get_list_izin_oss(req, res, next) {
+        let callback = async() => {
+            try {
+                let no_identitas = req.query.no_identitas;
+                let kode_izin = req.query.kode_izin;
+                debug('detail %o', no_identitas);
+                let detail = await oss.get_list_izin_oss(no_identitas, kode_izin);
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 }

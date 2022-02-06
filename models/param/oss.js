@@ -1,35 +1,27 @@
 const axios = require('axios');
+const crypto = require('crypto')
+const dotenv = require('dotenv');
+const md5 = require('md5');
+
+dotenv.config();
 
 
-exports.user_info = async(url, auth, x_sm_key, user, token) => {
+exports.user_info = async(url, kd_izin, username, x_sm_key, token, access_token) => {
 
-
-
-    let val = axios.get(url, {
-            params: {
-                username: 'psat',
-                token: user,
-                kd_izin: '018000000244'
-            },
-            headers: {
-                "Accept": "application/json",
-                'Content-Type': 'application/json',
-                'x-sm-key': x_sm_key
-            },
-            data: {
-                token: token
-            }
-        })
-        .then(function(response) {
-
-            return response.data
-        }).catch(function(error) {
-            console.log(error)
-            return error
-        });
-
-    return val
-
+    let new_url = url + `?username=${username}&token=${token}&kd_izin=${kd_izin}`
+    var param = {
+        'method': 'GET',
+        'url': new_url,
+        'headers': {
+            'Content-Type': 'application/json',
+            'x-sm-key': x_sm_key
+        },
+        'data': {
+            "token": access_token
+        }
+    };
+    const result = await axios(param);
+    return result.data;
 }
 
 exports.send_license = async(url, data, user, x_sm_key) => {
@@ -186,18 +178,48 @@ exports.send_license_final = async(url, body, user) => {
     return oss;
 }
 
-exports.validate_token = async(url, auth, user) => {
+exports.validate_token = async(url, access_token, token, x_sm_key, username, kd_izin) => {
+    let new_url = url + `?username=${username}&token=${token}&kd_izin=${kd_izin}`
     var param = {
-        'method': 'POST',
-        'url': url,
+        'method': 'GET',
+        'url': new_url,
         'headers': {
-            'Accept': '*/*',
-            'Connection': 'keep-alive',
-            'Host': 'api-prd.oss.go.id',
-            'Authorization': auth,
-            'user_key': user
+            'Content-Type': 'application/json',
+            'x-sm-key': x_sm_key
+        },
+        'data': {
+            token: access_token
         }
     };
     const result = await axios(param);
     return result.data;
+}
+
+exports.generate_token = async(type) => {
+    function sha1(val) {
+        return crypto.createHash("sha1").update(val, "binary").digest("hex");
+    }
+
+    function converte_date() {
+        function pad2(n) {
+            return (n < 10 ? '0' : '') + n;
+        }
+        var date_token = new Date();
+        var month = pad2(date_token.getMonth() + 1); //months (0-11)
+        var day = pad2(date_token.getDate()); //day (1-31)
+        var year = date_token.getFullYear();
+
+        var formattedDate = year + "-" + month + "-" + day;
+        return formattedDate
+    }
+
+    let data = {
+        username: process.env.OSS_USERNAME,
+        password: md5(process.env.OSS_PASSWORD),
+        type: type,
+        formattedDate: converte_date()
+    }
+
+    let user_key = sha1(data.username + data.password + data.type + data.formattedDate)
+    return user_key
 }

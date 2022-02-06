@@ -34,11 +34,11 @@ class PsatPlPerubahanModel {
 
             //Create pengajuan
             let data_perubahan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 10, 
-                                       data.expire_sertifikat_lama, data.nomor_sertifikat_lama, date, date]
+                                       data.expire_sertifikat_lama, data.nomor_sertifikat_lama, data.id_izin_oss, date, date]
             perubahan_data = await pool.query(
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, expire_sertifikat_lama, nomor_sertifikat_lama, `+
-                    `created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_perubahan_data)
+                    `id_izin_oss, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_perubahan_data)
             );
 
             response.perubahan_data = perubahan_data.rows[0];
@@ -120,12 +120,12 @@ class PsatPlPerubahanModel {
             //Update new file pemohonan
             let data_file_permohonan = [
                 data.surat_permohonan_izin_edar, data.sertifikat_izin_edar_sebelumnya,
-                data.surat_pernyataan, date
+                data.surat_pernyataan, data.id_izin_oss, date
             ];
             file_permohonan = await pool.query(
                 format('UPDATE ' + db_file_permohonan +
                     ' SET(surat_permohonan_izin_edar, sertifikat_izin_edar_sebelumnya, ' +
-                    `surat_pernyataan, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${perubahan_data.rows[0].file_permohonan} RETURNING *`, data_file_permohonan)
+                    `surat_pernyataan, id_izin_oss, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${perubahan_data.rows[0].file_permohonan} RETURNING *`, data_file_permohonan)
             );
             check_query.check_queryset(perubahan_data);
             check_query.check_queryset(file_permohonan);

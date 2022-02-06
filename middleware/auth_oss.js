@@ -1,5 +1,8 @@
 
+const dotenv = require('dotenv');
 const oss_param = require('../models/param/oss.js');
+
+dotenv.config();
 
 module.exports = auth = async(req, res, next) => {
     console.log('Check if request is authorized with OSS ID token');
@@ -14,19 +17,15 @@ module.exports = auth = async(req, res, next) => {
         return;
     }
 
-    let idToken, user_key;
+    let access_token;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
         console.log('Found "Authorization" header');
         // Read the ID Token from the Authorization header.
-        idToken = req.headers.authorization.split('Bearer ')[1];
-        if(req.headers.user_key){
-            console.log('Found "user_key" header');
-            user_key = req.headers.user_key;
-        }
+        access_token = req.headers.authorization.split('Bearer ')[1];
     } else if (req.cookies) {
         console.log('Found "__session" cookie');
         // Read the ID Token from cookie.
-        idToken = req.cookies.__session;
+        access_token = req.cookies.__session;
     } else {
 
         // No cookie
@@ -35,9 +34,25 @@ module.exports = auth = async(req, res, next) => {
     }
 
     try {
-        const url = 'https://api-prd.oss.go.id/v1/sso/users/validate-token';
-        const auth = 'Bearer ' + idToken;
-        let validate_token_oss = await oss_param.validate_token(url, auth, user_key);
+        const url = `${process.env.MIDOSS_URL}/validateToken`;
+        const x_sm_key = process.env.X_SM_KEY
+        const token = await oss_param.generate_token('validate')
+        const username = process.env.OSS_USERNAME
+        let kd_izin = req.query.kd_izin
+        let validate_token_oss = await oss_param.validate_token(url, access_token, token, x_sm_key, username, kd_izin);
+        if (validate_token_oss.OSS_result.status == 401){
+            return res.status(401).send({
+                auth: false,
+                message: validate_token_oss.OSS_result.message,
+                detail: validate_token_oss.OSS_result
+            });
+        } else if (validate_token_oss.status == false){
+            return res.status(401).send({
+                auth: false,
+                message: validate_token_oss.message,
+                detail: validate_token_oss
+            });
+        }
         req.user = validate_token_oss;
         next();
         return;
@@ -47,6 +62,5 @@ module.exports = auth = async(req, res, next) => {
 
         res.status(401).send(error.response.data);
         throw new Error("Unauthorized!");
-        return;
     }
 };

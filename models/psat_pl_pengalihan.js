@@ -21,12 +21,12 @@ class PsatPlPengalihanModel {
             //Create new file pemohonan
             let data_file_permohonan = [
                 data.id_pengguna, data.surat_permohonan_izin_edar, data.sertifikat_izin_edar_sebelumnya,
-                data.surat_pernyataan, date, date
+                data.surat_pernyataan, data.id_izin_oss, date, date
             ];
             file_permohonan = await pool.query(
                 format('INSERT INTO ' + db_file_permohonan +
                     ' (id_pengguna, surat_permohonan_izin_edar, sertifikat_izin_edar_sebelumnya, ' +
-                    'surat_pernyataan, created, update) VALUES (%L) RETURNING *', data_file_permohonan)
+                    'surat_pernyataan, id_izin_oss, created, update) VALUES (%L) RETURNING *', data_file_permohonan)
             );
 
             //Create pengajuan
@@ -108,12 +108,12 @@ class PsatPlPengalihanModel {
             //Create new file pemohonan
             let data_file_permohonan = [
                 data.surat_permohonan_izin_edar, data.sertifikat_izin_edar_sebelumnya,
-                data.surat_pernyataan, date, date
+                data.surat_pernyataan, data.id_izin_oss, date, date
             ];
             file_permohonan = await pool.query(
                 format('UPDATE ' + db_file_permohonan +
                     ' SET(surat_permohonan_izin_edar, sertifikat_izin_edar_sebelumnya, ' +
-                    `surat_pernyataan, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_file_permohonan} RETURNING *`, data_file_permohonan)
+                    `surat_pernyataan, id_izin_oss, update) = (%L) WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_file_permohonan} RETURNING *`, data_file_permohonan)
             );
             check_query.check_queryset(file_permohonan);
             //Create pengajuan
