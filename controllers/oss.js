@@ -26,9 +26,8 @@ class OSSController {
         let callback = async() => {
             try {
                 let data =  req.query;
-                let expired_token =  req.validateToken.OSS_result.expired_aToken;
                 let access_token = req.headers.authorization.split('Bearer ')[1];
-                let detail = await oss.pelaku_usaha(data, access_token, expired_token);
+                let detail = await oss.pelaku_usaha(data, access_token);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
             } catch (e) {
                 next(e.detail || e);
