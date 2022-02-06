@@ -74,12 +74,7 @@ class OSSModel {
             const x_sm_key = process.env.X_SM_KEY
             const username = process.env.OSS_USERNAME
             let oss = await oss_param.user_info(url, data.kd_izin, username, x_sm_key, token, access_token);
-            if (oss.status == false) {
-                return {
-                    status: 400,
-                    keterangan: oss
-                }
-            } else if(oss.OSS_result.status == 401){
+            if (oss.status == false || oss.OSS_result.status == 401) {
                 return {
                     status: 400,
                     keterangan: oss
