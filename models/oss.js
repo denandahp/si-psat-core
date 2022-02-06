@@ -155,6 +155,34 @@ class OSSModel {
         };
     }
 
+    async validate_token(data, access_token) {
+        try {
+            const url = `${process.env.MIDOSS_URL}/validateToken`;
+            const x_sm_key = process.env.X_SM_KEY
+            const token = await oss_param.generate_token('validate')
+            const username = process.env.OSS_USERNAME
+            let validate_token_oss = await oss_param.validate_token(url, access_token, token, x_sm_key, username, data.kd_izin);
+            if (validate_token_oss.OSS_result.status == 401){
+                return res.status(401).send({
+                    auth: false,
+                    message: validate_token_oss.OSS_result.message,
+                    detail: validate_token_oss.OSS_result
+                });
+            } else if (validate_token_oss.status == false){
+                return res.status(401).send({
+                    auth: false,
+                    message: validate_token_oss.message,
+                    detail: validate_token_oss
+                });
+            }
+            debug('get %o', validate_token_oss);
+            return { status: 200, validate_token_oss };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
     async get_list_izin_oss(no_identitas, kode_izin) {
         try {
             let izin_oss = await pool.query(
