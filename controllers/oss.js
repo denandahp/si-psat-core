@@ -82,10 +82,64 @@ class OSSController {
         let callback = async() => {
             try {
                 let body = req.body;
-                let user_key = req.headers.user_key;
-                debug('detail %o', body);
-                let detail = await oss.send_license(body, user_key);
-                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveLicense: detail }); }
+
+                let detail_key = await oss.generate_user_key(body.nib);
+
+                let detail = await oss.send_license(body, detail_key.user_key);
+
+                if ((detail.OSS_result.responreceiveLicenseStatus.kode == 400)) {
+                    res.status(400).json(detail);
+                } else {
+                    res.status(200).json(detail);
+                }
+            } catch (e) {
+
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        };
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async send_license_status(req, res, next) {
+        let callback = async() => {
+            try {
+                let body = req.body;
+
+                let detail_key = await oss.generate_user_key(body.nib);
+
+                let detail = await oss.send_license_status(body, detail_key.user_key);
+
+                if ((detail.OSS_result.responreceiveLicenseStatus.kode == 400)) {
+                    res.status(400).json(detail);
+                } else {
+                    res.status(200).json(detail);
+                }
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        };
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async send_fileDS(req, res, next) {
+        let callback = async() => {
+            try {
+                let body = req.body;
+
+                let detail_key = await oss.generate_user_key(body.receiveFileDS.nib);
+
+                let detail = await oss.send_fileDS(body, detail_key.user_key);
+                // if ((detail.OSS_result.responreceiveLicenseStatus.kode == 400)) {
+                res.status(200).json(detail);
+                // } else {
+                //     res.status(200).json(detail);
+                // }
             } catch (e) {
                 next(e.detail || e);
             }

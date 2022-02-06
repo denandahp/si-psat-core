@@ -76,6 +76,7 @@ class OSSModel {
             const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/validateToken';
             const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
             let oss = await oss_param.user_info(url, auth, x_sm_key, data.user_key, data.token);
+
             return oss;
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -90,61 +91,61 @@ class OSSModel {
             const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/userInfoToken';
             const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
             let oss = await oss_param.user_info(url, auth, x_sm_key, data.user_key, data.token);
-
+            console.log(oss)
             if (oss.OSS_result.status == 401) {
                 return {
-                    status: 400,
+                    status: 200,
                     oss
                 }
             }
-            let check_last_izin = await pool.query(
-                'Select * FROM ' + db_oss + 'WHERE kode_izin = $1 AND id_izin = $2 AND created >= $3', [data.kd_izin, data.id_izin, date]);
-            if (check_last_izin.rowCount <= 0) {
-                throw new Error('Process Expired');
-            } else {
-                process_data = [data.kd_izin, data.id_izin, data.token, data.user, 'LOGIN', oss.id_profile, date];
-                process = await pool.query(
-                    'UPDATE ' + db_oss + 'SET (token, user_key, status, id_user, last_login) ' +
-                    '=($3, $4, $5, $6, $7) WHERE kode_izin=$1 AND id_izin=$2 RETURNING ' +
-                    'kode_izin, id_izin, token, user_key, status, id_user, last_login', process_data);
-            }
-            //Check data user_info di PSAT
-            let check_user = await pool.query('Select id, id_profile_oss FROM ' + db_info_kepemilikan + 'WHERE id_profile_oss = $1', [oss.id_profile]);
-            user_info = [
-                oss.id_profile, oss.username, oss.kode_instansi, oss.jenis_identitas, oss.nomor_identitas, oss.nama,
-                oss.email, oss.alamat, oss.telp, oss.status, oss.role, oss.flag_umk, oss.foto, oss.nama_kota,
-                oss.jenis_perseroan, oss.flag_migrasi, oss.kantor, oss.unit_kerja, oss.npwp_perseroan,
-                oss.kewenangan_izin, oss.data_nib, date
-            ];
-            if (check_user.rowCount <= 0) {
-                query_data = await pool.query(
-                    'INSERT INTO ' + db_info_kepemilikan +
-                    '(id_profile_oss, username, kode_instansi, jenis_identitas, nomor_identitas, nama, email, alamat, telp, ' +
-                    'status, role, flag_umk, foto, nama_kota, jenis_perseroan, flag_migrasi, kantor, unit_kerja, ' +
-                    'npwp_perseroan, kewenangan_izin, data_nib, created)' +
-                    'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, ' +
-                    '$20, $21, $22) RETURNING *', user_info);
-                pengguna = await pool.query(
-                    'INSERT INTO ' + db_pengguna + ' (role, info_kepemilikan, created)' +
-                    'VALUES ($1, $2, $3) RETURNING info_kepemilikan, role, created', ['USER', query_data.rows[0].id, date]);
-            } else {
-                query_data = await pool.query(
-                    'UPDATE' + db_info_kepemilikan +
-                    'SET (id_profile_oss, username, kode_instansi, jenis_identitas, nomor_identitas, nama, email, alamat, telp, ' +
-                    'status, role, flag_umk, foto, nama_kota, jenis_perseroan, flag_migrasi, kantor, unit_kerja, ' +
-                    'npwp_perseroan, kewenangan_izin, data_nib, update)' +
-                    '= ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, ' +
-                    '$20, $21, $22) WHERE id_profile_oss = $1 RETURNING *', user_info);
-                pengguna = await pool.query(
-                    'UPDATE ' + db_pengguna + ' SET (info_kepemilikan, role, created)' +
-                    '= ($1, $2, $3) WHERE info_kepemilikan=$1 RETURNING ' +
-                    'info_kepemilikan, role, created', [query_data.rows[0].id, 'USER', date]);
-            }
-            response.user = pengguna.rows[0];
-            response.user_detail = query_data.rows[0];
-            response.receiveNIB = process.rows[0];
-            debug('get %o', response);
-            return response;
+            // let check_last_izin = await pool.query(
+            //     'Select * FROM ' + db_oss + 'WHERE kode_izin = $1 AND id_izin = $2 AND created >= $3', [data.kd_izin, data.id_izin, date]);
+            // if (check_last_izin.rowCount <= 0) {
+            //     throw new Error('Process Expired');
+            // } else {
+            //     process_data = [data.kd_izin, data.id_izin, data.token, data.user, 'LOGIN', oss.id_profile, date];
+            //     process = await pool.query(
+            //         'UPDATE ' + db_oss + 'SET (token, user_key, status, id_user, last_login) ' +
+            //         '=($3, $4, $5, $6, $7) WHERE kode_izin=$1 AND id_izin=$2 RETURNING ' +
+            //         'kode_izin, id_izin, token, user_key, status, id_user, last_login', process_data);
+            // }
+            // //Check data user_info di PSAT
+            // let check_user = await pool.query('Select id, id_profile_oss FROM ' + db_info_kepemilikan + 'WHERE id_profile_oss = $1', [oss.id_profile]);
+            // user_info = [
+            //     oss.id_profile, oss.username, oss.kode_instansi, oss.jenis_identitas, oss.nomor_identitas, oss.nama,
+            //     oss.email, oss.alamat, oss.telp, oss.status, oss.role, oss.flag_umk, oss.foto, oss.nama_kota,
+            //     oss.jenis_perseroan, oss.flag_migrasi, oss.kantor, oss.unit_kerja, oss.npwp_perseroan,
+            //     oss.kewenangan_izin, oss.data_nib, date
+            // ];
+            // if (check_user.rowCount <= 0) {
+            //     query_data = await pool.query(
+            //         'INSERT INTO ' + db_info_kepemilikan +
+            //         '(id_profile_oss, username, kode_instansi, jenis_identitas, nomor_identitas, nama, email, alamat, telp, ' +
+            //         'status, role, flag_umk, foto, nama_kota, jenis_perseroan, flag_migrasi, kantor, unit_kerja, ' +
+            //         'npwp_perseroan, kewenangan_izin, data_nib, created)' +
+            //         'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, ' +
+            //         '$20, $21, $22) RETURNING *', user_info);
+            //     pengguna = await pool.query(
+            //         'INSERT INTO ' + db_pengguna + ' (role, info_kepemilikan, created)' +
+            //         'VALUES ($1, $2, $3) RETURNING info_kepemilikan, role, created', ['USER', query_data.rows[0].id, date]);
+            // } else {
+            //     query_data = await pool.query(
+            //         'UPDATE' + db_info_kepemilikan +
+            //         'SET (id_profile_oss, username, kode_instansi, jenis_identitas, nomor_identitas, nama, email, alamat, telp, ' +
+            //         'status, role, flag_umk, foto, nama_kota, jenis_perseroan, flag_migrasi, kantor, unit_kerja, ' +
+            //         'npwp_perseroan, kewenangan_izin, data_nib, update)' +
+            //         '= ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, ' +
+            //         '$20, $21, $22) WHERE id_profile_oss = $1 RETURNING *', user_info);
+            //     pengguna = await pool.query(
+            //         'UPDATE ' + db_pengguna + ' SET (info_kepemilikan, role, created)' +
+            //         '= ($1, $2, $3) WHERE info_kepemilikan=$1 RETURNING ' +
+            //         'info_kepemilikan, role, created', [query_data.rows[0].id, 'USER', date]);
+            // }
+            // response.user = pengguna.rows[0];
+            // response.user_detail = query_data.rows[0];
+            // response.receiveNIB = process.rows[0];
+            // debug('get %o', response);
+            return oss;
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -153,15 +154,42 @@ class OSSModel {
 
     async send_license(body, user_key) {
         try {
-            let response;
-            const url = 'https://api-prd.oss.go.id/v1/kl/rba/receiveLicense';
-            let oss = await oss_param.send_license(url, body, user_key);
-            debug('get %o', response);
-            return { status: 200, response: response };
+
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/receiveLicense';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.send_license(url, body, user_key, x_sm_key);
+
+            return oss;
         } catch (ex) {
-            if (ex.response.data.responreceiveLicense.kode == 400) {
-                return { status: '400', Error: ex.response.data.responreceiveLicense };
-            }
+
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async send_license_status(body, user_key) {
+        try {
+
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/receiveLicenseStatus';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.send_license_status(url, body, user_key, x_sm_key);
+
+            return oss;
+        } catch (ex) {
+
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async send_fileDS(body, user_key) {
+        try {
+
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/receiveFileDS';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.send_fileDS(url, body, user_key, x_sm_key);
+
+            return oss;
+        } catch (ex) {
+
             return { status: '400', Error: "" + ex };
         };
     }
