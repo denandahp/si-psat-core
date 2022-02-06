@@ -1,4 +1,3 @@
-
 const debug = require('debug')('app:model:oss');
 const dotenv = require('dotenv');
 const oss_param = require('./param/oss.js');
@@ -125,15 +124,42 @@ class OSSModel {
 
     async send_license(body, user_key) {
         try {
-            let response;
-            const url = 'https://api-prd.oss.go.id/v1/kl/rba/receiveLicense';
-            let oss = await oss_param.send_license(url, body, user_key);
-            debug('get %o', response);
-            return { status: 200, response: response };
+
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/receiveLicense';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.send_license(url, body, user_key, x_sm_key);
+
+            return oss;
         } catch (ex) {
-            if (ex.response.data.responreceiveLicense.kode == 400) {
-                return { status: '400', Error: ex.response.data.responreceiveLicense };
-            }
+
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async send_license_status(body, user_key) {
+        try {
+
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/receiveLicenseStatus';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.send_license_status(url, body, user_key, x_sm_key);
+
+            return oss;
+        } catch (ex) {
+
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async send_fileDS(body, user_key) {
+        try {
+
+            const url = 'http://izinusaha.pertanian.go.id/midoss/api/services-stg/receiveFileDS';
+            const x_sm_key = '35d3d08c3d7b7f445ceb8e726a87b26c'
+            let oss = await oss_param.send_fileDS(url, body, user_key, x_sm_key);
+
+            return oss;
+        } catch (ex) {
+
             return { status: '400', Error: "" + ex };
         };
     }
