@@ -25,7 +25,7 @@ class OSSController {
     async pelaku_usaha(req, res, next) {
         let callback = async() => {
             try {
-                let data =  req.query;
+                let data = req.query;
                 let access_token = req.headers.authorization.split('Bearer ')[1];
                 let detail = await oss.pelaku_usaha(data, access_token);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
@@ -42,7 +42,7 @@ class OSSController {
     async validate_token(req, res, next) {
         let callback = async() => {
             try {
-                let data =  req.query;
+                let data = req.query;
                 let access_token = req.headers.authorization.split('Bearer ')[1];
                 let detail = await oss.validate_token(data, access_token);
 
@@ -84,7 +84,7 @@ class OSSController {
 
                 let detail = await oss.send_license(body, detail_key.user_key);
 
-                if ((detail.OSS_result.responreceiveLicenseStatus.kode == 400)) {
+                if ((detail.OSS_result.responreceiveLicense.kode == 400)) {
                     res.status(400).json(detail);
                 } else {
                     res.status(200).json(detail);
