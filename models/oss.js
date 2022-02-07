@@ -187,13 +187,13 @@ class OSSModel {
             const token = await oss_param.generate_token('validate')
             const username = process.env.OSS_USERNAME
             let validate_token_oss = await oss_param.validate_token(url, access_token, token, x_sm_key, username, data.kd_izin);
-            if (validate_token_oss.OSS_result.status == 401){
+            if (validate_token_oss.OSS_result.status == 401) {
                 return res.status(401).send({
                     auth: false,
                     message: validate_token_oss.OSS_result.message,
                     detail: validate_token_oss.OSS_result
                 });
-            } else if (validate_token_oss.status == false){
+            } else if (validate_token_oss.status == false) {
                 return res.status(401).send({
                     auth: false,
                     message: validate_token_oss.message,
