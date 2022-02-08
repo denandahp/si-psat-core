@@ -52,7 +52,6 @@ class OSSModel {
     async receive_nib(data) {
         try {
             let response;
-            let limit = format_date.limit_time(60)
             let value = [data.dataNIB.id_izin, data.dataNIB.kd_izin, data.dataNIB.no_id_user_proses, data.dataNIB, data.nib, date];
             response = await pool.query('INSERT INTO ' + db_oss + '(id_izin, kode_izin, no_identitas, receive_nib, no_nib, created)' +
                 'VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_izin, kode_izin, no_identitas', value);
