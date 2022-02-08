@@ -61,9 +61,8 @@ class OSSController {
         let callback = async() => {
             try {
                 let data = req.body;
-                let token = req.query.token;
                 debug('detail %o', data);
-                let detail = await oss.receive_nib(data, token);
+                let detail = await oss.receive_nib(data);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveNIB: detail }); }
             } catch (e) {
                 next(e.detail || e);
