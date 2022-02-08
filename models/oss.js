@@ -49,12 +49,12 @@ class OSSModel {
         };
     }
 
-    async receive_nib(data) {
+    async receive_nib(data, token) {
         try {
             let response;
-            let value = [data.dataNIB.id_izin, data.dataNIB.kd_izin, data.dataNIB.no_id_user_proses, data.dataNIB, data.nib, date];
-            response = await pool.query('INSERT INTO ' + db_oss + '(id_izin, kode_izin, no_identitas, receive_nib, no_nib, created)' +
-                'VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_izin, kode_izin, no_identitas', value);
+            let value = [token, data.dataNIB.id_izin, data.dataNIB.kd_izin, data.dataNIB.no_id_user_proses, data.dataNIB, data.nib, date];
+            response = await pool.query('INSERT INTO ' + db_oss + '(token, id_izin, kode_izin, no_identitas, receive_nib, no_nib, created)' +
+                'VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_izin, kode_izin, no_identitas', value);
             debug('get %o', response);
             return { status: 200, keterangan: "success" };
         } catch (ex) {
