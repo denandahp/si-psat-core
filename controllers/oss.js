@@ -62,11 +62,28 @@ class OSSController {
     async send_license(req, res, next) {
         let callback = async() => {
             try {
+                let masa_berlaku = new Date(req.body.masa_berlaku).toISOString().split('T')[0]
+                let date = new Date().toISOString().split('T')[0]
 
-                let params = [req.params.no_identitas, req.params.id_izin]
+
+                let mapReduce = {
+                    nomor_izin: req.body.nomor_sppb_psat,
+                    tgl_terbit_izin: date,
+                    tgl_berlaku_izin: masa_berlaku,
+                    nama_ttd: "#",
+                    nip_ttd: "#",
+                    jabatan_ttd: "#",
+                    status_izin: "50",
+                    file_izin: "#",
+                    keterangan: "#",
+                    file_lampiran: "#",
+                    nomenklatur_nomor_izin: "#"
+                }
+
+                let params = [req.query.no_identitas, req.query.id_izin]
 
                 let data_license = await oss.get_data_license(params)
-                let body = {...data_license, ...req.body };
+                let body = {...data_license, ...mapReduce };
 
 
                 let detail_key = await oss.generate_user_key(body.nib);
@@ -76,7 +93,9 @@ class OSSController {
                 if ((detail.OSS_result.responreceiveLicense.kode == 400)) {
                     res.status(400).json(detail);
                 } else {
-                    res.status(200).json(detail);
+                    next()
+                    req.body.oss = detail
+                    req.body.user_key = detail_key.user_key
                 }
             } catch (e) {
 
