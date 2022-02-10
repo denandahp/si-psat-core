@@ -13,6 +13,7 @@ const db_pengguna = schema_pengguna + '.' + '"pengguna"';
 dotenv.config();
 const crypto = require('crypto')
 const md5 = require('md5');
+const { param } = require('../routes/oss.js');
 
 var date = check_query.date_now();
 
@@ -118,6 +119,63 @@ class OSSModel {
             return response;
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+
+    async get_data_license_status(param) {
+        try {
+            let result = await (await pool.query('SELECT * FROM public.data_nib WHERE no_identitas= $1 AND id_izin =  $2', param)).rows[0];
+
+            let data_checklist = await result.receive_nib.data_checklist.find(item => {
+
+                return item.id_izin == result.id_izin
+            })
+
+            let data = {
+                nib: result.receive_nib.nib,
+                id_produk: data_checklist.id_produk,
+                id_proyek: data_checklist.id_proyek,
+                kd_izin: result.kode_izin,
+                id_izin: result.id_izin,
+                oss_id: result.oss_id,
+                kd_instansi: '018'
+
+
+            }
+            return data
+        } catch (ex) {
+
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async get_data_license(param) {
+        console.log(param)
+        try {
+            let result = await (await pool.query('SELECT * FROM public.data_nib WHERE no_identitas= $1 AND id_izin =  $2', param)).rows[0];
+
+            let data_checklist = await result.receive_nib.data_checklist.find(item => {
+
+                return item.id_izin == result.id_izin
+            })
+
+            let data = {
+                nib: result.receive_nib.nib,
+                id_produk: data_checklist.id_produk,
+                id_proyek: data_checklist.id_proyek,
+                kd_izin: result.kode_izin,
+                id_izin: result.id_izin,
+                oss_id: result.oss_id,
+                kd_daerah: result.receive_nib.kd_daerah,
+                kewenangan: result.receive_nib.kewenangan
+
+
+            }
+            return data
+        } catch (ex) {
+
             return { status: '400', Error: "" + ex };
         };
     }

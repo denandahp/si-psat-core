@@ -9,7 +9,7 @@ class OSSController {
             try {
                 let data = req.headers;
                 let type = req.headers.type;
-                debug('detail %o', data);
+
                 let detail = await oss.generate_user_key(type);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
             } catch (e) {
@@ -25,7 +25,8 @@ class OSSController {
     async pelaku_usaha(req, res, next) {
         let callback = async() => {
             try {
-                let data =  req.query;
+                let data = req.query;
+                console.log("ja")
                 let access_token = req.headers.authorization.split('Bearer ')[1];
                 let detail = await oss.pelaku_usaha(data, access_token);
 
@@ -45,7 +46,7 @@ class OSSController {
             try {
                 let data = req.body;
                 let token = req.query.token;
-                debug('detail %o', data);
+
                 let detail = await oss.receive_nib(data, token);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveNIB: detail }); }
             } catch (e) {
@@ -61,13 +62,18 @@ class OSSController {
     async send_license(req, res, next) {
         let callback = async() => {
             try {
-                let body = req.body;
+
+                let params = [req.params.no_identitas, req.params.id_izin]
+
+                let data_license = await oss.get_data_license(params)
+                let body = {...data_license, ...req.body };
+
 
                 let detail_key = await oss.generate_user_key(body.nib);
 
                 let detail = await oss.send_license(body, detail_key.user_key);
 
-                if ((detail.OSS_result.responreceiveLicenseStatus.kode == 400)) {
+                if ((detail.OSS_result.responreceiveLicense.kode == 400)) {
                     res.status(400).json(detail);
                 } else {
                     res.status(200).json(detail);
@@ -86,7 +92,10 @@ class OSSController {
     async send_license_status(req, res, next) {
         let callback = async() => {
             try {
-                let body = req.body;
+                let params = [req.params.no_identitas, req.params.id_izin]
+
+                let data_license = await oss.get_data_license(params)
+                let body = {...data_license, ...req.body };
 
                 let detail_key = await oss.generate_user_key(body.nib);
 
