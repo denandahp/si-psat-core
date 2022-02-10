@@ -1,6 +1,6 @@
 const debug = require('debug')('app:controller:oss');
 const authUtils = require('./utils/auth');
-const oss = require('../models/oss.js');
+const oss = require('../models/oss_tmp.js');
 
 
 class OSSController {
