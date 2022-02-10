@@ -53,7 +53,7 @@ module.exports = auth = async(req, res, next) => {
                 detail: validate_token_oss
             });
         }
-        req.user = validate_token_oss;
+        req.validateToken = validate_token_oss;
         next();
         return;
 
