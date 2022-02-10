@@ -26,9 +26,9 @@ class PsatPlPerubahanModel {
 
     async permohonan_baru(data) {
         try {
-            if(data.proses == 'REVIEW'){
+            if (data.proses == 'REVIEW') {
                 await check_query.check_data(data, ['keterangan', 'hasil_audit'])
-            }else{
+            } else {
                 await check_query.check_data(data)
             }
             let permohonan_baru, data_permohonan_baru;
@@ -46,7 +46,7 @@ class PsatPlPerubahanModel {
                 data: permohonan_baru.rows[0]
             };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -66,10 +66,13 @@ class PsatPlPerubahanModel {
                     ` '${data.keterangan}' )`, data_penunjukan_tim_audit));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
-            return {status: '200', ketarangan: "Penunjukkan Tim Audit", 
-                    notifikasi: notif, 
-                    email: send_email,
-                    data: penunjukan_tim_audit.rows[0] };
+            return {
+                status: '200',
+                ketarangan: "Penunjukkan Tim Audit",
+                notifikasi: notif,
+                email: send_email,
+                data: penunjukan_tim_audit.rows[0]
+            };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -79,9 +82,9 @@ class PsatPlPerubahanModel {
     async audit_dokumen(data) {
         try {
             let audit_dokumen, data_audit_dokumen, audit_lapang, data_audit_lapang;
-            if(data.proses == 'REVIEW' || data.proses == 'CLEAR'){
+            if (data.proses == 'REVIEW' || data.proses == 'CLEAR') {
                 await check_query.check_data(data, ['keterangan', 'hasil_audit'])
-            }else{
+            } else {
                 await check_query.check_data(data)
             }
             if (data.proses == 'CLEAR') {
@@ -98,13 +101,15 @@ class PsatPlPerubahanModel {
             }
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
-            return {status: '200',
-                    ketarangan: `${data.proses} AUDIT DOCUMENT `,
-                    notifikasi: notif,
-                    email: send_email,
-                    data: audit_dokumen.rows[0] };
+            return {
+                status: '200',
+                ketarangan: `${data.proses} AUDIT DOCUMENT `,
+                notifikasi: notif,
+                email: send_email,
+                data: audit_dokumen.rows[0]
+            };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -114,9 +119,9 @@ class PsatPlPerubahanModel {
 
     async audit_lapang(data) {
         try {
-            if(data.proses == 'REVIEW' || data.proses == 'CLEAR'){
+            if (data.proses == 'REVIEW' || data.proses == 'CLEAR') {
                 await check_query.check_data(data, ['keterangan', 'hasil_audit', 'id_tim_komtek'])
-            }else{
+            } else {
                 await check_query.check_data(data)
             }
             let audit_lapang, data_audit_lapang, sidang_komtek, data_sidang_komtek;
@@ -132,13 +137,15 @@ class PsatPlPerubahanModel {
             }
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
-            return {status: '200',
-                    ketarangan: `${data.proses} AUDIT LAPANG `,
-                    notifikasi: notif, 
-                    email: send_email,
-                    data: audit_lapang.rows[0] };
+            return {
+                status: '200',
+                ketarangan: `${data.proses} AUDIT LAPANG `,
+                notifikasi: notif,
+                email: send_email,
+                data: audit_lapang.rows[0]
+            };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -154,11 +161,13 @@ class PsatPlPerubahanModel {
                 format('CALL ' + proc_tim_komtek + ` (%L, '{${data.lead_komtek}}', '{${data.tim_komtek}}')`, data_penunjukan_tim_komtek));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
-            return {status: '200',
-                    ketarangan: "Penunjukkan Tim Komtek",
-                    notifikasi: notif,
-                    email: send_email,
-                    data: penunjukan_tim_komtek.rows[0] };
+            return {
+                status: '200',
+                ketarangan: "Penunjukkan Tim Komtek",
+                notifikasi: notif,
+                email: send_email,
+                data: penunjukan_tim_komtek.rows[0]
+            };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
@@ -167,9 +176,9 @@ class PsatPlPerubahanModel {
 
     async audit_rekomendasi(data) {
         try {
-            if(data.proses == 'REVIEW' || data.proses == 'CLEAR'){
+            if (data.proses == 'REVIEW' || data.proses == 'CLEAR') {
                 await check_query.check_data(data, ['keterangan', 'hasil_audit', 'id_tim_komtek'])
-            }else{
+            } else {
                 await check_query.check_data(data)
             }
             let sidang_komtek, data_sidang_komtek;
@@ -177,13 +186,15 @@ class PsatPlPerubahanModel {
             sidang_komtek = await pool.query(format('CALL ' + proc_sidang_komtek + ' (%L)', data_sidang_komtek));
             let notif = await check_query.send_notification(data.id_pengajuan, 'SPPB_PSAT');
             let send_email = await check_query.send_email(data.id_pengajuan, 'SPPB_PSAT');
-            return {status: '200',
-                    ketarangan: `${data.proses} SIDANG KOMTEK `,
-                    notifikasi: notif,
-                    email: send_email,
-                    data: sidang_komtek.rows[0] };
+            return {
+                status: '200',
+                ketarangan: `${data.proses} SIDANG KOMTEK `,
+                notifikasi: notif,
+                email: send_email,
+                data: sidang_komtek.rows[0]
+            };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -193,11 +204,11 @@ class PsatPlPerubahanModel {
 
     async pembayaran_pnbp(data) {
         try {
-            if(data.proses == 'REVIEW'){
+            if (data.proses == 'REVIEW') {
                 await check_query.check_data(data, ['bukti_pembayaran'])
-            }else{
+            } else {
                 await check_query.check_data(data)
-            }            
+            }
             let pembayaran_pnbp, data_pembayaran_pnbp;
             data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.keterangan, data.bukti_pembayaran];
 
@@ -212,7 +223,7 @@ class PsatPlPerubahanModel {
                 data: pembayaran_pnbp.rows[0]
             };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
@@ -236,7 +247,7 @@ class PsatPlPerubahanModel {
                 data: dokumen_ditolak.rows[0]
             };
         } catch (ex) {
-            if(ex.code == '401'){
+            if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
             }
             console.log('Enek seng salah iki ' + ex);
