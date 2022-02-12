@@ -1,4 +1,4 @@
-const debug = require('debug')('app:model:oss');
+const debug = require('debug')('app:model:oss_tmp');
 const dotenv = require('dotenv');
 const oss_param = require('./param/oss.js');
 const pool = require('../libs/db');

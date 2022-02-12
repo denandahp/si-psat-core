@@ -14,11 +14,10 @@ const db_pengguna = schema_pengguna + '.' + '"pengguna"';
 dotenv.config();
 const crypto = require('crypto')
 const md5 = require('md5');
-const { param } = require('../routes/oss.js');
 
 var date = check_query.date_now();
 
-class OSSModel {
+class IzinOSSModel {
     async generate_user_key(type) {
         function sha1(val) {
             return crypto.createHash("sha1").update(val, "binary").digest("hex");
@@ -305,10 +304,10 @@ class OSSModel {
         };
     }
 
-    async get_list_izin_oss(no_identitas, kode_izin) {
+    async index_izin_oss(no_identitas, kode_izin) {
         try {
             let izin_oss = await pool.query(
-                `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk,nama_cabang,  uraian_usaha, `+
+                `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
                 ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
                 ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
                 ' WHERE no_identitas=$1 AND kode_izin=$2 ORDER BY id DESC', [no_identitas, kode_izin])
@@ -322,4 +321,4 @@ class OSSModel {
     }
 }
 
-module.exports = new OSSModel();
+module.exports = new IzinOSSModel();
