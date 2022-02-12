@@ -1,6 +1,6 @@
 const debug = require('debug')('app:controller:oss');
 const authUtils = require('./utils/auth');
-const oss = require('../models/oss_tmp.js');
+const oss = require('../models/oss.js');
 
 
 class OSSController {
@@ -193,13 +193,13 @@ class OSSController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
-    async get_list_izin_oss(req, res, next) {
+    async index_izin_oss(req, res, next) {
         let callback = async() => {
             try {
                 let no_identitas = req.query.no_identitas;
                 let kode_izin = req.query.kode_izin;
                 debug('detail %o', no_identitas);
-                let detail = await oss.get_list_izin_oss(no_identitas, kode_izin);
+                let detail = await oss.index_izin_oss(no_identitas, kode_izin);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
