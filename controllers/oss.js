@@ -108,31 +108,45 @@ class OSSController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
-    async send_license_status(req, res, next) {
-        let callback = async() => {
-            try {
-                let params = [req.params.no_identitas, req.params.id_izin]
+    async send_license_status(request) {
 
-                let data_license = await oss.get_data_license(params)
-                let body = {...data_license, ...req.body };
+        try {
+            let params = await oss.get_izn_by_idpengguna(request.body.id_pengajuan, request.body.tipe_permohonan)
 
-                let detail_key = await oss.generate_user_key(body.nib);
 
-                let detail = await oss.send_license_status(body, detail_key.user_key);
+            let data_license = await oss.get_data_license([params.no_identitas, params.id_izin])
+            let date = new Date().toISOString().split('T')[0]
+            let add_body = {
 
-                if ((detail.OSS_result.responreceiveLicenseStatus.kode == 400)) {
-                    res.status(400).json(detail);
-                } else {
-                    res.status(200).json(detail);
+                tgl_status: date,
+                nip_status: "-",
+                nama_status: "DISETUJUI",
+                keterangan: "Berhasil",
+                data_pnbp: {
+                    kd_akun: "",
+                    kd_penerimaan: "",
+                    kd_billing: "",
+                    tgl_billing: "",
+                    tgl_expire: "",
+                    nominal: "",
+                    url_dokumen: ""
                 }
-            } catch (e) {
-                next(e.detail || e);
             }
-        };
-        let fallback = (err) => {
-            next(err);
-        };
-        authUtils.processRequestWithJWT(req, callback, fallback);
+
+
+            let body = {...data_license, ...request.body, ...add_body };
+
+            let detail_key = await oss.generate_user_key(body.nib);
+
+            let detail = await oss.send_license_status(body, detail_key.user_key);
+
+            return detail.OSS_result.responreceiveLicenseStatus.kode
+
+        } catch (e) {
+            return 404
+        }
+
+
     }
 
     async send_fileDS(req, res, next) {
