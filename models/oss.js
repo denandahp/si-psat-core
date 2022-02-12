@@ -304,13 +304,53 @@ class IzinOSSModel {
         };
     }
 
-    async index_izin_oss(no_identitas, kode_izin) {
+    async index_izin_oss(no_identitas, kode_izin, submit) {
         try {
-            let izin_oss = await pool.query(
-                `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
-                ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
-                ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
-                ' WHERE no_identitas=$1 AND kode_izin=$2 ORDER BY id DESC', [no_identitas, kode_izin])
+            let izin_oss;
+            //Get all data by no identitas only
+            if(kode_izin === undefined || kode_izin == null){
+                if(submit == 'true'){
+                    izin_oss = await pool.query(
+                        `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
+                        ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
+                        ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
+                        ' WHERE no_identitas=$1 AND id_pengajuan_izinedar IS NOT NULL ORDER BY id DESC', [no_identitas])
+                }else if(submit == 'false'){
+                    izin_oss = await pool.query(
+                        `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
+                        ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
+                        ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
+                        ' WHERE no_identitas=$1 AND id_pengajuan_izinedar IS NULL ORDER BY id DESC', [no_identitas])
+                }else{
+                    izin_oss = await pool.query(
+                        `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
+                        ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
+                        ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
+                        ' WHERE no_identitas=$1 ORDER BY id DESC', [no_identitas])
+                }
+
+            }else{
+                //Get all data by no identitas and kode izin
+                if(submit == 'true'){
+                    izin_oss = await pool.query(
+                        `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
+                        ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
+                        ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
+                        ' WHERE no_identitas=$1 AND kode_izin=$2 AND id_pengajuan_izinedar IS NOT NULL ORDER BY id DESC', [no_identitas, kode_izin])
+                }else if(submit == 'false'){
+                    izin_oss = await pool.query(
+                        `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
+                        ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
+                        ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
+                        ' WHERE no_identitas=$1 AND kode_izin=$2 AND id_pengajuan_izinedar IS NULL ORDER BY id DESC', [no_identitas, kode_izin])
+                }else{
+                    izin_oss = await pool.query(
+                        `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk, nama_cabang, uraian_usaha, `+
+                        ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
+                        ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
+                        ' WHERE no_identitas=$1 AND kode_izin=$2 ORDER BY id DESC', [no_identitas, kode_izin])
+                }
+            }
             check_query.check_queryset(izin_oss);
             debug('get %o', izin_oss);
             return { status: '200', keterangan: `List id izin oss dengan kode izin ${kode_izin}`, data: izin_oss.rows };
