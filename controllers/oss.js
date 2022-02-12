@@ -1,6 +1,6 @@
 const debug = require('debug')('app:controller:oss');
 const authUtils = require('./utils/auth');
-const oss = require('../models/oss.js');
+const oss = require('../models/oss_tmp.js');
 
 
 class OSSController {
@@ -9,7 +9,7 @@ class OSSController {
             try {
                 let data = req.headers;
                 let type = req.headers.type;
-                debug('detail %o', data);
+
                 let detail = await oss.generate_user_key(type);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
             } catch (e) {
@@ -26,6 +26,7 @@ class OSSController {
         let callback = async() => {
             try {
                 let data = req.query;
+                console.log("ja")
                 let access_token = req.headers.authorization.split('Bearer ')[1];
                 let detail = await oss.pelaku_usaha(data, access_token);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ response: 200, data: detail }); }
@@ -62,7 +63,7 @@ class OSSController {
             try {
                 let data = req.body;
                 let token = req.query.token;
-                debug('detail %o', data);
+
                 let detail = await oss.receive_nib(data, token);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ responreceiveNIB: detail }); }
             } catch (e) {
@@ -78,7 +79,29 @@ class OSSController {
     async send_license(req, res, next) {
         let callback = async() => {
             try {
-                let body = req.body;
+                let masa_berlaku = new Date(req.body.masa_berlaku).toISOString().split('T')[0]
+                let date = new Date().toISOString().split('T')[0]
+
+
+                let mapReduce = {
+                    nomor_izin: req.body.nomor_sppb_psat,
+                    tgl_terbit_izin: date,
+                    tgl_berlaku_izin: masa_berlaku,
+                    nama_ttd: "#",
+                    nip_ttd: "#",
+                    jabatan_ttd: "#",
+                    status_izin: "50",
+                    file_izin: "#",
+                    keterangan: "#",
+                    file_lampiran: "#",
+                    nomenklatur_nomor_izin: "#"
+                }
+
+                let params = [req.query.no_identitas, req.query.id_izin]
+
+                let data_license = await oss.get_data_license(params)
+                let body = {...data_license, ...mapReduce };
+
 
                 let detail_key = await oss.generate_user_key(body.nib);
 
@@ -87,7 +110,9 @@ class OSSController {
                 if ((detail.OSS_result.responreceiveLicense.kode == 400)) {
                     res.status(400).json(detail);
                 } else {
-                    res.status(200).json(detail);
+                    next()
+                    req.body.oss = detail
+                    req.body.user_key = detail_key.user_key
                 }
             } catch (e) {
 
@@ -103,7 +128,10 @@ class OSSController {
     async send_license_status(req, res, next) {
         let callback = async() => {
             try {
-                let body = req.body;
+                let params = [req.params.no_identitas, req.params.id_izin]
+
+                let data_license = await oss.get_data_license(params)
+                let body = {...data_license, ...req.body };
 
                 let detail_key = await oss.generate_user_key(body.nib);
 
