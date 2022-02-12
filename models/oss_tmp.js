@@ -7,7 +7,6 @@ const check_query = require('./param/utils.js');
 const schema_public = '"public"';
 const schema_pengguna = '"pengguna"';
 const db_oss = schema_public + '.' + '"oss"';
-const db_data_nib = schema_public + '.' + '"data_nib"';
 const db_info_kepemilikan = schema_pengguna + '.' + '"info_kepemilikan"';
 const db_pengguna = schema_pengguna + '.' + '"pengguna"';
 
@@ -53,16 +52,11 @@ class OSSModel {
 
     async receive_nib(data, token) {
         try {
-            let response, data_checklist_detail, data_proyek_detail, data_proyek_produk_detail;
-            data_checklist_detail = data.dataNIB.data_checklist[data.dataNIB.data_checklist.length - 1];
-            data_proyek_detail = data.dataNIB.data_proyek.find(o => o.id_proyek == data_checklist_detail.id_proyek);
-            data_proyek_produk_detail = JSON.stringify(data_proyek_detail.data_proyek_produk)
-            //Mapping data and store to db
-            let value =[token, data.dataNIB.id_izin, data.dataNIB.kd_izin, data.dataNIB.no_id_user_proses, 
-                        data.dataNIB, data.dataNIB.nib, data_checklist_detail, data_proyek_detail, data_proyek_produk_detail, date];
-            response = await pool.query('INSERT INTO ' + db_oss + 
-                '(token, id_izin, kode_izin, no_identitas, receive_nib, no_nib, data_checklist, data_proyek, data_proyek_produk, created)' +
-                'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id_izin, kode_izin, no_identitas', value);
+            let response;
+            let limit = format_date.limit_time(60)
+            let value = [token, data.dataNIB.id_izin, data.dataNIB.kd_izin, data.dataNIB.no_id_user_proses, data.dataNIB, data.nib, date];
+            response = await pool.query('INSERT INTO ' + db_oss + '(token, id_izin, kode_izin, no_identitas, receive_nib, no_nib, created)' +
+                'VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_izin, kode_izin, no_identitas', value);
             debug('get %o', response);
             return { status: 200, keterangan: "success" };
         } catch (ex) {
@@ -70,33 +64,7 @@ class OSSModel {
             return { status: '400', Error: "" + ex };
         };
     }
-/* 
-    // Plotting data manual
-    async plotting_data(data, token) {
-        try {
-            let response, receviveib, data_checklist_detail, data_proyek_detail, data_proyek_produk_detail;
-            async function mapping_data(item, index, arr) {
-                data_checklist_detail = item.receive_nib.data_checklist[item.receive_nib.data_checklist.length - 1];
-                data_proyek_detail = item.receive_nib.data_proyek.find(o => o.id_proyek == data_checklist_detail.id_proyek);
-                data_proyek_produk_detail = JSON.stringify(data_proyek_detail.data_proyek_produk)
 
-                let value =[item.id, item.receive_nib.nib ,data_checklist_detail, data_proyek_detail, data_proyek_produk_detail];
-                
-                response = await pool.query('UPDATE ' + db_oss + 
-                    'SET (no_nib, data_checklist, data_proyek, data_proyek_produk)' +
-                    ' = ($2, $3, $4, $5) WHERE id = $1', value);
-            }
-
-            receviveib = await pool.query('SELECT * FROM ' + db_oss );
-            receviveib.rows.forEach(mapping_data)
-            debug('get %o', response);
-            return { status: 200, keterangan: "success" };
-        } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
-        };
-    }
-*/
     async pelaku_usaha(data, access_token) {
         try {
             let response = {};
@@ -145,15 +113,8 @@ class OSSModel {
                     '= ($1, $2, $3) WHERE info_kepemilikan=$1 RETURNING ' +
                     'id, info_kepemilikan, role, created', [query_data.rows[0].id, 'PELAKU_USAHA', date]);
             }
-
-            //Get Nama Perusahaan
-            let dataNIB = await pool.query('Select id, nama_perseroan, npwp_perseroan, alamat_perseroan, email_perusahaan,kode_pos_perseroan, '+
-            ' tgl_pengesahan, tgl_terbit_nib, nama_user_proses FROM ' + db_data_nib + 
-            ' WHERE no_identitas = $1 AND kode_izin = $2 AND npwp_perseroan = $3', [oss.nomor_identitas, data.kd_izin, oss.npwp_perseroan]);
-            //response json
             response.user = pengguna.rows[0];
             response.user_detail = query_data.rows[0];
-            response.perusahaan = dataNIB.rows[0];
             debug('get %o', response);
             return response;
         } catch (ex) {
@@ -277,40 +238,10 @@ class OSSModel {
         };
     }
 
-    async validate_token(data, access_token) {
-        try {
-            const url = `${process.env.MIDOSS_URL}/validateToken`;
-            const x_sm_key = process.env.X_SM_KEY
-            const token = await oss_param.generate_token('validate')
-            const username = process.env.OSS_USERNAME
-            let validate_token_oss = await oss_param.validate_token(url, access_token, token, x_sm_key, username, data.kd_izin);
-            if (validate_token_oss.OSS_result.status == 401) {
-                return res.status(401).send({
-                    auth: false,
-                    message: validate_token_oss.OSS_result.message,
-                    detail: validate_token_oss.OSS_result
-                });
-            } else if (validate_token_oss.status == false) {
-                return res.status(401).send({
-                    auth: false,
-                    message: validate_token_oss.message,
-                    detail: validate_token_oss
-                });
-            }
-            debug('get %o', validate_token_oss);
-            return { status: 200, validate_token_oss };
-        } catch (ex) {
-            console.log('Enek seng salah iki ' + ex);
-            return { status: '400', Error: "" + ex };
-        };
-    }
-
     async get_list_izin_oss(no_identitas, kode_izin) {
         try {
             let izin_oss = await pool.query(
-                `SELECT id, id_pengajuan_izinedar, kode_izin, id_izin, id_proyek, oss_id, id_produk,nama_cabang,  uraian_usaha, `+
-                ` nama_kegiatan, kbli, no_identitas, nama_izin, instansi, npwp_perseroan, alamat_perseroan, `+
-                ` email_perusahaan, tgl_pengesahan, tgl_terbit_nib FROM` + db_data_nib +
+                'SELECT id, kode_izin, id_izin, no_identitas FROM' + db_oss +
                 ' WHERE no_identitas=$1 AND kode_izin=$2 ORDER BY id DESC', [no_identitas, kode_izin])
             check_query.check_queryset(izin_oss);
             debug('get %o', izin_oss);
