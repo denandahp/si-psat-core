@@ -53,7 +53,6 @@ class OSSModel {
     async receive_nib(data, token) {
         try {
             let response;
-            let limit = format_date.limit_time(60)
             let value = [token, data.dataNIB.id_izin, data.dataNIB.kd_izin, data.dataNIB.no_id_user_proses, data.dataNIB, data.nib, date];
             response = await pool.query('INSERT INTO ' + db_oss + '(token, id_izin, kode_izin, no_identitas, receive_nib, no_nib, created)' +
                 'VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id_izin, kode_izin, no_identitas', value);
@@ -234,6 +233,34 @@ class OSSModel {
             if (ex.response.data.responreceiveLicense.kode == 400) {
                 return { status: '400', Error: ex.response.data.responreceiveLicense };
             }
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async validate_token(data, access_token) {
+        try {
+            const url = `${process.env.MIDOSS_URL}/validateToken`;
+            const x_sm_key = process.env.X_SM_KEY
+            const token = await oss_param.generate_token('validate')
+            const username = process.env.OSS_USERNAME
+            let validate_token_oss = await oss_param.validate_token(url, access_token, token, x_sm_key, username, data.kd_izin);
+            if (validate_token_oss.OSS_result.status == 401) {
+                return res.status(401).send({
+                    auth: false,
+                    message: validate_token_oss.OSS_result.message,
+                    detail: validate_token_oss.OSS_result
+                });
+            } else if (validate_token_oss.status == false) {
+                return res.status(401).send({
+                    auth: false,
+                    message: validate_token_oss.message,
+                    detail: validate_token_oss
+                });
+            }
+            debug('get %o', validate_token_oss);
+            return { status: 200, validate_token_oss };
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
             return { status: '400', Error: "" + ex };
         };
     }
