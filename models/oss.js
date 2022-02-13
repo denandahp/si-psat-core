@@ -359,6 +359,23 @@ class IzinOSSModel {
             return { status: '400', Error: "" + ex };
         };
     }
+
+    async validate_id_izin(id_izin_oss) {
+        try {
+            let izin_oss;
+            //Get all data by no identitas only
+            izin_oss = await pool.query(`SELECT * FROM ` + db_data_nib + ' WHERE id=$1 AND id_pengajuan_izinedar IS NOT NULL', [id_izin_oss])
+            if (izin_oss.rowCount <= 0) {
+                return { status: '200', keterangan:`Id izin oss ${id_izin_oss} belum diajukan`, submit: 'false' };
+            } else{
+                check_query.check_queryset(izin_oss);
+                return { status: '400', keterangan:`Id izin oss ${id_izin_oss} dengan Id izin ${izin_oss.rows[0].id_izin} telah diajukan`, submit: 'true' };
+            }
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+    }
 }
 
 module.exports = new IzinOSSModel();
