@@ -211,6 +211,23 @@ class OSSController {
         }
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
+
+    async validate_id_izin(req, res, next) {
+        let callback = async() => {
+            try {
+                let id_izin_oss = req.query.id_izin_oss;
+                debug('detail %o', id_izin_oss);
+                let detail = await oss.validate_id_izin(id_izin_oss);
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
 }
 
 module.exports = new OSSController();
