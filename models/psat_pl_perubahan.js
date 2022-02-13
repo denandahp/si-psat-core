@@ -220,7 +220,7 @@ class PsatPlPerubahanModel {
             let permohonan;
             if(id == 'all'){
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' + 
+                    'SELECT id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' + 
                     ' sertifikat_izin_edar_sebelumnya, expire_sertifikat_lama, nomor_sertifikat_lama, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
@@ -229,7 +229,7 @@ class PsatPlPerubahanModel {
                     'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PERUBAHAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, '+
+                    'SELECT id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, '+
                     ' sertifikat_izin_edar_sebelumnya, expire_sertifikat_lama, nomor_sertifikat_lama, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
