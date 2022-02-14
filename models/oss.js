@@ -364,15 +364,15 @@ class IzinOSSModel {
         try {
             let izin_oss;
             //Get all data by no identitas only
-            izin_oss = await pool.query(`SELECT * FROM ` + db_data_nib + ' WHERE id=$1 AND id_pengajuan_izinedar IS NOT NULL', [id_izin_oss])
-            if (izin_oss.rowCount <= 0) {
+            izin_oss = await pool.query(`SELECT id, id_izin, kode_izin, id_pengajuan_izinedar FROM ` + db_data_nib + ' WHERE id=$1', [id_izin_oss])
+            check_query.check_queryset(izin_oss);
+            if(izin_oss.rows[0].id_pengajuan_izinedar == null || izin_oss.rows[0].id_pengajuan_izinedar === undefined){
                 return {
                     status: '200',
                     keterangan:`Id izin oss ${id_izin_oss} belum diajukan`,
                     submit: 'false',
                     data: izin_oss.rows[0] };
             } else{
-                check_query.check_queryset(izin_oss);
                 return {
                     status: '400',
                     keterangan:`Id izin oss ${id_izin_oss} dengan Id izin ${izin_oss.rows[0].id_izin} telah diajukan`,
