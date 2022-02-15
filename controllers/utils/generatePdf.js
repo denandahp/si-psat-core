@@ -102,39 +102,9 @@ class generatePdfController {
             const def = req.body
             const param = req.params
             const type = req.query.type
+           
 
-
-            let berlaku_sampai = new Date(req.body.berlaku_sampai).toISOString().split('T')[0]
-            let date = new Date().toISOString().split('T')[0]
-
-
-            let mapReduce = {
-                nomor_izin: req.body.nomor_izin_edar,
-                tgl_terbit_izin: date,
-                tgl_berlaku_izin: berlaku_sampai,
-                nama_ttd: "#",
-                nip_ttd: "#",
-                jabatan_ttd: "#",
-                status_izin: "50",
-                file_izin: "#",
-                keterangan: "#",
-                file_lampiran: "#",
-                nomenklatur_nomor_izin: "#"
-            }
-
-
-
-            let data_license = await oss.get_data_license([req.query.no_identitas, req.query.id_izin])
-            let body_license = {...data_license, ...mapReduce };
-
-
-            let detail_key = await oss.generate_user_key(body_license.nib);
-            let detail = await oss.send_license(body_license, detail_key.user_key);
-
-            if ((detail.OSS_result.responreceiveLicense.kode == 400)) {
-                res.status(400).json(detail);
-            } else {
-                req.body.oss = detail
+                
 
                 let sertifikat_pl = await sppb_pl_view.view_sertifikat(param)
                 let unit_produksi = await sppb_pl_view.view_unitproduksi(sertifikat_pl.unit_produksi)
@@ -150,23 +120,53 @@ class generatePdfController {
 
                 }
 
-                let view_pdf = 'http://103.161.184.37/api/upload/view_pdf?path=' + result.path
+                    
+                if (req.method == 'GET') {
+                    res.status(200).json(result) 
+                }else {                
+                
+                let berlaku_sampai = new Date(req.body.berlaku_sampai).toISOString().split('T')[0]
+                let date = new Date().toISOString().split('T')[0]
 
-                req.body.oss.data.file_izin = view_pdf
-                let body = {
-                    receiveFileDS: {
-                        nib: req.body.oss.data.nib,
-                        id_izin: req.body.oss.data.kd_izin,
-                        file_izin: view_pdf
-                    }
+
+                let mapReduce = {
+                    nomor_izin: req.body.nomor_izin_edar,
+                    tgl_terbit_izin: date,
+                    tgl_berlaku_izin: berlaku_sampai,
+                    nama_ttd: "#",
+                    nip_ttd: "#",
+                    jabatan_ttd: "#",
+                    status_izin: "50",
+                    file_izin: "#",
+                    keterangan: "#",
+                    file_lampiran: "#",
+                    nomenklatur_nomor_izin: "#"
                 }
-                let send_file_ds = await oss.send_fileDS(body, detail_key.user_key)
-                res.status(200).json({
-                    sertifikat: result,
-                    oss: req.body.oss,
-                    fileDS: send_file_ds
-                })
 
+                let data_license = await oss.get_data_license([req.query.no_identitas, req.query.id_izin])
+                let body_license = {...data_license, ...mapReduce };
+
+                let detail_key = await oss.generate_user_key(body_license.nib);
+                let detail = await oss.send_license(body_license, detail_key.user_key);
+                if ((detail.OSS_result.responreceiveLicense.kode == 400)) {
+                    res.status(400).json(detail);
+                } else {
+                    req.body.oss = detail
+
+                    let view_pdf = 'http://103.161.184.37/api/upload/view_pdf?path=' + result.path
+
+                    req.body.oss.data.file_izin = view_pdf
+                    let body = {
+                        receiveFileDS: {
+                            nib: req.body.oss.data.nib,
+                            id_izin: req.body.oss.data.kd_izin,
+                            file_izin: view_pdf
+                        }
+                    }
+                    let send_file_ds = await oss.send_fileDS(body, detail_key.user_key)
+                    res.status(200).json(result)
+
+                }
             }
             // } catch (e) {
             //     next(e.detail || e);
