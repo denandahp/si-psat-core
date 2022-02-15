@@ -218,7 +218,8 @@ class PsatPlPengalihanModel {
             let permohonan;
             if (id == 'all') {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' +
+                    'SELECT id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                    ' kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
@@ -226,7 +227,8 @@ class PsatPlPengalihanModel {
                     'sertifikat_izin_edar_sebelumnya, surat_pernyataan FROM ' + db_history_pengajuan + ' WHERE status_pengajuan=$1', ["PENGALIHAN"])
             } else {
                 permohonan = await pool.query(
-                    'SELECT id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' +
+                    'SELECT id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                    ' kode_pengajuan, final_sertifikat, code_status_proses, status_proses, status_aktif, status_pengajuan, surat_permohonan_izin_edar, produk, created, update, ' +
                     ' hasil_audit_dokumen, hasil_sidang_komtek, bahan_sidang_komtek, ' +
                     ' keterangan_audit, keterangan_audit_dokumen, keterangan_sidang_komtek, '+
                     ' id_tim_audit, tim_auditor, lead_auditor, tanggal_penugasan_tim_audit, surat_tugas_tim_audit, ' +
