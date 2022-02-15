@@ -251,6 +251,23 @@ class OSSModel {
             return { status: '400', Error: "" + ex };
         };
     }
+
+    async get_izn_by_idpengguna(id_pengajuan, tipe_permohonan) {
+        try {
+            let result
+            if (tipe_permohonan == 'IZIN-EDAR') {
+                result = await pool.query('SELECT  id_izin, no_identitas FROM izin_edar.history_all_pengajuan WHERE id_pengajuan=$1 ', [id_pengajuan])
+            } else {
+                result = await pool.query('SELECT  id_izin, no_identitas FROM sppb_psat.history_all_pengajuan WHERE id_pengajuan=$1 ', [id_pengajuan])
+            }
+
+            return result.rows[0]
+        } catch (ex) {
+            console.log('Enek seng salah iki ' + ex);
+            return { status: '400', Error: "" + ex };
+        };
+
+    }
 }
 
 module.exports = new OSSModel();

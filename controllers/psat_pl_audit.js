@@ -1,6 +1,7 @@
 const debug = require('debug')('app:controller:psat_pl_audit');
 const authUtils = require('./utils/auth');
 const audit = require('../models/psat_pl_audit.js');
+const oss = require('../controllers/oss.js')
 
 
 class AuditDokumenController {
@@ -11,8 +12,20 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.permohonan_baru(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
+                } else {
+                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.kd_status = "20"
+
+                    let send_license_status = await oss.send_license_status(req, res, next);
+                    if (send_license_status == 200) {
+                        res.status(200).json({ detail });
+                    } else {
+                        res.status(400).json({ detail });
+                    }
+
+                }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -29,8 +42,22 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.penunjukkan_auditor(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
+                } else {
+                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.kd_status = "20"
+
+                    let send_license_status = await oss.send_license_status(req);
+
+
+                    if (send_license_status == 200) {
+                        res.status(200).json({ detail });
+                    } else {
+                        res.status(400).json({ detail });
+                    }
+
+                }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -47,8 +74,19 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.audit_dokumen(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
+                } else {
+                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.kd_status = "20"
+
+                    let send_license_status = await oss.send_license_status(req, res, next);
+                    if (send_license_status == 200) {
+                        res.status(200).json({ detail });
+                    } else {
+                        res.status(400).json({ detail });
+                    }
+                }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -65,8 +103,18 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.penunjukkan_tim_komtek(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
+                } else {
+                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.kd_status = "20"
+                    let send_license_status = await oss.send_license_status(req, res, next);
+                    if (send_license_status == 200) {
+                        res.status(200).json({ detail });
+                    } else {
+                        res.status(400).json({ detail });
+                    }
+                }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -83,8 +131,18 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.audit_rekomendasi(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
+                } else {
+                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.kd_status = "20"
+                    let send_license_status = await oss.send_license_status(req, res, next);
+                    if (send_license_status == 200) {
+                        res.status(200).json({ detail });
+                    } else {
+                        res.status(400).json({ detail });
+                    }
+                }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -101,8 +159,18 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.pembayaran_pnbp(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
+                } else {
+                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.kd_status = "30"
+                    let send_license_status = await oss.send_license_status(req, res, next);
+                    if (send_license_status == 200) {
+                        res.status(200).json({ detail });
+                    } else {
+                        res.status(400).json({ detail });
+                    }
+                }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -119,8 +187,18 @@ class AuditDokumenController {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail = await audit.dokumen_ditolak(query);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
+                } else {
+                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.kd_status = "90"
+                    let send_license_status = await oss.send_license_status(req, res, next);
+                    if (send_license_status == 200) {
+                        res.status(200).json({ detail });
+                    } else {
+                        res.status(400).json({ detail });
+                    }
+                }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -137,8 +215,7 @@ class AuditDokumenController {
                 let id_pengajuan = req.query.id;
                 debug('detail %o', id_pengajuan);
                 let detail = await audit.audit_history(id_pengajuan);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
@@ -157,8 +234,7 @@ class AuditDokumenController {
                 let role = req.query.role;
                 debug('detail %o', user);
                 let detail = await audit.history_pengajuan_izin_edar(user, code_proses, role);
-                if (detail.status == '400') {res.status(400).json({ detail });}
-                else { res.status(200).json({ detail });}
+                if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);
             }
