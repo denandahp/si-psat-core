@@ -39,8 +39,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} Permohonan Baru Izin Edar `,
                 notifikasi: notif,
                 email: send_email,
-                data: permohonan_baru.rows[0]
-            };
+                audit_status: permohonan_baru.rows[0] };
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
@@ -69,8 +68,7 @@ class PsatPlPerubahanModel {
                 ketarangan: "Penunjukkan Tim Audit PSAT PL",
                 notifikasi: notif,
                 email: send_email,
-                data: penunjukan_tim_audit.rows[0]
-            };
+                audit_status: penunjukan_tim_audit.rows[0] };
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
@@ -107,8 +105,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} AUDIT DOCUMENT PSAT PL`,
                 notifikasi: notif,
                 email: send_email,
-                data: audit_dokumen.rows[0]
-            };
+                audit_status: audit_dokumen.rows[0] };
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
@@ -122,8 +119,8 @@ class PsatPlPerubahanModel {
         try {
             if (data.proses == 'REVIEW' || data.proses == 'CLEAR') {
                 await check_query.check_data(data, ['keterangan', 'hasil_audit', 'id_tim_komtek'])
-            } else {
-                await check_query.check_data(data)
+            }else{
+                await check_query.check_data(data,  ['id_tim_komtek'])
             }
             let sidang_komtek, data_sidang_komtek;
             data_sidang_komtek = [data.id_pengajuan, data.id_tim_komtek, data.proses, data.bahan_komtek, data.hasil_audit, data.keterangan];
@@ -135,8 +132,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} SIDANG KOMTEK PSAT PL`,
                 notifikasi: notif,
                 email: send_email,
-                data: sidang_komtek.rows[0]
-            };
+                audit_status: sidang_komtek.rows[0] };
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
@@ -163,8 +159,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} PEMBAYARAN PNBP IZIN EDAR id ${data.id_pengajuan}`,
                 notifikasi: notif,
                 email: send_email,
-                data: pembayaran_pnbp.rows[0]
-            };
+                audit_status: pembayaran_pnbp.rows[0] };
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };
@@ -187,8 +182,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} DOKUMEN IZIN EDAR DITOLAK id ${data.id_pengajuan}`,
                 notifikasi: notif,
                 email: send_email,
-                data: dokumen_ditolak.rows[0]
-            };
+                audit_status: dokumen_ditolak.rows[0] };
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };

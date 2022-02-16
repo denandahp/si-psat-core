@@ -43,7 +43,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} Permohonan Baru SPPB PSAT `,
                 notifikasi: notif,
                 email: send_email,
-                data: permohonan_baru.rows[0]
+                audit_status: permohonan_baru.rows[0]
             };
         } catch (ex) {
             if (ex.code == '401') {
@@ -71,7 +71,7 @@ class PsatPlPerubahanModel {
                 ketarangan: "Penunjukkan Tim Audit",
                 notifikasi: notif,
                 email: send_email,
-                data: penunjukan_tim_audit.rows[0]
+                audit_status: penunjukan_tim_audit.rows[0]
             };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -106,7 +106,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} AUDIT DOCUMENT `,
                 notifikasi: notif,
                 email: send_email,
-                data: audit_dokumen.rows[0]
+                audit_status: audit_dokumen.rows[0]
             };
         } catch (ex) {
             if (ex.code == '401') {
@@ -142,7 +142,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} AUDIT LAPANG `,
                 notifikasi: notif,
                 email: send_email,
-                data: audit_lapang.rows[0]
+                audit_status: audit_lapang.rows[0]
             };
         } catch (ex) {
             if (ex.code == '401') {
@@ -166,7 +166,7 @@ class PsatPlPerubahanModel {
                 ketarangan: "Penunjukkan Tim Komtek",
                 notifikasi: notif,
                 email: send_email,
-                data: penunjukan_tim_komtek.rows[0]
+                audit_status: penunjukan_tim_komtek.rows[0]
             };
         } catch (ex) {
             console.log('Enek seng salah iki ' + ex);
@@ -191,7 +191,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} SIDANG KOMTEK `,
                 notifikasi: notif,
                 email: send_email,
-                data: sidang_komtek.rows[0]
+                audit_status: sidang_komtek.rows[0]
             };
         } catch (ex) {
             if (ex.code == '401') {
@@ -220,7 +220,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} PEMBAYARAN PNBP SPPB PSAT id ${data.id_pengajuan}`,
                 notifikasi: notif,
                 email: send_email,
-                data: pembayaran_pnbp.rows[0]
+                audit_status: pembayaran_pnbp.rows[0]
             };
         } catch (ex) {
             if (ex.code == '401') {
@@ -244,7 +244,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} DOKUMEN SPPB PSAT DITOLAK id ${data.id_pengajuan}`,
                 notifikasi: notif,
                 email: send_email,
-                data: dokumen_ditolak.rows[0]
+                audit_status: dokumen_ditolak.rows[0]
             };
         } catch (ex) {
             if (ex.code == '401') {
