@@ -152,6 +152,7 @@ class OSSController {
 
 
             let body = {...data_license, ...request.body, ...add_body };
+            console.log(body)
 
             let detail_key = await oss.generate_user_key(body.nib);
 
@@ -160,7 +161,11 @@ class OSSController {
             return detail.OSS_result.responreceiveLicenseStatus.kode
 
         } catch (e) {
-            return 404
+            console.log({status: 404, error: e.message})
+            return {
+                status: 404, 
+                keterangan: 'Update status ke OSS gagal',
+                error: e.message}
         }
 
 

@@ -159,7 +159,7 @@ class PsatPlPerubahanModel {
                 ketarangan: `${data.proses} PEMBAYARAN PNBP IZIN EDAR id ${data.id_pengajuan}`,
                 notifikasi: notif,
                 email: send_email,
-                audit_status: pembayaran_pnbp.rows[0] };
+                audit_status: pembayaran_pnbp.rows[0]};
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', Error: ex.pesan };

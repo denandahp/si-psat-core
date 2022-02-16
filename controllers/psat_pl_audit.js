@@ -22,7 +22,7 @@ class AuditDokumenController {
                     if (send_license_status == 200) {
                         res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({ detail });
+                        res.status(404).json({ detail: send_license_status });
                     }
 
                 }
@@ -54,7 +54,7 @@ class AuditDokumenController {
                     if (send_license_status == 200) {
                         res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({ detail });
+                        res.status(404).json({ detail: send_license_status });
                     }
 
                 }
@@ -84,7 +84,7 @@ class AuditDokumenController {
                     if (send_license_status == 200) {
                         res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({ detail });
+                        res.status(404).json({ detail: send_license_status });
                     }
                 }
             } catch (e) {
@@ -112,7 +112,7 @@ class AuditDokumenController {
                     if (send_license_status == 200) {
                         res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({ detail });
+                        res.status(404).json({ detail: send_license_status });
                     }
                 }
             } catch (e) {
@@ -140,7 +140,7 @@ class AuditDokumenController {
                     if (send_license_status == 200) {
                         res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({ detail });
+                        res.status(404).json({ detail: send_license_status });
                     }
                 }
             } catch (e) {
@@ -164,11 +164,11 @@ class AuditDokumenController {
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     req.body.kd_status = "30"
-                    let send_license_status = await oss.send_license_status(req, res, next);
+                    let send_license_status = await oss.send_license_status(req);
                     if (send_license_status == 200) {
                         res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({ detail });
+                        res.status(404).json({ detail: send_license_status });
                     }
                 }
             } catch (e) {
@@ -196,7 +196,7 @@ class AuditDokumenController {
                     if (send_license_status == 200) {
                         res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({ detail });
+                        res.status(404).json({ detail: send_license_status });
                     }
                 }
             } catch (e) {
