@@ -309,6 +309,25 @@ class UserModel {
     };
   }
 
+  async index_pelaku_usaha(id) {
+    try {
+      let user;
+      if(id == 'all'){
+        user = await pool.query('SELECT * FROM ' + db_list_pelaku_usaha + ` WHERE is_deleted='false'`)
+      }else{
+        user = await pool.query('SELECT * FROM ' + db_list_pelaku_usaha + ` WHERE id=${id} AND is_deleted='false'`)
+      }
+      check_query.check_queryset(user);
+      debug('get %o', user);
+      return {status: '200',
+              keterangan: `Detail pelaku usaha id ${id}`,
+              data: user.rows };
+  } catch (ex) {
+      console.log('Enek seng salah iki ' + ex);
+      return { status: '400', Error: "" + ex };
+  };
+}
+
 }
 
 module.exports = new UserModel();
