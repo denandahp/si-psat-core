@@ -260,6 +260,24 @@ class UserController {
     }
     authUtils.processRequestWithJWT(req, callback, fallback);
   }
+
+  async index_pelaku_usaha(req, res, next) {
+    let callback = async() => {
+        try {
+            let id = req.query.user;
+            debug('detail %o', id);
+            let detail = await user.index_pelaku_usaha(id);
+            if (detail.status == '400') {res.status(400).json({ detail });}
+            else { res.status(200).json({ detail });}
+        } catch (e) {
+            next(e.detail || e);
+        }
+    };
+    let fallback = (err) => {
+        next(err);
+    }
+    authUtils.processRequestWithJWT(req, callback, fallback);
+  }
 }
 
 module.exports = new UserController();
