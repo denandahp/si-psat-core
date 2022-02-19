@@ -98,7 +98,7 @@ class generatePdfController {
 
     async psat_pl(req, res, next) {
         let callback = async() => {
-            // try {
+             try {
             const def = req.body
             const param = req.params
             const type = req.query.type
@@ -125,52 +125,42 @@ class generatePdfController {
                     res.status(200).json(result) 
                 }else {                
                 
-                let berlaku_sampai = new Date(req.body.berlaku_sampai).toISOString().split('T')[0]
-                let date = new Date().toISOString().split('T')[0]
-
-
-                let mapReduce = {
-                    nomor_izin: req.body.nomor_izin_edar,
-                    tgl_terbit_izin: date,
-                    tgl_berlaku_izin: berlaku_sampai,
-                    nama_ttd: "#",
-                    nip_ttd: "#",
-                    jabatan_ttd: "#",
-                    status_izin: "50",
-                    file_izin: "#",
-                    keterangan: "#",
-                    file_lampiran: "#",
-                    nomenklatur_nomor_izin: "#"
-                }
-
-                let data_license = await oss.get_data_license([req.query.no_identitas, req.query.id_izin])
-                let body_license = {...data_license, ...mapReduce };
-
-                let detail_key = await oss.generate_user_key(body_license.nib);
-                let detail = await oss.send_license(body_license, detail_key.user_key);
-                if ((detail.OSS_result.responreceiveLicense.kode == 400)) {
-                    res.status(400).json(detail);
-                } else {
-                    req.body.oss = detail
-
+                    let berlaku_sampai = new Date(req.body.berlaku_sampai).toISOString().split('T')[0]
+                    let date = new Date().toISOString().split('T')[0]
                     let view_pdf = 'http://103.161.184.37/api/upload/view_pdf?path=' + result.path
 
-                    req.body.oss.data.file_izin = view_pdf
-                    let body = {
-                        receiveFileDS: {
-                            nib: req.body.oss.data.nib,
-                            id_izin: req.body.oss.data.kd_izin,
-                            file_izin: view_pdf
-                        }
+                    let mapReduce = {
+                        nomor_izin: req.body.nomor_izin_edar,
+                        tgl_terbit_izin: date,
+                        tgl_berlaku_izin: berlaku_sampai,
+                        nama_ttd: "#",
+                        nip_ttd: "#",
+                        jabatan_ttd: "#",
+                        status_izin: "50",
+                        file_izin: view_pdf,
+                        keterangan: "#",
+                        file_lampiran: "#",
+                        nomenklatur_nomor_izin: "#"
                     }
-                    let send_file_ds = await oss.send_fileDS(body, detail_key.user_key)
-                    res.status(200).json(result)
 
-                }
+                    let data_license = await oss.get_data_license([req.query.no_identitas, req.query.id_izin])
+                  
+                    let body_license = {...result, ...data_license, ...mapReduce };
+
+                    let detail_key = await oss.generate_user_key(body_license.nib);
+                    let detail = await oss.send_license(body_license, detail_key.user_key);
+                    if ((detail.OSS_result.responreceiveLicense.kode == 200)) {
+                        let respone = await {...detail, ...result}
+                        res.status(200).json(respone)
+                        
+                    } else {    
+                        res.status(400);
+
+                    }
             }
-            // } catch (e) {
-            //     next(e.detail || e);
-            // }
+            } catch (e) {
+                next(e.detail || e);
+            }
         };
         let fallback = (err) => {
             next(err);
