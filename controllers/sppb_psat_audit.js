@@ -189,6 +189,7 @@ class AuditDokumenController {
                 if (detail_permohonan.status == '400') {
                     res.status(400).json({ detail_permohonan });
                 } else {
+
                     req.body.tipe_permohonan = 'SPPB-PSAT'
                     if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
                     let detail_status = await oss_integration(req)
@@ -198,6 +199,7 @@ class AuditDokumenController {
                     } else {
                         res.status(400).json({ detail });
                     }
+
                 }
             } catch (e) {
                 next(e.detail || e);
@@ -218,15 +220,18 @@ class AuditDokumenController {
                 if (detail_permohonan.status == '400') {
                     res.status(400).json({ detail_permohonan });
                 } else {
+
                     req.body.tipe_permohonan = 'SPPB-PSAT'
                     if (req.body.proses == "REVIEW") { req.body.kd_status = "30" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "31" }
                     let detail_status = await oss_integration(req)
                     let detail = {...detail_permohonan, ...detail_status }
+
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
                         res.status(400).json({ detail });
                     }
+
                 }
             } catch (e) {
                 next(e.detail || e);
@@ -247,7 +252,7 @@ class AuditDokumenController {
                 if (detail_permohonan.status == '400') {
                     res.status(400).json({ detail });
                 } else {
-                    req.body.tipe_permohonan = 'IZIN-EDAR'
+                    req.body.tipe_permohonan = 'SPPB-PSAT'
                     req.body.kd_status = "90"
                     let detail_status = await oss_integration(req)
                     let detail = {...detail_permohonan, ...detail_status }
