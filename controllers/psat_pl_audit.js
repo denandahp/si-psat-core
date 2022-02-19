@@ -110,8 +110,6 @@ class AuditDokumenController {
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
-
-
                     let detail_status = await oss_integration(req)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
