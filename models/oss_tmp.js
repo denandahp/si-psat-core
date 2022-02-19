@@ -152,7 +152,6 @@ class OSSModel {
     }
 
     async get_data_license(param) {
-        console.log(param)
         try {
             let result = await (await pool.query('SELECT * FROM public.data_nib WHERE no_identitas= $1 AND id_izin =  $2', param)).rows[0];
 
