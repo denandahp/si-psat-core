@@ -131,32 +131,6 @@ class OSSController {
             let params = await oss.get_izn_by_idpengguna(request.body.id_pengajuan, request.body.tipe_permohonan)
 
 
-            let data_license = await oss.get_data_license([params.no_identitas, params.id_izin])
-            let date = new Date().toISOString().split('T')[0]
-            let add_body = {
-
-                tgl_status: date,
-                nip_status: "-",
-                nama_status: "DISETUJUI",
-                keterangan: "Berhasil",
-                data_pnbp: {
-                    kd_akun: "",
-                    kd_penerimaan: "",
-                    kd_billing: "",
-                    tgl_billing: "",
-                    tgl_expire: "",
-                    nominal: "",
-                    url_dokumen: ""
-                }
-            }
-
-
-            let body = {...data_license, ...request.body, ...add_body };
-            console.log(body)
-
-            let detail_key = await oss.generate_user_key(body.nib);
-
-            let detail = await oss.send_license_status(body, detail_key.user_key);
 
             return detail.OSS_result.responreceiveLicenseStatus.kode
 
