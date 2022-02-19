@@ -6,7 +6,7 @@ const oss = require('../models/oss_tmp.js')
 async function oss_integration(data) {
     console.log("oss integration ...")
     let params = await oss.get_izn_by_idpengguna(data.body.id_pengajuan, data.body.tipe_permohonan)
-    console.log(params.no_identitas)
+
     let data_license = await oss.get_data_license([params.no_identitas, params.id_izin])
     let date = new Date().toISOString().split('T')[0]
     let add_body = {
@@ -36,8 +36,8 @@ async function oss_integration(data) {
 
 class AuditDokumenController {
 
-    
-    
+
+
 
     async permohonan_baru(req, res, next) {
         let callback = async() => {
@@ -49,16 +49,13 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                  
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" }
-                    else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" }
-                    else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }    
+                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
                     let detail_status = await oss_integration(req)
-                    let detail = {...detail_permohonan, ...detail_status}              
+                    let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({respone });
+                        res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({respone});
+                        res.status(400).json({ detail });
                     }
 
                 }
@@ -84,11 +81,11 @@ class AuditDokumenController {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     req.body.kd_status = "20"
                     let detail_status = await oss_integration(req)
-                    let detail = {...detail_permohonan, ...detail_status}              
+                    let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({detail });
+                        res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({detail});
+                        res.status(400).json({ detail });
                     }
 
                 }
@@ -112,17 +109,15 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" }
-                    else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" }
-                    else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
-                    
+                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
+
 
                     let detail_status = await oss_integration(req)
-                    let detail = {...detail_permohonan, ...detail_status}              
+                    let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({detail });
+                        res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({detail});
+                        res.status(400).json({ detail });
                     }
                 }
             } catch (e) {
@@ -146,13 +141,13 @@ class AuditDokumenController {
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     req.body.kd_status = "20"
-                    
+
                     let detail_status = await oss_integration(req)
-                    let detail = {...detail_permohonan, ...detail_status}              
+                    let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({detail });
+                        res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({detail});
+                        res.status(400).json({ detail });
                     }
                 }
             } catch (e) {
@@ -175,16 +170,14 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" }
-                    else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" }
-                    else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
-                    
+                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
+
                     let detail_status = await oss_integration(req)
-                    let detail = {...detail_permohonan, ...detail_status}              
+                    let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({detail });
+                        res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({detail});
+                        res.status(400).json({ detail });
                     }
                 }
             } catch (e) {
@@ -207,14 +200,13 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                    if (req.body.proses == "REVIEW") { req.body.kd_status = "30" }
-                    else if (req.body.proses == "CLEAR") { req.body.kd_status = "31" }
+                    if (req.body.proses == "REVIEW") { req.body.kd_status = "30" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "31" }
                     let detail_status = await oss_integration(req)
-                    let detail = {...detail_permohonan, ...detail_status}              
+                    let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({detail });
+                        res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({detail});
+                        res.status(400).json({ detail });
                     }
                 }
             } catch (e) {
@@ -239,11 +231,11 @@ class AuditDokumenController {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     req.body.kd_status = "90"
                     let detail_status = await oss_integration(req)
-                    let detail = {...detail_permohonan, ...detail_status}              
+                    let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({detail });
+                        res.status(200).json({ detail });
                     } else {
-                        res.status(400).json({detail});
+                        res.status(400).json({ detail });
                     }
                 }
             } catch (e) {
