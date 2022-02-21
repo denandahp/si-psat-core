@@ -14,7 +14,7 @@ async function oss_integration(data) {
         tgl_status: date,
         nip_status: "-",
         nama_status: "DISETUJUI",
-        keterangan: "-",
+        keterangan: "Seandainya Aku punya sayap",
         data_pnbp: {
             kd_akun: "",
             kd_penerimaan: "",
