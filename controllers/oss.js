@@ -192,8 +192,10 @@ class OSSController {
                 let no_identitas = req.query.no_identitas;
                 let kode_izin = req.query.kode_izin;
                 let submit = req.query.submit;
+                let page = req.query.page;
+                let limit = req.query.limit;
                 debug('detail %o', no_identitas);
-                let detail = await oss.index_izin_oss(no_identitas, kode_izin, submit);
+                let detail = await oss.index_izin_oss(no_identitas, kode_izin, submit, page, limit);
                 if (detail.status == '400') { res.status(400).json({ detail }); } else { res.status(200).json({ detail }); }
             } catch (e) {
                 next(e.detail || e);

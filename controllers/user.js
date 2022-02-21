@@ -265,8 +265,10 @@ class UserController {
     let callback = async() => {
         try {
             let id = req.query.user;
+            let page = req.query.page;
+            let limit = req.query.limit;
             debug('detail %o', id);
-            let detail = await user.index_pelaku_usaha(id);
+            let detail = await user.index_pelaku_usaha(id, page, limit);
             if (detail.status == '400') {res.status(400).json({ detail });}
             else { res.status(200).json({ detail });}
         } catch (e) {

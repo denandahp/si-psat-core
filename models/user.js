@@ -309,19 +309,21 @@ class UserModel {
     };
   }
 
-  async index_pelaku_usaha(id) {
+  async index_pelaku_usaha(id, page, limit) {
     try {
-      let user;
+      let user, data;
       if(id == 'all'){
-        user = await pool.query('SELECT * FROM ' + db_list_pelaku_usaha + ` WHERE is_deleted='false'`)
+        //page, limit, Where(clause), data[array], returning/selected field, database
+        data = await check_query.pagination(page, limit, `is_deleted='false'`, null, '*', db_list_pelaku_usaha)
       }else{
         user = await pool.query('SELECT * FROM ' + db_list_pelaku_usaha + ` WHERE id=${id} AND is_deleted='false'`)
+        data = user.rows
       }
-      check_query.check_queryset(user);
+      check_query.check_queryset(data);
       debug('get %o', user);
       return {status: '200',
               keterangan: `Detail pelaku usaha id ${id}`,
-              data: user.rows };
+              data: data };
   } catch (ex) {
       console.log('Enek seng salah iki ' + ex);
       return { status: '400', Error: "" + ex };
