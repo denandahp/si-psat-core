@@ -34,7 +34,6 @@ class generatePdfController {
                 if (req.method == 'GET') {
                     res.status(200).json(result)
                 } else {
-<<<<<<< HEAD
                     req.body.oss = detail
 
                     let sertifikat_psat = await sppb_psat_view.view_sertifikat(param)
@@ -49,11 +48,6 @@ class generatePdfController {
 
                     }
                     let view_pdf = 'http://103.161.184.37:3000/api/upload/view_pdf?path=' + result.path
-=======
-                    let berlaku_sampai = new Date(req.body.masa_berlaku).toISOString().split('T')[0]
-                    let date = new Date().toISOString().split('T')[0]
-                    let view_pdf = 'http://103.161.184.37/api/upload/view_pdf?path=' + result.path
->>>>>>> 48f8a2f7a89c4f6a9b8bce7a9e28a472bd3df64b
 
                     let mapReduce = {
                         nomor_izin: req.body.nomor_sppb_psat,

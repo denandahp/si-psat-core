@@ -3,7 +3,7 @@ const authUtils = require('./utils/auth');
 const audit = require('../models/sppb_psat_audit.js');
 
 const oss = require('../models/oss_tmp.js')
-async function oss_integration(data) {
+async function oss_integration(data, keterangan) {
     console.log("oss integration ...")
     let params = await oss.get_izn_by_idpengguna(data.body.id_pengajuan, data.body.tipe_permohonan)
 
@@ -14,7 +14,7 @@ async function oss_integration(data) {
         tgl_status: date,
         nip_status: "-",
         nama_status: "DISETUJUI",
-        keterangan: "-",
+        keterangan: keterangan,
         data_pnbp: {
             kd_akun: "",
             kd_penerimaan: "",
@@ -45,8 +45,18 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'SPPB-PSAT'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
-                    let detail_status = await oss_integration(req)
+                    let keterangan;
+                    if (req.body.proses == "REVISION") {
+                        req.body.kd_status = "11"
+                        keterangan = "Perbaikan Permohonan Baru"
+                    } else if (req.body.proses == "REVIEW") {
+                        req.body.kd_status = "11"
+                        keterangan = "Permohonan Baru"
+                    } else if (req.body.proses == "CLEAR") {
+                        req.body.kd_status = "11"
+                        keterangan = "Permohonan Baru Sesuai"
+                    }
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
@@ -75,7 +85,8 @@ class AuditDokumenController {
                 } else {
                     req.body.tipe_permohonan = 'SPPB-PSAT'
                     req.body.kd_status = "20"
-                    let detail_status = await oss_integration(req)
+                    let keterangan = "Penunjukan Auditor"
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
@@ -103,8 +114,18 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'SPPB-PSAT'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
-                    let detail_status = await oss_integration(req)
+                    let keterangan;
+                    if (req.body.proses == "REVISION") {
+                        req.body.kd_status = "20"
+                        keterangan = "Perbaikan Audit Dokumen"
+                    } else if (req.body.proses == "REVIEW") {
+                        req.body.kd_status = "20"
+                        keterangan = "Audit Dokumen"
+                    } else if (req.body.proses == "CLEAR") {
+                        req.body.kd_status = "20"
+                        keterangan = "Audit Dokumen Sesuai"
+                    }
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
@@ -132,8 +153,18 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'SPPB-PSAT'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "40" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
-                    let detail_status = await oss_integration(req)
+                    let keterangan
+                    if (req.body.proses == "REVISION") {
+                        req.body.kd_status = "40"
+                        keterangan = "Perbaikan Audit Lapang"
+                    } else if (req.body.proses == "REVIEW") {
+                        req.body.kd_status = "40"
+                        keterangan = "Audit Lapang"
+                    } else if (req.body.proses == "CLEAR") {
+                        req.body.kd_status = "40"
+                        keterangan = "Audit Lapang Sesuai"
+                    }
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
@@ -162,7 +193,8 @@ class AuditDokumenController {
                 } else {
                     req.body.tipe_permohonan = 'SPPB-PSAT'
                     req.body.kd_status = "20"
-                    let detail_status = await oss_integration(req)
+                    let keterangan = 'Penunjukan Tim Komtek'
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
@@ -191,8 +223,18 @@ class AuditDokumenController {
                 } else {
 
                     req.body.tipe_permohonan = 'SPPB-PSAT'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
-                    let detail_status = await oss_integration(req)
+                    let keterangan;
+                    if (req.body.proses == "REVISION") {
+                        req.body.kd_status = "40"
+                        keterangan = "Perbaikan Review/Sidang Komtek"
+                    } else if (req.body.proses == "REVIEW") {
+                        req.body.kd_status = "40"
+                        keterangan = "Review/Sidang Komtek"
+                    } else if (req.body.proses == "CLEAR") {
+                        req.body.kd_status = "40"
+                        keterangan = "Review/Sidang Komtek Sesuai"
+                    }
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
@@ -222,8 +264,15 @@ class AuditDokumenController {
                 } else {
 
                     req.body.tipe_permohonan = 'SPPB-PSAT'
-                    if (req.body.proses == "REVIEW") { req.body.kd_status = "30" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "31" }
-                    let detail_status = await oss_integration(req)
+                    let keterangan
+                    if (req.body.proses == "REVIEW") {
+                        req.body.kd_status = "31"
+                        keterangan = "Menunggu Pembayaran PNBP"
+                    } else if (req.body.proses == "CLEAR") {
+                        req.body.kd_status = "30"
+                        keterangan = "Pembayaran PNBP Selesai"
+                    }
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
 
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
@@ -254,7 +303,8 @@ class AuditDokumenController {
                 } else {
                     req.body.tipe_permohonan = 'SPPB-PSAT'
                     req.body.kd_status = "90"
-                    let detail_status = await oss_integration(req)
+                    let keterangan = "Dokumen Ditolak"
+                    let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
