@@ -34,9 +34,20 @@ class generatePdfController {
                 if (req.method == 'GET') {
                     res.status(200).json(result)
                 } else {
-                    let berlaku_sampai = new Date(req.body.masa_berlaku).toISOString().split('T')[0]
-                    let date = new Date().toISOString().split('T')[0]
-                    let view_pdf = 'http://103.161.184.37/api/upload/view_pdf?path=' + result.path
+                    req.body.oss = detail
+
+                    let sertifikat_psat = await sppb_psat_view.view_sertifikat(param)
+                    let unit_produksi = await sppb_psat_view.view_unitproduksi(sertifikat_psat.unit_produksi)
+                    let result;
+
+                    if (type == 'PENGALIHAN') {
+                        result = await sppbGenerator.sppb_pengalihan(sertifikat_psat, unit_produksi, def, req.method)
+
+                    } else {
+                        result = await sppbGenerator.sppb_permohonan(sertifikat_psat, def, req.method)
+
+                    }
+                    let view_pdf = 'http://103.161.184.37:3000/api/upload/view_pdf?path=' + result.path
 
                     let mapReduce = {
                         nomor_izin: req.body.nomor_sppb_psat,
@@ -109,7 +120,7 @@ class generatePdfController {
 
                     let berlaku_sampai = new Date(req.body.berlaku_sampai).toISOString().split('T')[0]
                     let date = new Date().toISOString().split('T')[0]
-                    let view_pdf = 'http://103.161.184.37/api/upload/view_pdf?path=' + result.path
+                    let view_pdf = 'http://103.161.184.37:3000/api/upload/view_pdf?path=' + result.path
 
                     let mapReduce = {
                         nomor_izin: req.body.nomor_izin_edar,
