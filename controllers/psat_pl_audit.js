@@ -35,10 +35,6 @@ async function oss_integration(data) {
 }
 
 class AuditDokumenController {
-
-
-
-
     async permohonan_baru(req, res, next) {
         let callback = async() => {
             try {
@@ -49,7 +45,9 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
+                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" 
+                    } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" 
+                    } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
                     let detail_status = await oss_integration(req)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
@@ -109,7 +107,9 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
+                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" 
+                    } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" 
+                    } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
                     let detail_status = await oss_integration(req)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
@@ -168,7 +168,10 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                    if (req.body.proses == "REVISION") { req.body.kd_status = "11" } else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
+                    if (req.body.proses == "REVISION") 
+                        { req.body.kd_status = "11" 
+                    }else if (req.body.proses == "REVIEW") { req.body.kd_status = "20" 
+                    } else if (req.body.proses == "CLEAR") { req.body.kd_status = "10" }
 
                     let detail_status = await oss_integration(req)
                     let detail = {...detail_permohonan, ...detail_status }
@@ -198,7 +201,8 @@ class AuditDokumenController {
                     res.status(400).json({ detail_permohonan });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
-                    if (req.body.proses == "REVIEW") { req.body.kd_status = "30" } else if (req.body.proses == "CLEAR") { req.body.kd_status = "31" }
+                    if (req.body.proses == "REVIEW") { req.body.kd_status = "30" 
+                    } else if (req.body.proses == "CLEAR") { req.body.kd_status = "31" }
                     let detail_status = await oss_integration(req)
                     let detail = {...detail_permohonan, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
