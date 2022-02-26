@@ -29,10 +29,13 @@ class PsatPlPermohonanModel {
             );
 
             //Create pengajuan
-            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 10, data.id_izin_oss, date, date]
+            let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, 
+                                  data.status_pengajuan, 10, data.id_izin_oss, 
+                                  data.nama_perusahaan, data.alamat_perusahaan, date, date]
             pengajuan = await pool.query(
                 format('INSERT INTO ' + db_pengajuan +
-                    ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, id_izin_oss, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengajuan)
+                    ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, id_izin_oss, `+
+                    ` nama_perusahaan, alamat_perusahaan, created, update, produk) VALUES (%L, '{${data.info_produk}}') RETURNING *`, data_pengajuan)
             );
 
             response.pengajuan = pengajuan.rows[0];
@@ -114,7 +117,7 @@ class PsatPlPermohonanModel {
 
     async add_info_produk(data) {
         try {
-            await check_query.check_data(data, ['nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
+            await check_query.check_data(data, ['jenis_klaim', 'nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
             let data_info_produk = [
                 data.id_pengguna, data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri,
@@ -175,10 +178,11 @@ class PsatPlPermohonanModel {
             );
             check_query.check_queryset(file_permohonan);
             //Create pengajuan
-            let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan, 10, data.id_izin_oss, date]
+            let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan,
+                                  data.nama_perusahaan, data.alamat_perusahaan, data.id_izin_oss, date]
             pengajuan = await pool.query(
                 format('UPDATE ' + db_pengajuan +
-                    ` SET(status_aktif, file_permohonan, status_pengajuan, status_proses, id_izin_oss, update, produk) = (%L, '{${data.info_produk}}') ` +
+                    ` SET(status_aktif, file_permohonan, status_pengajuan, id_izin_oss, nama_perusahaan, alamat_perusahaan, update, produk) = (%L, '{${data.info_produk}}') ` +
                     `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan}RETURNING *`, data_pengajuan)
             );
 

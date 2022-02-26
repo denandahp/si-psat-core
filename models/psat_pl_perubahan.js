@@ -34,7 +34,8 @@ class PsatPlPerubahanModel {
 
             //Create pengajuan
             let data_perubahan_data = [data.id_pengguna, true, file_permohonan.rows[0].id, data.status_pengajuan, 10, 
-                                       data.expire_sertifikat_lama, data.nomor_sertifikat_lama, data.id_izin_oss, date, date]
+                                       data.expire_sertifikat_lama, data.nomor_sertifikat_lama, data.id_izin_oss,
+                                       data.nama_perusahaan, data.alamat_perusahaan, date, date]
             perubahan_data = await pool.query(
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, expire_sertifikat_lama, nomor_sertifikat_lama, `+
@@ -110,10 +111,10 @@ class PsatPlPerubahanModel {
             let file_permohonan, perubahan_data;
             await check_query.check_data(data)
             //Update pengajuan
-            let data_perubahan_data = [true, data.status_pengajuan, 10, date]
+            let data_perubahan_data = [true, data.status_pengajuan, data.nama_perusahaan, data.alamat_perusahaan, date]
             perubahan_data = await pool.query(
                 format('UPDATE ' + db_pengajuan +
-                    ` SET(status_aktif, status_pengajuan, status_proses, update, produk) = (%L, '{${data.info_produk}}') `+
+                    ` SET(status_aktif, status_pengajuan, nama_perusahaan, alamat_perusahaan, update, produk) = (%L, '{${data.info_produk}}') `+
                     `WHERE id_pengguna=${data.id_pengguna} AND id=${data.id_pengajuan} RETURNING *`, data_perubahan_data)
             );
 

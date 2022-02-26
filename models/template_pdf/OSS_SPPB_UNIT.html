@@ -1,113 +1,133 @@
-<br>
-
-
+<html>
 <head>
     <meta http-equiv=Content-Type content="text/html">
-    <title>Sertifikat Izin Edar PSAT PL</title>
+    <title>Sertifikat SPPB PSAT</title>
     <style>
+		<!-- Remove this if not needed -->
+		@page {
+		  size: A4;
+		  margin: 0;
+		}
+		@media print {
+			html{
+				width: 21cm;
+				height: 29.7cm;
+		   } 
+			@page {
+			  size: A4;
+			  <!-- size: A4 landscape; -->
+			  margin: 0;
+			}
+			body {
+				margin: 0;
+				margin-bottom: 25mm;
+				border: initial;
+				border-radius: initial;
+				width: initial;
+				min-height: initial;
+				box-shadow: initial;
+				background: initial;
+				page-break-after: always;
+			}
+		   table { page-break-inside:auto }
+		   tr    { page-break-inside:avoid; page-break-after:auto }
+		}
+		body {
+			margin: 25mm 15mm; 
+			/* change the margins as you want them to be. */
+		}
+		
+		
+		
         p,
         br {
-            line-height: 115%;
-            font-family: "Bookman Old Style", serif;
-            font-size: 12pt;
+            line-height: 100%;
+            font-family: "Arial", sans-serif;
             margin: 0;
         }
-        
-        .title p {
-            font-weight: bold;
-            text-align: center;
+        .body p, .body br {
+			font-size: 11pt;
         }
-        
-        .title .logo {
-            text-align: center;
-            margin-bottom: 24pt;
-        }
-        
-        .logo img {
-            width: 87;
-            height: 87;
-        }
-        
-        .body p {
-            margin-bottom: 6pt;
-        }
-        
         table {
             text-indent: initial;
             white-space: normal;
+            line-height: 150%;
             font-weight: normal;
-            font-size: 10pt;
-            font-family: "Bookman Old Style", serif;
+            font-size: 11pt;
+            font-family: "Arial", sans-serif;
             font-style: normal;
             color: -internal-quirk-inherit;
             text-align: start;
             border-spacing: 2px;
             font-variant: normal;
-            margin-left: 5.4pt;
             border-collapse: collapse
         }
-        
         tr.header {
             text-align: center;
         }
-        
         tr.data td.left {
             text-align: center;
         }
-        
         td {
             border: solid 1pt;
             padding: 0cm 5.4pt 0cm 5.4pt;
             height: 1.5pt;
+            width: 100%;
         }
-        
-        td.left {
-            width: 21.25pt;
+		
+		<!-- Remove this if not needed -->
+        .footer p, .footer br {
+			font-size: 9pt;
         }
-        
-        td.center {
-            width: 297.7pt;
-        }
-        
-        td.right {
-            width: 6cm;
-        }
+		.footer {
+			margin-inline-end: 15mm;
+			position: fixed;
+			bottom: 25mm;
+		}
+		.footer img{
+			max-width: 100%;
+			max-height: 100%;
+		}
     </style>
 </head>
+<body lang=EN-ID style='word-wrap:break-word'>
+	<div class="body">
+		<p>DATA PENGALIHAN KEPEMILIKAN SPPB-PSAT:</p>
+		</br>
+		<table>
+			<thead>
+				<tr class="header">
+					<th>Nama unit</th>
+					<th>Alamat unit</th>
+					<th>Status</th>
+					<th>No. SPPB</th>
+					<th>Level</th>
+					<th>Ruang lingkup</th>
+					<th>Masa berlaku</th>
+				</tr>
+			</thead>
 
-</br>
-<div class="body">
-    <p>DATA PENGALIHAN KEPEMILIKA SPPB-PSAT:</p>
-    <table>
-        <thead>
-            <tr class="header">
-                <th>Nama unit</th>
-                <th>Alamat unit</th>
-                <th>Status</th>
-                <th>No. SPPB</th>
-                <th>Level</th>
-                <th>Ruang lingkup</th>
-                <th>Masa berlaku</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {{#each this}}
-            <tr class="data">
-                <td>{{nama_unit}}</td>
-                <td>{{alamat_unit}}</td>
-                <td>{{status_kepemilikan}}</td>
-                <td>{{sppb_psat_nomor}}</td>
-                <td>{{sppb_psat_level}}</td>
-                <td>{{sppb_psat_ruang_lingkup}}</td>
-                <td>{{sppb_psat_masa_berlaku}}</td>
-            </tr>
-            {{/each}}
-        </tbody>
+			<tbody>
+				{{#each this}}
+				<tr class="data">
+					<td>{{nama_unit}}</td>
+					<td>{{alamat_unit}}</td>
+					<td>{{status_kepemilikan}}</td>
+					<td>{{sppb_psat_nomor}}</td>
+					<td>{{sppb_psat_level}}</td>
+					<td>{{sppb_psat_ruang_lingkup}}</td>
+					<td>{{sppb_psat_masa_berlaku}}</td>
+				</tr>
+				{{/each}}
+			</tbody>
 
 
-    </table>
-</div>
+		</table>
+	</div>
+	
+	<!-- Remove this if not needed -->
+	<div class="footer">
+		<img src="footer.png">
+	</div>
 </body>
-
 </html>
