@@ -31,7 +31,7 @@ class PsatPlPermohonanModel {
             //Create pengajuan
             let data_pengajuan = [data.id_pengguna, true, file_permohonan.rows[0].id, 
                                   data.status_pengajuan, 10, data.id_izin_oss, 
-                                  data.nama_perusahaan, data.alamat_perusahaan, date, date]
+                                  data.nama_perseroan, data.alamat_perseroan, date, date]
             pengajuan = await pool.query(
                 format('INSERT INTO ' + db_pengajuan +
                     ` (id_pengguna, status_aktif, file_permohonan, status_pengajuan, status_proses, id_izin_oss, `+
@@ -179,7 +179,7 @@ class PsatPlPermohonanModel {
             check_query.check_queryset(file_permohonan);
             //Create pengajuan
             let data_pengajuan = [true, file_permohonan.rows[0].id, data.status_pengajuan,
-                                  data.nama_perusahaan, data.alamat_perusahaan, data.id_izin_oss, date]
+                                  data.nama_perseroan, data.alamat_perseroan, data.id_izin_oss, date]
             pengajuan = await pool.query(
                 format('UPDATE ' + db_pengajuan +
                     ` SET(status_aktif, file_permohonan, status_pengajuan, id_izin_oss, nama_perusahaan, alamat_perusahaan, update, produk) = (%L, '{${data.info_produk}}') ` +
