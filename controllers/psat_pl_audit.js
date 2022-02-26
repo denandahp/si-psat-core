@@ -35,10 +35,6 @@ async function oss_integration(data, keterangan) {
 }
 
 class AuditDokumenController {
-
-
-
-
     async permohonan_baru(req, res, next) {
         let callback = async() => {
             try {
