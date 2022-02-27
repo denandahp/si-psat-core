@@ -505,10 +505,8 @@ class izinedarGenerator {
                 });
             });
             const main = async() => {
-    
-            
-                const pdfa = await PDFNet.PDFACompliance.createFromFile(true, filename, '', PDFNet.PDFACompliance.Conformance.e_Level1A);
-                await pdfa.saveAsFromFileName(filename);
+                const doc = await PDFNet.PDFDoc.createFromFilePath(filename);
+                doc.save(filename, PDFNet.SDFDoc.SaveOptions.e_compatibility);
               };
               
               // add your own license key as the second parameter, e.g. in place of 'YOUR_LICENSE_KEY'.
