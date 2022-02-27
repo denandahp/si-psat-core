@@ -10,6 +10,7 @@
   "author": "Duye Chen",
   "license": "MIT",
   "dependencies": {
+    "@pdftron/pdfnet-node": "^9.2.0-1",
     "axios": "^0.23.0",
     "body-parser": "^1.17.2",
     "circular-json": "^0.5.9",
@@ -30,7 +31,7 @@
     "multer": "^1.4.3",
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.13",
-    "pdf-lib": "^1.17.1",
+    "pdf-lib": "^1.4.0",
     "pdf-merge": "^1.2.0",
     "pg": "^8.4.2",
     "pg-format": "^1.0.4",
