@@ -10,6 +10,9 @@ const generatePdf = require("../../models/generatePdf.js")
 
 const PDFDocument = require('pdf-lib').PDFDocument;
 
+// Change PDF to PDF/A ;lal6666666666666666666666666666666666
+const { PDFNet } = require('@pdftron/pdfnet-node');
+
 
 const url = '/root/si-psat-core/'
 const db_pengajuan_izin_edar = 'izin_edar.pengajuan';
@@ -501,6 +504,19 @@ class izinedarGenerator {
                     });
                 });
             });
+            const main = async() => {
+    
+            
+                const pdfa = await PDFNet.PDFACompliance.createFromFile(true, filename, '', PDFNet.PDFACompliance.Conformance.e_Level1A);
+                await pdfa.saveAsFromFileName(filename);
+              };
+              
+              // add your own license key as the second parameter, e.g. in place of 'YOUR_LICENSE_KEY'.
+              PDFNet.runWithCleanup(main, 'demo:1645969152158:7b10d4bd0300000000c7eac0487211ca90454ad31fe4efffab5fbe56bc').catch(function(error) {
+                console.log('Error: ' + JSON.stringify(error));
+              }).then(function(){ PDFNet.shutdown(); 
+            });
+              
 
             return {
                 view_only: false,

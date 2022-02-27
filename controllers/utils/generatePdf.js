@@ -91,7 +91,7 @@ class generatePdfController {
 
     async psat_pl(req, res, next) {
         let callback = async() => {
-            try {
+            // try {
                 const def = req.body
                 const param = req.params
                 const type = req.query.type
@@ -151,9 +151,9 @@ class generatePdfController {
 
                     }
                 }
-            } catch (e) {
-                next(e.detail || e);
-            }
+            // } catch (e) {
+            //   //  next(e.detail || e);
+            // }
         };
         let fallback = (err) => {
             next(err);
