@@ -251,20 +251,24 @@ class getSummary {
                 let total = 0;
                 let proses = 0;
                 let selesai = 0;
+                let ditolak = 0
                 for (let y = 0; y < data.length; y++) {
                     if (data[y].month == i) {
                         total += Number(data[y].count)
-                        if (data[y].status_proses == 'Terbit Sertifikat' || data[y].status_proses == 'Dokumen Ditolak') {
+                        if (data[y].status_proses == 'Terbit Sertifikat') {
                             selesai = Number(data[y].count)
+                        } else if (data[y].status_proses == 'Dokumen Ditolak') {
+                            ditolak = Number(data[y].count)
                         }
                     }
                 }
-                proses = total - selesai
+                proses = total - (selesai + ditolak)
                 result.push({
                     month: date_val[i],
                     total: total,
                     proses: proses,
-                    selesai: selesai
+                    selesai: selesai,
+                    ditolak: ditolak
                 })
             }
 
