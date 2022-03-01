@@ -56,8 +56,11 @@ class getSummary {
                 if (type == 'ongoing') {
                     history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " sppb_psat.history_all_pengajuan ")
                     check_query.check_queryset(history);
-                } else {
-                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " sppb_psat.history_all_pengajuan ")
+                } else if (type == 'finish') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 ) ', [year, month, 'Terbit Sertifikat'], '*', " sppb_psat.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else if (type == 'reject') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3) ', [year, month, 'Dokumen Ditolak'], '*', " sppb_psat.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 }
             } else {
@@ -65,8 +68,11 @@ class getSummary {
                 if (type == 'ongoing') {
                     history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
                     check_query.check_queryset(history);
-                } else {
-                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) AND' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
+                } else if (type == 'finish') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 ) AND' + `  $4=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', username], '*', " sppb_psat.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else if (type == 'reject') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 ) AND' + `  $4=ANY(${'tim_auditor'}) `, [year, month, 'Dokumen Ditolak', username], '*', " sppb_psat.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 }
             }
@@ -148,16 +154,22 @@ class getSummary {
                 if (type == 'ongoing') {
                     history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " izin_edar.history_all_pengajuan ")
                     check_query.check_queryset(history);
-                } else {
-                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) ', [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak'], '*', " izin_edar.history_all_pengajuan ")
+                } else if (type == 'finish') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3) ', [year, month, 'Terbit Sertifikat'], '*', " izin_edar.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else if (type == 'reject') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 ) ', [year, month, 'Dokumen Ditolak'], '*', " izin_edar.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 }
             } else {
                 if (type == 'ongoing') {
                     history = await check_query.pagination(page, limit, ' EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND (status_proses <> $3 AND status_proses <> $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
                     check_query.check_queryset(history);
-                } else {
-                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 OR status_proses = $4) AND ' + `  $5=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
+                } else if (type == 'finish') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 ) AND ' + `  $4=ANY(${'tim_auditor'}) `, [year, month, 'Terbit Sertifikat', username], '*', " izin_edar.history_all_pengajuan ")
+                    check_query.check_queryset(history);
+                } else if (type == 'reject') {
+                    history = await check_query.pagination(page, limit, '  EXTRACT(YEAR FROM created) = $1 AND EXTRACT(MONTH FROM created)= $2 AND  (status_proses = $3 ) AND ' + `  $4=ANY(${'tim_auditor'}) `, [year, month, 'Dokumen Ditolak', username], '*', " izin_edar.history_all_pengajuan ")
                     check_query.check_queryset(history);
                 }
             }
