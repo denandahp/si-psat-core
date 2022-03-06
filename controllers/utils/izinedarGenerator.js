@@ -428,8 +428,8 @@ class izinedarGenerator {
                 "unit_penanganan": " ",
 
             }
-
-            let filename = await 'sertifikat/psat-pl/permohonan-' + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.nomor_izin_edar + '.pdf'
+            // permohonan-15-15-12345_convert
+            let filename = await 'sertifikat/psat-pl/permohonan-15-15-12345_convert.pdf' // + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.nomor_izin_edar + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL.html')
 
             const content = await ReadFile(templatePath, 'utf8')
@@ -504,16 +504,16 @@ class izinedarGenerator {
                     });
                 });
             });
-            const main = async() => {
-                const doc = await PDFNet.PDFDoc.createFromFilePath(filename);
-                doc.save(filename, PDFNet.SDFDoc.SaveOptions.e_compatibility);
-              };
+            // const main = async() => {
+            //     const doc = await PDFNet.PDFDoc.createFromFilePath(filename);
+            //     doc.save(filename, PDFNet.SDFDoc.SaveOptions.e_compatibility);
+            //   };
               
-              // add your own license key as the second parameter, e.g. in place of 'YOUR_LICENSE_KEY'.
-              PDFNet.runWithCleanup(main, 'demo:1645969152158:7b10d4bd0300000000c7eac0487211ca90454ad31fe4efffab5fbe56bc').catch(function(error) {
-                console.log('Error: ' + JSON.stringify(error));
-              }).then(function(){ PDFNet.shutdown(); 
-            });
+            //   // add your own license key as the second parameter, e.g. in place of 'YOUR_LICENSE_KEY'.
+            //   PDFNet.runWithCleanup(main, 'demo:1645969152158:7b10d4bd0300000000c7eac0487211ca90454ad31fe4efffab5fbe56bc').catch(function(error) {
+            //     console.log('Error: ' + JSON.stringify(error));
+            //   }).then(function(){ PDFNet.shutdown(); 
+            // });
               
 
             return {
