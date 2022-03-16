@@ -429,7 +429,7 @@ class izinedarGenerator {
 
             }
             // permohonan-15-15-12345_convert
-            let filename = await 'sertifikat/psat-pl/permohonan-15-15-12345_convert.pdf' // + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.nomor_izin_edar + '.pdf'
+            let filename = await  sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.nomor_izin_edar + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL.html')
 
             const content = await ReadFile(templatePath, 'utf8')
