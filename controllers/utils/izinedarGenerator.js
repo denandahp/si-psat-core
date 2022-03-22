@@ -11,7 +11,7 @@ const generatePdf = require("../../models/generatePdf.js")
 const PDFDocument = require('pdf-lib').PDFDocument;
 
 // Change PDF to PDF/A ;lal666666666666666666666666sds6666666666
-const { PDFNet } = require('@pdftron/pdfnet-node');
+
 
 
 const url = '/root/si-psat-core/'
@@ -504,6 +504,7 @@ class izinedarGenerator {
                     });
                 });
             });
+            const { PDFNet } = require('@pdftron/pdfnet-node');
             const main = async() => {
                 const doc = await PDFNet.PDFDoc.createFromFilePath(filename);
                 doc.save(filename, PDFNet.SDFDoc.SaveOptions.e_compatibility);
