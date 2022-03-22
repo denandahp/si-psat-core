@@ -31,6 +31,7 @@ async function oss_integration(data, keterangan) {
     let detail_key = await oss.generate_user_key(body.nib);
 
     let detail_status = await oss.send_license_status(body, detail_key.user_key);
+    console.log(detail_status)
     return detail_status
 }
 
@@ -217,7 +218,7 @@ class AuditDokumenController {
 
     async pembayaran_pnbp(req, res, next) {
         let callback = async() => {
-            try {
+            // try {
                 let query = req.body;
                 debug('detail %o', query);
                 let detail_permohonan = await audit.pembayaran_pnbp(query);
@@ -235,15 +236,15 @@ class AuditDokumenController {
                     }
                     let detail_status = await oss_integration(req, keterangan)
                     let detail = {...detail_permohonan, ...detail_status }
-                    if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({ detail });
-                    } else {
-                        res.status(400).json({ detail });
-                    }
+                    // if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
+                        res.status(200).json({ detail_status });
+                    // } else {
+                    //     res.status(400).json({ detail });
+                    // }
                 }
-            } catch (e) {
-                next(e.detail || e);
-            }
+            // } catch (e) {
+            //     next(e.detail || e);
+            // }
         };
         let fallback = (err) => {
             next(err);
