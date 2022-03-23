@@ -264,7 +264,7 @@ class PsatPlPermohonanModel {
 
     async update_info_produk(data) {
         try {
-            await check_query.check_data(data, ['nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
+            await check_query.check_data(data, ['jenis_klaim', 'nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
             let data_info_produk = [
                 data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri,
@@ -512,7 +512,7 @@ class PsatPlPermohonanModel {
             let history, proses, query_select;
             if (user == 'all') {
                 history = await pool.query(
-                    ' SELECT id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                    ' SELECT id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
                     ' kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                     ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                     ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
@@ -525,7 +525,7 @@ class PsatPlPermohonanModel {
                 if (code_proses == 'all') {
                     proses = check_query.proses_code_all(user, code_proses, role, proses_pengajuan, 'IZIN_EDAR', search);
                     query_select =
-                        ' id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                        ' id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
                         ' kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                         ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                         ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
@@ -539,13 +539,13 @@ class PsatPlPermohonanModel {
 
                     if (code_proses == '10' || code_proses == '11') {
                         query_select =
-                            ' id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                            ' id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
                             ' kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                             ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen'
                     } else if (code_proses == '20' || code_proses == '21') {
                         query_select =
-                            ' id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                            ' id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
                             ' kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' id_audit_dokumen, mulai_audit_dokumen, tenggat_audit_dokumen, waktu_tenggat_audit_dokumen, selesai_audit_dokumen, mulai_perbaikan_audit_dokumen, ' +
                             ' tenggat_perbaikan_audit_dokumen, waktu_tenggat_perbaikan_audit_dokumen, selesai_perbaikan_audit_dokumen, keterangan_audit_dokumen, hasil_audit_dokumen, ' +
@@ -553,7 +553,7 @@ class PsatPlPermohonanModel {
                             ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'
                     } else if (code_proses == '40' || code_proses == '41') {
                         query_select =
-                            ' id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                            ' id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
                             ' kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' id_sidang_komtek, mulai_sidang_komtek, tenggat_sidang_komtek, waktu_tenggat_sidang_komtek, selesai_sidang_komtek, mulai_perbaikan_sidang_komtek, ' +
                             ' tenggat_perbaikan_sidang_komtek, waktu_tenggat_perbaikan_sidang_komtek, selesai_perbaikan_sidang_komtek, keterangan_sidang_komtek, hasil_sidang_komtek, bahan_sidang_komtek' +
@@ -561,17 +561,17 @@ class PsatPlPermohonanModel {
                             ' id_tim_komtek, tim_komtek, lead_komtek, tanggal_penugasan_tim_komtek, surat_tugas_tim_komtek'
                     } else if (code_proses == '50' || code_proses == '51') {
                         query_select =
-                            ' id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, kode_pengajuan, '+
+                            ' id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, kode_pengajuan, '+
                             'final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' bukti_pembayaran_pnbp, tanggal_pembayaran_pnbp '
                     } else if (code_proses == '99') {
                         query_select =
-                            ' id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
+                            ' id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, '+
                             ' kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses, ' +
                             ' dokumen_ditolak, tanggal_dokumen_ditolak, keterangan_audit'
                     } else {
                         query_select =
-                            ' id_pengajuan, id_pengguna, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses '
+                            ' id_pengajuan, id_pengguna, kbli, id_izin_oss, id_izin, nama_perseroan, alamat_perseroan, no_identitas, no_nib, kode_pengajuan, final_sertifikat, status_pengajuan, created, nomor_izin_edar, status_proses, code_status_proses '
                     }
                 }
             }
