@@ -104,7 +104,7 @@ exports.send_license_status = async(url, data, user, x_sm_key) => {
     };
     const result = await axios(param);
     let oss = result.data;
-
+    console.log(oss)
     return oss
 
 }

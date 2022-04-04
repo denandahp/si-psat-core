@@ -40,9 +40,9 @@ class AuditDokumenController {
             try {
                 let query = req.body;
                 debug('detail %o', query);
-                let detail_permohonan = await audit.permohonan_baru(query);
-                if (detail_permohonan.status == '400') {
-                    res.status(400).json({ detail_permohonan });
+                let detail = await audit.permohonan_baru(query);
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     let keterangan;
@@ -57,7 +57,7 @@ class AuditDokumenController {
                         keterangan = "Permohonan Baru Sesuai"
                     }
                     let detail_status = await oss_integration(req, keterangan)
-                    let detail = {...detail_permohonan, ...detail_status }
+                    detail = {...detail, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
@@ -80,15 +80,15 @@ class AuditDokumenController {
             try {
                 let query = req.body;
                 debug('detail %o', query);
-                let detail_permohonan = await audit.penunjukkan_auditor(query);
-                if (detail_permohonan.status == '400') {
-                    res.status(400).json({ detail_permohonan });
+                let detail = await audit.penunjukkan_auditor(query);
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     req.body.kd_status = "20"
                     let keterangan = "Penunjukan Auditor"
                     let detail_status = await oss_integration(req, keterangan)
-                    let detail = {...detail_permohonan, ...detail_status }
+                    detail = {...detail, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
@@ -111,9 +111,9 @@ class AuditDokumenController {
             try {
                 let query = req.body;
                 debug('detail %o', query);
-                let detail_permohonan = await audit.audit_dokumen(query);
-                if (detail_permohonan.status == '400') {
-                    res.status(400).json({ detail_permohonan });
+                let detail = await audit.audit_dokumen(query);
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     let keterangan;
@@ -128,7 +128,7 @@ class AuditDokumenController {
                         keterangan = "Audit Dokumen Sesuai"
                     }
                     let detail_status = await oss_integration(req, keterangan)
-                    let detail = {...detail_permohonan, ...detail_status }
+                    detail = {...detail, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
@@ -150,16 +150,16 @@ class AuditDokumenController {
             try {
                 let query = req.body;
                 debug('detail %o', query);
-                let detail_permohonan = await audit.penunjukkan_tim_komtek(query);
-                if (detail_permohonan.status == '400') {
-                    res.status(400).json({ detail_permohonan });
+                let detail = await audit.penunjukkan_tim_komtek(query);
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     req.body.kd_status = "20"
                     let keterangan = 'Penunjukan Tim Komtek'
 
                     let detail_status = await oss_integration(req, keterangan)
-                    let detail = {...detail_permohonan, ...detail_status }
+                    detail = {...detail, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
@@ -181,9 +181,9 @@ class AuditDokumenController {
             try {
                 let query = req.body;
                 debug('detail %o', query);
-                let detail_permohonan = await audit.audit_rekomendasi(query);
-                if (detail_permohonan.status == '400') {
-                    res.status(400).json({ detail_permohonan });
+                let detail = await audit.audit_rekomendasi(query);
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     let keterangan;
@@ -198,7 +198,7 @@ class AuditDokumenController {
                         keterangan = "Review/Sidang Komtek Sesuai"
                     }
                     let detail_status = await oss_integration(req, keterangan)
-                    let detail = {...detail_permohonan, ...detail_status }
+                    detail = {...detail, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
@@ -220,9 +220,9 @@ class AuditDokumenController {
             try {
                 let query = req.body;
                 debug('detail %o', query);
-                let detail_permohonan = await audit.pembayaran_pnbp(query);
-                if (detail_permohonan.status == '400') {
-                    res.status(400).json({ detail_permohonan });
+                let detail = await audit.pembayaran_pnbp(query);
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     let keterangan
@@ -234,7 +234,7 @@ class AuditDokumenController {
                         keterangan = "Pembayaran PNBP Selesai"
                     }
                     let detail_status = await oss_integration(req, keterangan)
-                    let detail = {...detail_permohonan, ...detail_status }
+                    detail = {...detail, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
@@ -256,15 +256,15 @@ class AuditDokumenController {
             try {
                 let query = req.body;
                 debug('detail %o', query);
-                let detail_permohonan = await audit.dokumen_ditolak(query);
-                if (detail_permohonan.status == '400') {
-                    res.status(400).json({ detail_permohonan });
+                let detail = await audit.dokumen_ditolak(query);
+                if (detail.status == '400') {
+                    res.status(400).json({ detail });
                 } else {
                     req.body.tipe_permohonan = 'IZIN-EDAR'
                     req.body.kd_status = "90"
                     let keterangan = "Dokumen Ditolak"
                     let detail_status = await oss_integration(req, keterangan)
-                    let detail = {...detail_permohonan, ...detail_status }
+                    detail = {...detail, ...detail_status }
                     if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
                         res.status(200).json({ detail });
                     } else {
