@@ -11,7 +11,7 @@ const generatePdf = require("../../models/generatePdf.js")
 const PDFDocument = require('pdf-lib').PDFDocument;
 
 // Change PDF to PDF/A ;lal666666666666666666666666sds6666666666
-const { PDFNet } = require('@pdftron/pdfnet-node');
+
 
 
 const url = '/root/si-psat-core/'
@@ -428,8 +428,8 @@ class izinedarGenerator {
                 "unit_penanganan": " ",
 
             }
-
-            let filename = await 'sertifikat/psat-pl/permohonan-' + sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.nomor_izin_edar + '.pdf'
+            // permohonan-15-15-12345_convert
+            let filename = await  sertifikat_pl.id_pengguna + '-' + sertifikat_pl.id_pengajuan + '-' + def.nomor_izin_edar + '.pdf'
             const templatePath = Path.resolve('models', 'template_pdf', 'OSS_PL.html')
 
             const content = await ReadFile(templatePath, 'utf8')
@@ -504,6 +504,7 @@ class izinedarGenerator {
                     });
                 });
             });
+            const { PDFNet } = require('@pdftron/pdfnet-node');
             const main = async() => {
                 const doc = await PDFNet.PDFDoc.createFromFilePath(filename);
                 doc.save(filename, PDFNet.SDFDoc.SaveOptions.e_compatibility);

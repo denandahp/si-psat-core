@@ -31,6 +31,7 @@ async function oss_integration(data, keterangan) {
     let detail_key = await oss.generate_user_key(body.nib);
 
     let detail_status = await oss.send_license_status(body, detail_key.user_key);
+    console.log(detail_status)
     return detail_status
 }
 
@@ -217,33 +218,43 @@ class AuditDokumenController {
 
     async pembayaran_pnbp(req, res, next) {
         let callback = async() => {
-            try {
-                let query = req.body;
-                debug('detail %o', query);
-                let detail = await audit.pembayaran_pnbp(query);
-                if (detail.status == '400') {
-                    res.status(400).json({ detail });
-                } else {
-                    req.body.tipe_permohonan = 'IZIN-EDAR'
-                    let keterangan
-                    if (req.body.proses == "REVIEW") {
-                        req.body.kd_status = "31"
-                        keterangan = "Menunggu Pembayaran PNBP"
-                    } else if (req.body.proses == "CLEAR") {
-                        req.body.kd_status = "30"
-                        keterangan = "Pembayaran PNBP Selesai"
-                    }
-                    let detail_status = await oss_integration(req, keterangan)
-                    detail = {...detail, ...detail_status }
-                    if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
-                        res.status(200).json({ detail });
-                    } else {
-                        res.status(400).json({ detail });
-                    }
+            // try {
+            let query = req.body;
+            debug('detail %o', query);
+            let detail = await audit.pembayaran_pnbp(query);
+            if (detail.status == '400') {
+                res.status(400).json({ detail });
+            } else {
+                req.body.tipe_permohonan = 'IZIN-EDAR'
+                let keterangan
+                if (req.body.proses == "REVIEW") {
+                    req.body.kd_status = "31"
+                    keterangan = "Menunggu Pembayaran PNBP"
+                } else if (req.body.proses == "CLEAR") {
+                    req.body.kd_status = "30"
+                    keterangan = "Pembayaran PNBP Selesai"
                 }
-            } catch (e) {
-                next(e.detail || e);
+                let detail_status = await oss_integration(req, keterangan) <<
+                    << << < HEAD
+                detail = {...detail, ...detail_status }
+                if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
+                    res.status(200).json({ detail });
+                } else {
+                    res.status(400).json({ detail });
+                } ===
+                === =
+                let detail = {...detail_permohonan, ...detail_status }
+                    // if (detail.OSS_result.responreceiveLicenseStatus.kode == 200) {
+                res.status(200).json({ detail_status });
+                // } else {
+                //     res.status(400).json({ detail });
+                // }
+                >>>
+                >>> > efd5c4e18a243fab61f964e37421aa35ce82e3aa
             }
+            // } catch (e) {
+            //     next(e.detail || e);
+            // }
         };
         let fallback = (err) => {
             next(err);

@@ -72,7 +72,8 @@ exports.send_license_status = async(url, data, user, x_sm_key) => {
         'method': 'POST',
         'url': url,
         'headers': {
-            'x-sm-key': x_sm_key
+            'x-sm-key': x_sm_key,
+            'Content-Type': 'application/json',
         },
         params: {
             username: 'psat',

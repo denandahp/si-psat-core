@@ -153,12 +153,13 @@ class PsatPlPerubahanModel {
             data_pembayaran_pnbp = [data.id_pengajuan, data.proses, data.keterangan, data.bukti_pembayaran];
             pembayaran_pnbp = await pool.query(format('CALL ' + proc_pembayaran_pnbp + ' (%L)', data_pembayaran_pnbp));
             let notif = await check_query.send_notification(data.id_pengajuan, 'IZIN_EDAR');
-            let send_email = await check_query.send_email(data.id_pengajuan, 'IZIN_EDAR');
+           // let send_email = await check_query.send_email(data.id_pengajuan, 'IZIN_EDAR');
+            
             return {
                 status: '200',
                 ketarangan: `${data.proses} PEMBAYARAN PNBP IZIN EDAR id ${data.id_pengajuan}`,
                 notifikasi: notif,
-                email: send_email,
+                // email: send_email,
                 audit_status: pembayaran_pnbp.rows[0]};
         } catch (ex) {
             if (ex.code == '401') {
