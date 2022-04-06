@@ -101,6 +101,8 @@ class getSummary {
                     tim_auditor: data.tim_auditor,
                     nomor_sppb_psat: data.nomor_sppb_psat_sebelumnya,
                     masa_berlaku: data.masa_berlaku,
+                    tanggal_pengajuan: data.created,
+                    tanggal_terbit: data.update
 
                 }
             });
@@ -198,6 +200,8 @@ class getSummary {
                     detail_tim_auditor: auditor_name,
                     nomor_izin_edar: data.nomor_izin_edar,
                     masa_berlaku: data.expire_sertifikat,
+                    tanggal_pengajuan: data.created,
+                    tanggal_terbit: data.update
 
                 }
 
