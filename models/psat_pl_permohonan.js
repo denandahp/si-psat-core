@@ -117,7 +117,7 @@ class PsatPlPermohonanModel {
 
     async add_info_produk(data) {
         try {
-            await check_query.check_data(data, ['jenis_klaim', 'nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
+            await check_query.check_data(data, ['jenis_klaim', 'nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat', 'berat_bersih'])
             let data_info_produk = [
                 data.id_pengguna, data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri,
@@ -264,7 +264,7 @@ class PsatPlPermohonanModel {
 
     async update_info_produk(data) {
         try {
-            await check_query.check_data(data, ['jenis_klaim', 'nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat'])
+            await check_query.check_data(data, ['jenis_klaim', 'nama_merek', 'kelas_mutu', 'sertifikat_jaminan_keamanan_psat', 'berat_bersih'])
             let data_info_produk = [
                 data.jenis_psat, data.nama_latin, data.negara_asal, data.nama_dagang, data.jenis_kemasan, data.berat_bersih,
                 data.komposisi, data.coa_nomor, data.coa_tanggal, data.desain_tabel_dan_kemasan, data.diagram_alir_psat_luar_negri,
