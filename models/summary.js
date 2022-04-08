@@ -202,7 +202,8 @@ class getSummary {
                     masa_berlaku: data.expire_sertifikat,
                     tanggal_pengajuan: data.created,
                     tanggal_terbit: data.update,
-                    id_izin_oss: data.id_izin_oss
+                    id_izin_oss: data.id_izin_oss,
+                    id_izin: data.id_izin
 
                 }
 
