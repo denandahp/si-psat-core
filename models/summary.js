@@ -201,7 +201,8 @@ class getSummary {
                     nomor_izin_edar: data.nomor_izin_edar,
                     masa_berlaku: data.expire_sertifikat,
                     tanggal_pengajuan: data.created,
-                    tanggal_terbit: data.update
+                    tanggal_terbit: data.update,
+                    id_izin_oss: data.id_izin_oss
 
                 }
 
