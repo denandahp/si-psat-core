@@ -11,7 +11,7 @@ const config = require(CONFIG_FILE_PATH);
 const path = require('path');
 const cors = require('cors');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 server.listen(PORT, () => {
     debug('Server Started. *:%o', PORT);
