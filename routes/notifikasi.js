@@ -1,8 +1,9 @@
 const Router = require('express').Router();
 const notifikasi = require('../controllers/notifikasi.js');
+const auth = require('../middleware/auth.js');
 
 
-Router.put('/read_notifikasi', notifikasi.read_notifikasi)
-      .get('/history', notifikasi.history_notifikasi)
+Router.put('/read_notifikasi', auth, notifikasi.read_notifikasi)
+      .get('/history', auth, notifikasi.history_notifikasi)
 
 module.exports = Router;
