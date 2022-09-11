@@ -70,8 +70,7 @@ app.get("/", function rootHandler(req, res) {
     res.end("Hello world!");
 });
 
-const index = require('./routes/index.js');
-const user = require('./routes/user.js');
+// PSAT
 const sppb_psat_penambahan = require('./routes/sppb_psat_penambahan.js');
 const sppb_psat_pengalihan = require('./routes/sppb_psat_pengalihan.js');
 const sppb_psat_permohonan = require('./routes/sppb_psat_permohonan.js');
@@ -81,6 +80,15 @@ const past_pl_pengalihan = require('./routes/psat_pl_pengalihan.js');
 const past_pl_permohonan = require('./routes/psat_pl_permohonan.js');
 const past_pl_perubahan = require('./routes/psat_pl_perubahan.js');
 const psat_pl_audit = require('./routes/psat_pl_audit.js');
+
+// OKKP
+const okkp_import = require('./okkp/imports/routes.js');
+const okkp_registrations = require('./okkp/registrations/routes.js');
+const okkp_static = require('./okkp/static/routes')
+
+//PUBLIC
+const index = require('./routes/index.js');
+const user = require('./routes/user.js');
 const oss = require('./routes/oss.js');
 const upload_file = require('./routes/upload.js');
 const sertifikat = require('./routes/sertifikat.js');
@@ -88,8 +96,7 @@ const notifikasi = require('./routes/notifikasi.js');
 const summary = require('./routes/summary.js');
 
 
-app.use('/', index);
-app.use('/api/user', user);
+// PSAT
 app.use('/api/psat/sppb', sppb_psat_penambahan)
 app.use('/api/psat/sppb', sppb_psat_pengalihan)
 app.use('/api/psat/sppb', sppb_psat_permohonan)
@@ -99,6 +106,15 @@ app.use('/api/psat/pl', past_pl_pengalihan)
 app.use('/api/psat/pl', past_pl_permohonan)
 app.use('/api/psat/pl', past_pl_perubahan)
 app.use('/api/psat/pl', psat_pl_audit)
+
+// OKKP
+app.use('/api/okkp/imports', okkp_import)
+app.use('/api/okkp/registrations', okkp_registrations)
+app.use('/api/okkp/static', okkp_static)
+
+// PUBLIC
+app.use('/', index);
+app.use('/api/user', user);
 app.use('/api/oss', oss)
 app.use('/api/upload', upload_file)
 app.use('/api/sertifikat', sertifikat)
