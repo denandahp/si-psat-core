@@ -4,6 +4,10 @@ var format = require('pg-format');
 
 let schema = 'static';
 let db_komoditas = schema + '.komoditas';
+let db_jenis_registrasi = schema + '.jenis_registrasi';
+let db_jenis_sertifikat = schema + '.jenis_sertifikat';
+let db_jenis_hc = schema + '.jenis_hc';
+let db_status = schema + '.status';
 
 class StaticController {
     async index_komoditas() {
@@ -15,19 +19,47 @@ class StaticController {
         };
     }
 
-    async sync_komoditas() {
+    async index_jenis_registrasi() {
         try {
-            let nama = []
-            let komoditas = await mysql.query('SELECT * FROM komoditas ORDER BY komoditas ASC')
-            for (let index in komoditas){
-                nama.push([komoditas[index].komoditas])
-            }
-            let komoditas_query = await pool.query(format('INSERT INTO ' + db_komoditas + ` (nama) VALUES %L RETURNING *`, nama));
-            console.log(komoditas_query.rows)
-
-            return { status: '200', keterangan: "Penambahan Ruang Lingkup SPPB PSAT"};
+            let jenis_registrasi = await pool.query(format('SELECT id, nama FROM ' + db_jenis_registrasi));
+            return { status: '200', data: jenis_registrasi.rows};
         } catch (ex) {
             console.log('data', 'error ' + ex)
+        };
+    }
+
+    async index_jenis_sertifikat() {
+        try {
+            let jenis_sertifikat = await pool.query(format('SELECT id, nama FROM ' + db_jenis_sertifikat));
+            return { status: '200', data: jenis_sertifikat.rows};
+        } catch (ex) {
+            console.log('data', 'error ' + ex)
+        };
+    }
+
+    async index_status() {
+        try {
+            let status = await pool.query(format('SELECT id, nama FROM ' + db_status));
+            return { status: '200', data: status.rows};
+        } catch (ex) {
+            console.log('data', 'error ' + ex)
+        };
+    }
+
+
+    async sync_data() {
+        try {
+            let nama = []
+            let data_mysql = await mysql.query('SELECT * FROM jsertifikat')
+            for (let index in data_mysql){
+                nama.push([data_mysql[index].jenis_serti])
+            }
+            console.log(nama)
+            let data_pg = await pool.query(format(`INSERT INTO `+ db_jenis_sertifikat +` (nama) VALUES %L RETURNING *`, nama));
+
+            return { status: '200', data: data_pg.rows};
+        } catch (ex) {
+            console.log('error ' + ex)
         };
     }
 }
