@@ -26,6 +26,7 @@ exports.serialize_registrations = (data, user, process) => {
         "jenis_hc_id" : data.jenis_hc_id,
         "jenis_sertifikat_id" : data.jenis_sertifikat_id ,
         "status_id" : data.status_id,
+        "provinsi_id":data.provinsi_id,
         "modified_by" : user.email,
         "updated_at": date
     }
