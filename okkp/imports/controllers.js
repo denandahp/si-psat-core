@@ -14,17 +14,16 @@ class ImportController {
             if (req.file === undefined) {
                 throw new Error('No File Selected')
             } else {
+                let body = req.body
                 excel_file = req.file;
                 await readXlsxFile(excel_file.path)
                     .then((raw_data) => {
-                        is_valid = utils.validation_headers(raw_data.shift())
+                        is_valid = utils.validation_headers(raw_data.shift(), body)
                         data = raw_data
                     })
                 if (is_valid == true){
-                    model_import = await model.model_imports(data)
+                    model_import = await model.model_imports(data, body)
                 }
-                
-                
                 res.status(200).json({ response: response });
             };
         } catch (e) {

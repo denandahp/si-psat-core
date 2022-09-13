@@ -53,7 +53,7 @@ class OkkpRegistrationsController {
                     no_reg : core.default_dict(req.query.no_reg, ''),
                     usaha : core.default_dict(req.query.usaha, '')
                 }
-                let response = await model.index_registrasi(parameter, user);
+                let response = await model.index_registrasi(parameter);
                 if (response.status == '400') {res.status(400).json({ response });}
                 else { res.status(200).json({ response });}
             } catch (e) {

@@ -45,7 +45,6 @@ class OkkpRegistrationsController {
         try {
             let filter = core.check_value(query.sertif,'jenis_sertifikat_id') + core.check_value( query.provinsi,'provinsi_id') + 
                          `no_sertifikat LIKE '%${query.no_sertif}%' AND unit_usaha LIKE '%${query.usaha}%'`
-            console.log(filter)
             let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_registrations)
             return { status: '200', data: registrasi.query };
         } catch (ex) {
