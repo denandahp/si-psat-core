@@ -1,3 +1,4 @@
+const authUtils = require('../../controllers/utils/auth.js');
 var fs = require('fs');
 const format_date = require('../../models/param/utils.js');
 const readXlsxFile = require('read-excel-file/node')
@@ -8,28 +9,37 @@ var date = format_date.time_format();
 
 
 class ImportController {
-    async import_excels(req, res) {
-        try {
-            let response = [], excel_file, model_import, is_valid = false, data;
-            if (req.file === undefined) {
-                throw new Error('No File Selected')
-            } else {
-                let body = req.body
-                excel_file = req.file;
-                await readXlsxFile(excel_file.path)
-                    .then((raw_data) => {
-                        is_valid = utils.validation_headers(raw_data.shift(), body)
-                        data = raw_data
-                    })
-                if (is_valid == true){
-                    model_import = await model.model_imports(data, body)
+    async import_excels(req, res, next) {
+        let callback = async() => {
+            try {
+                if (req.file === undefined) {
+                    throw new Error('No File Selected')
+                } else {
+                    let body = req.body
+                    let excel_file = req.file;
+                    let user = req.user.data.data;
+                    let data = await readXlsxFile(excel_file.path)
+                                    .then(async (raw_data) => {
+                                        let is_valid = await utils.validation_headers(raw_data.shift(), body)
+                                        if(is_valid === true){
+                                            return raw_data;
+                                        } else{
+                                            throw new Error('Format judul kolom tidak sesuai dengan contoh template.')
+                                        }
+                                    })
+                    let response = await model.model_imports(data, body, user)
+                    if (response.status == '400') {res.status(400).json({ response });}
+                    else { res.status(200).json({ response });}
                 }
-                res.status(200).json({ response: response });
-            };
-        } catch (e) {
-            res.status(400).json({ error: e.message });
-            console.log("error" + e)
+            } catch (e) {
+                res.status(400).json({ status: '400', Error: "" + e.message })
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
         }
+        authUtils.processRequestWithJWT(req, callback, fallback);
     }
 }
 

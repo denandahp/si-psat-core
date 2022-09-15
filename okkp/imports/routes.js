@@ -5,6 +5,6 @@ const multer = require('./utils.js');
 
 var param = multer.param();
 
-Router.post('', param, imports.import_excels)
+Router.post('', auth, param, imports.import_excels)
 
 module.exports = Router;
