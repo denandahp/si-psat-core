@@ -86,7 +86,7 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
     let jenis_registrasi_id = body.registrasi_id, 
         provinsi_id = body.provinsi_id,
         modified_by = user.email,
-        error_no_regis = 'Nomor registrasi sudah terdaftar semua';
+        error_msg = {};
 
     let komoditas_dict = await this.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, jenis_registrasi_id)
@@ -225,7 +225,7 @@ exports.packing_house = async (raw_data, body, user) => {
     let jenis_registrasi_id = body.registrasi_id, 
         provinsi_id = body.provinsi_id,
         modified_by = user.email,
-        error_no_regis = 'Nomor registrasi sudah terdaftar semua';
+        error_msg = {};
 
     let komoditas_dict = await this.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, jenis_registrasi_id)
