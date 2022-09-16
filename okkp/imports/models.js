@@ -22,9 +22,9 @@ class ImportModel {
             }else if(jenis_registrasi_id == 3){
                 ({wrong_format, key, value} = await utils.packing_house(raw_data, body, user))
             }else if(jenis_registrasi_id == 4){
-                return
+                ({wrong_format, key, value} = await utils.health_certificate(raw_data, body, user))
             }else if(jenis_registrasi_id == 5){
-                return
+                ({wrong_format, key, value} = await utils.sppb_psat_provinsi(raw_data, body, user))
             }
             let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
             await pool.query(format('INSERT INTO ' + db_registrations + ` (${key}) VALUES %L`, value));

@@ -22,7 +22,7 @@ class OkkpRegistrationsController {
     async update_registrations(data, user) {
         try {
             let {key, value} = utils.serialize_registrations(data, user, 'updated')
-            let registrasi = await pool.query(format('UPDATE ' + db_registrations + `SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value));
+            let registrasi = await pool.query(format('UPDATE ' + db_registrations + ` SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value));
             // debug('get %o', response);
             return { status: '200', data: registrasi.rows[0] };
         } catch (ex) {
