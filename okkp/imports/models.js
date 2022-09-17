@@ -25,11 +25,16 @@ class ImportModel {
                 ({wrong_format, key, value} = await utils.health_certificate(raw_data, body, user))
             }else if(jenis_registrasi_id == 5){
                 ({wrong_format, key, value} = await utils.sppb_psat_provinsi(raw_data, body, user))
+            }else if(jenis_registrasi_id == 6){
+                ({wrong_format, key, value} = await utils.sertifikasi_prima(raw_data, body, user))
             }
             let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
             await pool.query(format('INSERT INTO ' + db_registrations + ` (${key}) VALUES %L`, value));
 
-            return { status: '200', jenis_registrasi: jenis_registrasi.rows[0].nama , keterangan: 'Import Success', not_upload: wrong_format};
+            return {status: '200', 
+                    jenis_registrasi: jenis_registrasi.rows[0].nama,
+                    keterangan: 'Import Success',
+                    not_created: wrong_format};
         } catch (ex) {
             if (ex.code == '401') {
                 return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_upload: ex.details };
