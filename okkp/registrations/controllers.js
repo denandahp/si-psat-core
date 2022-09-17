@@ -42,6 +42,23 @@ class OkkpRegistrationsController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async delete_registrations(req, res, next) {
+        let callback = async() => {
+            try {
+                let registrasi_id = req.query.registrasi_id;
+                let response = await model.delete_registrations(registrasi_id);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async index_registrasi(req, res, next) {
         let callback = async() => {
             try {
@@ -78,6 +95,23 @@ class OkkpRegistrationsController {
                     usaha : core.default_dict(req.query.usaha, '')
                 }
                 let response = await model.index_sertifikasi(parameter);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async detail_registrations(req, res, next) {
+        let callback = async() => {
+            try {
+                let registrasi_id = req.query.registrasi_id;
+                let response = await model.detail_registrations(registrasi_id);
                 if (response.status == '400') {res.status(400).json({ response });}
                 else { res.status(200).json({ response });}
             } catch (e) {

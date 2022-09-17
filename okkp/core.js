@@ -7,7 +7,6 @@ exports.default_dict = (value, default_value) => {
 }
 
 exports.check_value = (value, column) => {
-    console.log(value, column)
     if(value === undefined || value === null ){
         return '';
     } else{

@@ -2,6 +2,9 @@ const utils = require('../../models/param/utils.js');
 
 var date = utils.date_now();
 
+const schema_regis = 'register';
+const db_registrations = schema_regis + '.registrasi';
+
 
 exports.serialize_registrations = (data, user, process) => {
     let serialize = {
@@ -41,4 +44,14 @@ exports.serialize_registrations = (data, user, process) => {
     let key = Object.keys(serialize).toString()
     let value = Object.values(serialize)
     return {key, value}
+}
+
+exports.is_no_register_already_exist = async (data) => {
+    let no_regis = await pool.query(`select no_registration from ${db_registrations} `+
+                                    `WHERE jenis_registrasi_id=${data.jenis_registrasi_id} AND no_registration=${data.no_registration}`)
+    if(no_regis.rows[0].count == 0){
+        return no_regis.rows[0]
+    }else{
+        return false
+    }
 }

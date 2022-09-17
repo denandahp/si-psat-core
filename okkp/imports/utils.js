@@ -88,7 +88,7 @@ exports.mapping_no_registrasi_dict = async (raw_data, index_no_regis, jenis_regi
     }
     let no_regis = await pool.query(format(`select no_registration from ${db_registrations} `+
                                            `WHERE jenis_registrasi_id=${jenis_registrasi_id} AND no_registration IN (%L)`, regis_array))
-    let no_regis_dict = {}, no_regis_list =[];
+    let no_regis_dict = {};
     for(index in no_regis.rows){
         no_regis_dict[no_regis.rows[index].no_registration] = true
     }
