@@ -6,6 +6,8 @@ var format = require('pg-format');
 
 const schema = 'register';
 const db_registrations = schema + '.registrasi';
+const db_view_registrasi = schema + '.view_index_registrasi';
+
 
 class OkkpRegistrationsController {
     async create_registrations(data, user) {
@@ -48,7 +50,7 @@ class OkkpRegistrationsController {
         try {
             let filter = core.check_value(query.reg,'jenis_registrasi_id') + core.check_value( query.provinsi,'provinsi_id') + 
                          `no_registration ILIKE '%${query.no_reg}%' AND unit_usaha ILIKE '%${query.usaha}%'`
-            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_registrations)
+            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_view_registrasi)
             return { status: '200', data: registrasi.query };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -59,7 +61,7 @@ class OkkpRegistrationsController {
         try {
             let filter = core.check_value(query.sertif,'jenis_sertifikat_id') + core.check_value( query.provinsi,'provinsi_id') + 
                          `no_sertifikat ILIKE '%${query.no_sertif}%' AND unit_usaha ILIKE '%${query.usaha}%'`
-            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_registrations)
+            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_view_registrasi)
             return { status: '200', data: registrasi.query };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -68,7 +70,7 @@ class OkkpRegistrationsController {
 
     async detail_registrations(registrasi_id) {
         try {
-            let registrasi = await pool.query('SELECT * FROM ' + db_registrations + ` WHERE id=${registrasi_id}`);
+            let registrasi = await pool.query('SELECT * FROM ' + db_view_registrasi + ` WHERE id=${registrasi_id}`);
             return { status: '200', data: registrasi.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
