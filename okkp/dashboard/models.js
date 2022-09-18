@@ -60,5 +60,24 @@ class DashboardController {
             return { status: '400', Error: "" + ex };
         };
     }
+
+    async komoditas(param) {
+        try {
+            let provinsi='Semua Provinsi', where='';
+            if(param.provinsi_id){
+                provinsi = await pool.query(`SELECT * FROM ${db_provinsi} WHERE id=${param.provinsi_id}`);
+                provinsi = provinsi.rows[0].nama
+                where = 'WHERE'
+            }
+
+            let select = `komoditas_id, komoditas, count(jenis_registrasi_id) AS total_registrasi`
+            let query = `SELECT ${select} FROM ${db_view_registrasi} ${where} ${core.check_value(param.provinsi_id, 'provinsi_id', true)} 
+                         GROUP BY komoditas_id, komoditas ORDER BY total_registrasi DESC`
+            let registrasi = await pool.query(query);
+            return { status: '200', Provinsi: provinsi, data: registrasi.rows };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
 }
 module.exports = new DashboardController();
