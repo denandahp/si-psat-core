@@ -6,10 +6,15 @@ exports.default_dict = (value, default_value) => {
     }
 }
 
-exports.check_value = (value, column) => {
+exports.check_value = (value, column, not_operator) => {
     if(value === undefined || value === null ){
         return '';
     } else{
-        return `${column}=${value} AND `;
+        if(not_operator){
+            return `${column}=${value}`;
+        }else{
+            return `${column}=${value} AND `;
+        }
+        
     }
 }
