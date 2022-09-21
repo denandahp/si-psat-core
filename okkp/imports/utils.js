@@ -121,8 +121,7 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
             kemasan = raw_data[index][8],
             merk = raw_data[index][9],
             label = raw_data[index][11],
-            terbit_sertifikat = raw_data[index][12],
-            komoditas_id, err_msg;
+            komoditas_id, err_msg, is_wrong_format = false;
 
         let komoditas = komoditas_dict[raw_data[index][5]]
         if (komoditas == undefined || komoditas == null){
@@ -130,7 +129,7 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             komoditas_id = komoditas.id
         }
@@ -141,16 +140,32 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else{
             no_registration = raw_data[index][10]
+        }
+
+        let terbit_sertifikat = raw_data[index][12];
+        if(terbit_sertifikat){
+            let is_valid = format_date.check_date_format(terbit_sertifikat)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
         }
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, komoditas_id, nama_psat, 
              nama_ilmiah, kemasan, merk, no_registration, label, terbit_sertifikat, provinsi_id, modified_by]
         )
-        line = line++;
     }
 
     if(value.length === 0){
@@ -190,8 +205,7 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
             nama_ilmiah = raw_data[index][7],
             kemasan = raw_data[index][8],
             merk = raw_data[index][9],
-            terbit_sertifikat = raw_data[index][11],
-            komoditas_id, err_msg;
+            komoditas_id, err_msg, is_wrong_format = false;
 
         let komoditas = komoditas_dict[raw_data[index][5]]
         if (komoditas == undefined || komoditas == null){
@@ -199,7 +213,7 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             komoditas_id = komoditas.id
         }
@@ -210,16 +224,32 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else{
             no_registration = raw_data[index][10]
+        }
+
+        let terbit_sertifikat = raw_data[index][11];
+        if(terbit_sertifikat){
+            let is_valid = format_date.check_date_format(terbit_sertifikat)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
         }
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, komoditas_id, nama_psat, 
              nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
-        line = line++;
     }
 
     if(value.length === 0){
@@ -259,8 +289,7 @@ exports.packing_house = async (raw_data, body, user) => {
             luas_lahan = raw_data[index][6],
             nama_psat = raw_data[index][8],
             nama_ilmiah = raw_data[index][9],
-            terbit_sertifikat = raw_data[index][11],
-            komoditas_id, err_msg;
+            komoditas_id, err_msg, is_wrong_format = false;
 
         let komoditas = komoditas_dict[raw_data[index][7]]
         if (komoditas == undefined || komoditas == null){
@@ -268,7 +297,7 @@ exports.packing_house = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             komoditas_id = komoditas.id
         }
@@ -279,16 +308,32 @@ exports.packing_house = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else{
             no_registration = raw_data[index][10]
+        }
+
+        let terbit_sertifikat = raw_data[index][11];
+        if(terbit_sertifikat){
+            let is_valid = format_date.check_date_format(terbit_sertifikat)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
         }
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, ruang_lingkup, luas_lahan, komoditas_id, nama_psat, 
              nama_ilmiah, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
-        line = line++;
     }
 
     if(value.length === 0){
@@ -330,8 +375,7 @@ exports.health_certificate = async (raw_data, body, user) => {
             alamat_kantor = raw_data[index][3],
             identitas_lot = raw_data[index][5],
             negara_tujuan = raw_data[index][6],
-            terbit_sertifikat = raw_data[index][8],
-            komoditas_id, jenis_hc_id, err_msg;
+            komoditas_id, jenis_hc_id, err_msg, is_wrong_format = false;
 
         let jenis_hc = jenis_hc_dict[raw_data[index][2]]
         if (jenis_hc == undefined || jenis_hc == null){
@@ -339,7 +383,7 @@ exports.health_certificate = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             jenis_hc_id = jenis_hc.id
         }
@@ -350,7 +394,7 @@ exports.health_certificate = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             komoditas_id = komoditas.id
         }
@@ -361,16 +405,32 @@ exports.health_certificate = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else{
             no_registration = raw_data[index][7]
+        }
+
+        let terbit_sertifikat = raw_data[index][8];
+        if(terbit_sertifikat){
+            let is_valid = format_date.check_date_format(terbit_sertifikat)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
         }
 
         value.push(
             [jenis_registrasi_id, unit_usaha, jenis_hc_id, alamat_kantor, komoditas_id, identitas_lot, 
              negara_tujuan, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
-        line = line++;
     }
 
     if(value.length === 0){
@@ -409,8 +469,7 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
             nama_ilmiah = raw_data[index][7],
             kemasan = raw_data[index][8],
             merk = raw_data[index][9],
-            terbit_sertifikat = raw_data[index][11],
-            komoditas_id, err_msg;
+            komoditas_id, err_msg, is_wrong_format = false;
 
         let komoditas = komoditas_dict[raw_data[index][5]]
         if (komoditas == undefined || komoditas == null){
@@ -418,7 +477,7 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             komoditas_id = komoditas.id
         }
@@ -429,16 +488,32 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else{
             no_registration = raw_data[index][10]
+        }
+
+        let terbit_sertifikat = raw_data[index][11];
+        if(terbit_sertifikat){
+            let is_valid = format_date.check_date_format(terbit_sertifikat)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
         }
 
         value.push(
             [jenis_registrasi_id, unit_usaha, alamat_kantor, alamat_unit, ruang_lingkup, komoditas_id, nama_psat, 
              nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
-        line = line++;
     }
 
     if(value.length === 0){
@@ -478,8 +553,8 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
             nama_psat = raw_data[index][6],
             nama_ilmiah = raw_data[index][7],
             merk = raw_data[index][8],
-            terbit_sertifikat = raw_data[index][11],
-            komoditas_id, jenis_sertifikat_id, err_msg;
+            komoditas_id, jenis_sertifikat_id, err_msg, 
+            is_wrong_format = false;
 
         let komoditas = komoditas_dict[raw_data[index][5]]
         if (komoditas == undefined || komoditas == null){
@@ -487,7 +562,7 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             komoditas_id = komoditas.id
         }
@@ -498,7 +573,7 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else {
             jenis_sertifikat_id = jenis_sertif.id
         }
@@ -509,19 +584,33 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
-            continue;
+            is_wrong_format = true
         }else{
             no_registration = raw_data[index][10]
         }
-        ['jenis_registrasi_id', 'unit_usaha', 'kota', 'alamat_kantor', 'alamat_unit', 'komoditas_id', 'nama_psat', 'nama_ilmiah', 'merk', 'jenis_sertifikat_id', 'no_registration', 'terbit_sertifikat', 'provinsi_id', 'modified_by']
+
+        let terbit_sertifikat = raw_data[index][11];
+        if(terbit_sertifikat){
+            let is_valid = format_date.check_date_format(terbit_sertifikat)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
+        }
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, komoditas_id, nama_psat, 
              nama_ilmiah, merk, jenis_sertifikat_id, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
-        line = line++;
     }
-
     if(value.length === 0){
         let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
 

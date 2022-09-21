@@ -29,7 +29,7 @@ class ImportModel {
                 ({wrong_format, key, value} = await utils.sertifikasi_prima(raw_data, body, user))
             }
             let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
-            await pool.query(format('INSERT INTO ' + db_registrations + ` (${key}) VALUES %L`, value));
+            // await pool.query(format('INSERT INTO ' + db_registrations + ` (${key}) VALUES %L`, value));
 
             return {status: '200', 
                     jenis_registrasi: jenis_registrasi.rows[0].nama,

@@ -30,6 +30,12 @@ exports.limit_time = (limit) => {
     return FormattedDate;
 }
 
+exports.check_date_format = (data_date) => {
+    let date_format = moment(data_date, 'DD-MM-YYYY').toDate();
+    let is_valid = moment(date_format, 'DD/MM/YYYY',true).isValid()
+    return is_valid;
+}
+
 exports.date_now = () => {
     var date = moment().tz("Asia/jakarta").format();
     return date;
