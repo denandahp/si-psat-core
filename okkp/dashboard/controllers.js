@@ -7,7 +7,11 @@ class DashboardController {
         let callback = async() => {
             try {
                 let param = {
-                    provinsi_id : req.query.provinsi
+                    provinsi_id : req.query.provinsi,
+                    start_date : req.query.start,
+                    end_date : req.query.end,
+                    start_terbit : req.query.start_terbit,
+                    end_terbit : req.query.end_terbit
                 }
                 let response = await model.statistik_registrasi(param);
                 if (response.status == '400') {res.status(400).json({ response });}
@@ -28,7 +32,11 @@ class DashboardController {
                 let param = {
                     provinsi_id : req.query.provinsi,
                     unit_usaha : req.query.unit_usaha,
-                    jenis_registrasi_id : req.query.jenis_registrasi
+                    jenis_registrasi_id : req.query.jenis_registrasi,
+                    start_date : req.query.start,
+                    end_date : req.query.end,
+                    start_terbit : req.query.start_terbit,
+                    end_terbit : req.query.end_terbit
                 }
                 let response = await model.registrasi_by_provinsi(param);
                 if (response.status == '400') {res.status(400).json({ response });}
@@ -47,7 +55,11 @@ class DashboardController {
         let callback = async() => {
             try {
                 let param = {
-                    provinsi_id : req.query.provinsi
+                    provinsi_id : req.query.provinsi,
+                    start_date : req.query.start,
+                    end_date : req.query.end,
+                    start_terbit : req.query.start_terbit,
+                    end_terbit : req.query.end_terbit
                 }
                 let response = await model.komoditas(param);
                 if (response.status == '400') {res.status(400).json({ response });}

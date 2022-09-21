@@ -69,7 +69,12 @@ class OkkpRegistrationsController {
                     provinsi : req.query.provinsi,
                     no_reg : core.default_dict(req.query.no_reg, ''),
                     usaha : core.default_dict(req.query.usaha, ''),
-                    id_sertif: req.query.id_sertif
+                    id_sertif: req.query.id_sertif,
+                    start_date : req.query.start,
+                    end_date : req.query.end,
+                    start_terbit : req.query.start_terbit,
+                    end_terbit : req.query.end_terbit
+
                 }
                 let response = await model.index_registrasi(parameter);
                 if (response.status == '400') {res.status(400).json({ response });}

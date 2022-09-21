@@ -50,7 +50,14 @@ class OkkpRegistrationsController {
         try {
             let filter = core.check_value(query.reg,'jenis_registrasi_id') + core.check_value( query.provinsi,'provinsi_id') + 
                          core.check_value(query.id_sertif,'jenis_sertifikat_id') +
-                         `no_registration ILIKE '%${query.no_reg}%' AND unit_usaha ILIKE '%${query.usaha}%'`
+                         `no_registration ILIKE '%${query.no_reg}%' AND unit_usaha ILIKE '%${query.usaha}%' `
+            if(query.start_date && query.end_date){
+                filter = filter + `AND created_at BETWEEN '${query.start_date}' AND '${query.end_date}' `
+            }
+
+            if(query.start_terbit && query.end_terbit){
+                filter = filter + `AND terbit_sertifikat BETWEEN '${query.start_terbit}' AND '${query.end_terbit}' `
+            }
             let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_view_registrasi)
             return { status: '200', data: registrasi };
         } catch (ex) {

@@ -41,7 +41,7 @@ exports.date_now = () => {
     return date;
 }
 
-exports.time_format = () => {
+exports.time_format = (date) => {
     var d = new Date(Date.now());
     d.toLocaleString('en-GB', { timeZone: 'Asia/Jakarta' });
     var dd = d.getDate();
