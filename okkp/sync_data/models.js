@@ -64,7 +64,7 @@ class SyncDataController {
                 } 
                 let key_info_sekretariat = Object.keys(info_sekretariat_dict).toString()
                 let value_info_sekretariat = Object.values(info_sekretariat_dict)
-                let info_sekretariat = await pool_psat.query(format(`INSERT INTO `+ db_info_sekretariat + ` (${key_info_sekretariat}) VALUES (%L) RETURNING *`, value_info_sekretariat));
+                // let info_sekretariat = await pool_psat.query(format(`INSERT INTO `+ db_info_sekretariat + ` (${key_info_sekretariat}) VALUES (%L) RETURNING *`, value_info_sekretariat));
 
                 let role_user;
                 if(data_mysql[index].id_cms_privileges == 1){
@@ -87,7 +87,7 @@ class SyncDataController {
 
                 let key_pengguna = Object.keys(pengguna_dict).toString()
                 let value_pengguna = Object.values(pengguna_dict)
-                let pengguna = await pool_psat.query(format(`INSERT INTO `+ db_pengguna + ` (${key_pengguna}) VALUES (%L) RETURNING *`, value_pengguna));
+                // let pengguna = await pool_psat.query(format(`INSERT INTO `+ db_pengguna + ` (${key_pengguna}) VALUES (%L) RETURNING *`, value_pengguna));
                 console.log(`ID user mysql: ${data_mysql[index].id} Success,`, `info secretariat : ${info_sekretariat.rows[0].id} Success,`,  `info pengguna : ${pengguna.rows[0].id} Success`)
             }
 
