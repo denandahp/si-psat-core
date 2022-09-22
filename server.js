@@ -86,6 +86,7 @@ const okkp_import = require('./okkp/imports/routes.js');
 const okkp_registrations = require('./okkp/registrations/routes.js');
 const okkp_static = require('./okkp/static/routes')
 const okkp_dashboard = require('./okkp/dashboard/routers')
+const okkp_sync_data = require('./okkp/sync_data/routes.js')
 
 //PUBLIC
 const index = require('./routes/index.js');
@@ -96,7 +97,7 @@ const sertifikat = require('./routes/sertifikat.js');
 const notifikasi = require('./routes/notifikasi.js');
 const summary = require('./routes/summary.js');
 
-
+// ---------------------- URLNAMESPACE ---------------------------------
 // PSAT
 app.use('/api/psat/sppb', sppb_psat_penambahan)
 app.use('/api/psat/sppb', sppb_psat_pengalihan)
@@ -113,6 +114,7 @@ app.use('/api/okkp/imports', okkp_import)
 app.use('/api/okkp/registrations', okkp_registrations)
 app.use('/api/okkp/static', okkp_static)
 app.use('/api/okkp/dashboard', okkp_dashboard)
+app.use('/api/okkp/sync_data', okkp_sync_data)
 
 // PUBLIC
 app.use('/', index);
