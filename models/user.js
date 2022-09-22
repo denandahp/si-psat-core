@@ -256,6 +256,8 @@ class UserModel {
         if(id == 'all'){
           if(role == 'list'){
             user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('AUDITOR','TIM_KOMTEK', 'SUPERADMIN') AND is_deleted='false'`)
+          }else if(role == 'list-okkp'){
+            user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role IN ('OKKP_ADMIN_UJILAB','OKKP_ADMIN_DAERAH','OKKP_ADMIN_PUSAT','SUPERADMIN') AND is_deleted='false'`)
           }else{
             user = await pool.query('SELECT * FROM ' + db_list_sekretariat + ` WHERE role=$1 AND is_deleted='false'` , [role])
           };
