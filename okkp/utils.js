@@ -1,5 +1,13 @@
+const constant = require('./constant')
+const dotenv = require('dotenv');
+const excelJS = require("exceljs");
+const format_date = require('../models/param/utils.js');
+const fs = require('fs');
+const path = require('path');
 const pool = require('../libs/okkp_db.js');
 const utils = require('../models/param/utils.js');
+
+dotenv.config();
 
 
 exports.pagination = async(page_query, limit_query, filter, data, query_select, database) => {
@@ -40,4 +48,46 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
         console.log('Enek seng salah iki ' + ex);
         return { "error": "data" + ex, "res": err };
     };
+}
+
+exports.exports = async(data, keys) => {
+    const workbook = new excelJS.Workbook();  // Create a new workbook
+    const worksheet = workbook.addWorksheet("My Users"); // New Worksheet
+
+    var date = format_date.time_format(), dir;
+    if(process.env.NODE_ENV == 'LOKAL'){
+        dir = path.join(process.cwd(), `/media/exports/${date}/`);
+    } else {
+        dir = `si-psat-core/media/exports/${date}/`;
+    };
+
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    // Column for data in excel. key must match data key
+    const headers_dict = await constant.headers_dict()
+    let column = [{ header: "No", key: "number", width: 10 }, ];
+    for(index in keys){
+        let worksheet_column = {
+            header: headers_dict[keys[index]],
+            key: keys[index],
+            width: 10}
+        column.push(worksheet_column)
+    }
+    worksheet.columns = column;
+
+    // Looping through User data
+    let counter = 1;
+    data.forEach((registrasi) => {
+        registrasi.number = counter;
+        worksheet.addRow(registrasi); // Add data in worksheet
+        counter++;
+    });
+
+    // Making first line in excel bold
+    worksheet.getRow(1).eachCell((cell) => {cell.font = { bold: true };});
+    let name_file = `Export-${data[0].jenis_registrasi}-${date}.xlsx`
+    dir = dir + name_file
+    return {workbook, dir}
 }

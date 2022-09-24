@@ -10,3 +10,33 @@ exports.field_db = async (jenis_registrasi_id) => {
     }
     return jenis_registrasi_field[jenis_registrasi_id]
 }
+
+exports.headers_dict = async (jenis_registrasi_id) => {
+    let keys ={
+        jenis_registrasi : "Jenis Registrasi",
+        unit_usaha: "Nama Unit Usaha",
+        kota: "Kab/Kota",
+        alamat_kantor: "Alamat Kantor",
+        alamat_unit: "Alamat Unit Penanganan",
+        komoditas: "Komoditas",
+        ruang_lingkup: "Ruang Lingkup",
+        nama_psat: "Nama PSAT",
+        nama_ilmiah: "Nama Ilmiah",
+        kemasan: "Kemasan dan Berat Bersih",
+        merk: "Nama Dagang/Merk",
+        no_registration: "Nomor Registrasi",
+        terbit_sertifikat: "Tanggal Penerbitan Sertifikat",
+        exp_sertifikat: "Tanggal Expired Sertifikat",
+        luas_lahan: "Luas Lahan",
+        label: "Label Hijau/Putih",
+        jenis_hc: "Jenis Sertifikat",
+        status: "Status",
+        created_at: "Tanggal Input",
+        updated_at: "Tanggal Input Diubah",
+        provinsi: "Provinsi",
+        negara_tujuan: "Negara Tujuan",
+        identitas_lot: "Identitas Lot"
+    }
+
+    return keys
+}

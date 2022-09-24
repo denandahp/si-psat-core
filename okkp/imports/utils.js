@@ -1,4 +1,4 @@
-const constant = require('./constant.js')
+const constant = require('../constant.js')
 const dotenv = require('dotenv');
 var format = require('pg-format');
 const format_date = require('../../models/param/utils.js');

@@ -83,6 +83,7 @@ const psat_pl_audit = require('./routes/psat_pl_audit.js');
 
 // OKKP
 const okkp_import = require('./okkp/imports/routes.js');
+const okkp_export = require('./okkp/exports/routes.js');
 const okkp_registrations = require('./okkp/registrations/routes.js');
 const okkp_static = require('./okkp/static/routes')
 const okkp_dashboard = require('./okkp/dashboard/routers')
@@ -111,6 +112,7 @@ app.use('/api/psat/pl', psat_pl_audit)
 
 // OKKP
 app.use('/api/okkp/imports', okkp_import)
+app.use('/api/okkp/exports', okkp_export)
 app.use('/api/okkp/registrations', okkp_registrations)
 app.use('/api/okkp/static', okkp_static)
 app.use('/api/okkp/dashboard', okkp_dashboard)
