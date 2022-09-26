@@ -13,12 +13,12 @@ class OkkpRegistrationsController {
     async create_registrations(data, user) {
         try {
             let registrasi;
-            let {key, value} = utils.serialize_registrations(data, user, 'created')
-            let is_alread_exist = utils.is_no_register_already_exist(data)
-            if(is_alread_exist == false){
+            let {key, value} = await utils.serialize_registrations(data, user, 'created')
+            let is_already_exist = await utils.is_no_register_already_exist(data)
+            if(is_already_exist == false){
                 registrasi = await pool.query(format('INSERT INTO ' + db_registrations + ` (${key}) VALUES (%L) RETURNING *`, value));
             }else{
-                return { status: '400', Error: "Nomor registrasi sudah terdaftar", data: is_alread_exist };
+                return { status: '400', Error: "Nomor registrasi sudah terdaftar", data: is_already_exist };
             }
             return { status: '200', data: registrasi.rows[0] };
         } catch (ex) {

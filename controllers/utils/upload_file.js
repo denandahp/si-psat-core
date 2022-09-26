@@ -44,11 +44,16 @@ class UploadController {
         try {
             let query_path = req.query.path;
             if (fs.existsSync(query_path)) {
+                let ext_file = path.extname(query_path)
+                if(ext_file == ".pdf"){
+                    res.setHeader('Content-Type', 'application/pdf');
+                }else{
+                    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                }
                 let filename = query_path.split('/')
                 var file = fs.createReadStream(query_path);
                 var stat = fs.statSync(query_path);
                 res.setHeader('Content-Length', stat.size);
-                res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', `attachment; filename=${filename[filename.length-1]}`);
                 file.pipe(res);
             } else {
