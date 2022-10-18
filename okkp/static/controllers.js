@@ -224,6 +224,23 @@ class StaticController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    // ----------------------- CRUD STATUS UJI LAB----------------------------
+    async index_status_uji_lab(req, res, next) {
+        let callback = async() => {
+            try {
+                let response = await model.index_status_uji_lab();
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     // ----------------------- CRUD JENIS HC ----------------------------
     async create_jenis_hc(req, res, next) {
         let callback = async() => {
@@ -280,6 +297,150 @@ class StaticController {
         let callback = async() => {
             try {
                 let response = await model.index_jenis_hc();
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    // ----------------------- CRUD Parameter Rapid Test ----------------------------
+    async create_param_rapid_test(req, res, next) {
+        let callback = async() => {
+            try {
+                let paramater_rapid_test = req.params.paramater_rapid_test;
+                let requset_body = req.body;
+                let response = await model.create_param_rapid_test(paramater_rapid_test, requset_body);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async update_param_rapid_test(req, res, next) {
+        let callback = async() => {
+            try {
+                let paramater_rapid_test = req.params.paramater_rapid_test;
+                let requset_body = req.body;
+                let response = await model.update_param_rapid_test(paramater_rapid_test, requset_body);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async delete_param_rapid_test(req, res, next) {
+        let callback = async() => {
+            try {
+                let paramater_rapid_test = req.params.paramater_rapid_test;
+                let id = req.query.id;
+                let response = await model.delete_param_rapid_test(paramater_rapid_test, id);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async index_param_rapid_test(req, res, next) {
+        let callback = async() => {
+            try {
+                let paramater_rapid_test = req.params.paramater_rapid_test;
+                let response = await model.index_param_rapid_test(paramater_rapid_test);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    // ----------------------- CRUD Jenis Uji ----------------------------
+    async create_jenis_uji(req, res, next) {
+        let callback = async() => {
+            try {
+                let jenis_uji = req.params.jenis_uji;
+                let requset_body = req.body;
+                let response = await model.create_jenis_uji(jenis_uji, requset_body);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async update_jenis_uji(req, res, next) {
+        let callback = async() => {
+            try {
+                let jenis_uji = req.params.jenis_uji;
+                let requset_body = req.body;
+                let response = await model.update_jenis_uji(jenis_uji, requset_body);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async delete_jenis_uji(req, res, next) {
+        let callback = async() => {
+            try {
+                let jenis_uji = req.params.jenis_uji;
+                let id = req.query.id;
+                let response = await model.delete_jenis_uji(jenis_uji, id);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async index_jenis_uji(req, res, next) {
+        let callback = async() => {
+            try {
+                let jenis_uji = req.params.jenis_uji;
+                let response = await model.index_jenis_uji(jenis_uji);
                 if (response.status == '400') {res.status(400).json({ response });}
                 else { res.status(200).json({ response });}
             } catch (e) {

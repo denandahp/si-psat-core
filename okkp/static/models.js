@@ -1,15 +1,17 @@
 const param_utils = require('../../models/param/utils.js');
 const mysql = require('../../libs/mysql.js');
 const pool = require('../../libs/okkp_db.js');
+const utils = require('./utils.js')
 var format = require('pg-format');
 
-let schema = 'static';
-let db_komoditas = schema + '.komoditas';
-let db_jenis_registrasi = schema + '.jenis_registrasi';
-let db_jenis_sertifikat = schema + '.jenis_sertifikat';
-let db_jenis_hc = schema + '.jenis_hc';
-let db_provinsi = schema + '.provinsi';
-let db_status = schema + '.status';
+const schema = 'static';
+const db_komoditas = schema + '.komoditas';
+const db_jenis_registrasi = schema + '.jenis_registrasi';
+const db_jenis_sertifikat = schema + '.jenis_sertifikat';
+const db_jenis_hc = schema + '.jenis_hc';
+const db_provinsi = schema + '.provinsi';
+const db_status = schema + '.status';
+const db_status_uji_lab = schema + '.status_uji_lab';
 
 let date_now = param_utils.date_now()
 
@@ -142,6 +144,16 @@ class StaticController {
         };
     }
 
+    // ----------------------- CRUD STATUS ----------------------------
+    async index_status_uji_lab() {
+        try {
+            let status = await pool.query(format('SELECT id, nama FROM ' + db_status_uji_lab));
+            return { status: '200', data: status.rows};
+        } catch (ex) {
+            console.log('data', 'error ' + ex)
+        };
+    }
+
     // ----------------------- CRUD Jenis HC ----------------------------
     async create_jenis_hc(data) {
         try {
@@ -176,6 +188,92 @@ class StaticController {
         try {
             let jenis_hc = await pool.query(format('SELECT id, nama FROM ' + db_jenis_hc));
             return { status: '200', data: jenis_hc.rows};
+        } catch (ex) {
+            console.log('data', 'error ' + ex)
+        };
+    }
+
+    // ----------------------- CRUD Parameter Rapid Test ----------------------------
+    async create_param_rapid_test(parameter, data) {
+        try {
+            let value = [data.nama, date_now, date_now]
+            const database_name = await utils.database_parameter(parameter)
+            let param_rapid_test = await pool.query(format('INSERT INTO ' + database_name + ` (nama, created_at, updated_at) VALUES (%L) RETURNING *`, value));
+            return { status: '200', data: param_rapid_test.rows[0] };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_param_rapid_test(parameter, data) {
+        try {
+            let value = [data.id, data.nama, date_now]
+            const database_name = await utils.database_parameter(parameter)
+            let param_rapid_test = await pool.query('UPDATE ' + database_name + ` SET (nama, updated_at) = ($2, $3) WHERE id=$1 RETURNING *`, value);
+            return { status: '200', data: param_rapid_test.rows[0] };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async delete_param_rapid_test(parameter, id) {
+        try {
+            const database_name = await utils.database_parameter(parameter)
+            let param_rapid_test = await pool.query('DELETE FROM ' + database_name + ` WHERE id=${id} RETURNING *`);
+            return { status: '200', data: param_rapid_test.rows[0] };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async index_param_rapid_test(parameter) {
+        try {
+            const database_name = await utils.database_parameter(parameter)
+            let param_rapid_test = await pool.query(format('SELECT id, nama FROM ' + database_name));
+            return { status: '200', data: param_rapid_test.rows};
+        } catch (ex) {
+            console.log('data', 'error ' + ex)
+        };
+    }
+
+    // ----------------------- CRUD Jenis Uji ----------------------------
+    async create_jenis_uji(parameter, data) {
+        try {
+            let value = [data.nama, date_now, date_now]
+            const database_name = await utils.database_parameter(parameter)
+            let jenis_uji = await pool.query(format('INSERT INTO ' + database_name + ` (nama, created_at, updated_at) VALUES (%L) RETURNING *`, value));
+            return { status: '200', data: jenis_uji.rows[0] };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async update_jenis_uji(parameter, data) {
+        try {
+            let value = [data.id, data.nama, date_now]
+            const database_name = await utils.database_parameter(parameter)
+            let jenis_uji = await pool.query('UPDATE ' + database_name + ` SET (nama, updated_at) = ($2, $3) WHERE id=$1 RETURNING *`, value);
+            return { status: '200', data: jenis_uji.rows[0] };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async delete_jenis_uji(parameter, id) {
+        try {
+            const database_name = await utils.database_parameter(parameter)
+            let jenis_uji = await pool.query('DELETE FROM ' + database_name + ` WHERE id=${id} RETURNING *`);
+            return { status: '200', data: jenis_uji.rows[0] };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async index_jenis_uji(parameter) {
+        try {
+            const database_name = await utils.database_parameter(parameter)
+            let jenis_uji = await pool.query(format('SELECT id, nama FROM ' + database_name));
+            return { status: '200', data: jenis_uji.rows};
         } catch (ex) {
             console.log('data', 'error ' + ex)
         };
