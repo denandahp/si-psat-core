@@ -6,6 +6,4 @@ Router.get('/statistik_registrasi', controllers.statistik_registrasi)
       .get('/registrasi_by_provinsi', controllers.registrasi_by_provinsi)
       .get('/komoditas', controllers.komoditas)
 
-
-
 module.exports = Router;

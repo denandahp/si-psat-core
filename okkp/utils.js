@@ -19,6 +19,7 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
         err = [];
     var date = utils.date_now();
     try {
+        console.log(filter)
         counts = await pool.query('SELECT COUNT (*)  FROM ' + database + ` WHERE ${filter} `, data);
         if (endIndex <= counts.rows[0].count) {
             results.next = {
