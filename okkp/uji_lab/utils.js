@@ -11,6 +11,7 @@ exports.serialize_uji_lab = (data, user, process) => {
         "jenis_uji_lab_id" : data.jenis_uji_lab_id,
         "user_id" : user.id,
         "lembaga" : user.duduk_lembaga,
+        "tanggal" : data.tanggal,
         "lokasi_sampel" : data.lokasi_sampel,
         "komoditas_id" : data.komoditas_id,
         "komoditas_tambahan" : data.komoditas_tambahan,

@@ -10,6 +10,7 @@ exports.serialize_rapid_test = (data, user, process) => {
         "jenis_rapid_test_id" : data.jenis_rapid_test_id,
         "user_id" : user.id,
         "lembaga" : user.duduk_lembaga,
+        "tanggal" : data.tanggal,
         "lokasi_sampel" : data.lokasi_sampel,
         "komoditas_id" : data.komoditas_id,
         "komoditas_tambahan" : data.komoditas_tambahan,

@@ -15,6 +15,7 @@ const db_komoditas = schema_static + '.komoditas'
 const db_jenis_hc = schema_static + '.jenis_hc'
 const db_jenis_registrasi = schema_static + '.jenis_registrasi';
 const db_jenis_sertifikat = schema_static + '.jenis_sertifikat';
+const db_status_uji_lab = schema_static + '.status_uji_lab';
 
 const schema_regis = 'register';
 const db_registrations = schema_regis + '.registrasi';
@@ -51,8 +52,15 @@ exports.param = () => {
 }
 
 exports.validation_headers = async (headers, body) => {
-    let header_imports = await pool.query('SELECT * FROM ' + db_header_import + 
-                                          ` WHERE jenis_registrasi_id=${body.registrasi_id} ORDER BY jenis_registrasi_id ASC`);
+    let header_imports;
+    if (body.jenis_uji){
+        header_imports = await pool.query('SELECT * FROM ' + db_header_import + 
+                                          ` WHERE jenis_uji=${body.registrasi_id} ORDER BY jenis_uji ASC`);
+    }else if(body.registrasi_id){
+        header_imports = await pool.query('SELECT * FROM ' + db_header_import + 
+                                              ` WHERE jenis_registrasi_id=${body.registrasi_id} ORDER BY jenis_registrasi_id ASC`);
+    }
+
     let fix_headers = header_imports.rows[0].headers
     let is_same = headers.length == fix_headers.length && fix_headers.every(function(element, index) {
         return element === headers[index]; 
@@ -78,6 +86,16 @@ exports.mapping_jenis_sertif_dict = async () => {
     }
 
     return jenis_sertif_dict
+}
+
+exports.mapping_status_uji_lab_dict = async () => {
+    let status_uji_lab_dict = {}
+    let status_uji_lab = await pool.query(`select * from ${db_status_uji_lab}`)
+    for(index in status_uji_lab.rows){
+        status_uji_lab_dict[status_uji_lab.rows[index].nama] = {'id' : status_uji_lab.rows[index].id, 'Nama': status_uji_lab.rows[index].nama}
+    }
+
+    return status_uji_lab_dict
 }
 
 exports.mapping_no_registrasi_dict = async (raw_data, index_no_regis, jenis_registrasi_id) => {
@@ -618,6 +636,83 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
                 code: '401' ,
                 jenis_registrasi: jenis_registrasi.rows[0].nama,
                 details: wrong_format});
+    }
+
+    return {wrong_format, key, value}
+}
+
+exports.uji_lab = async (raw_data, body, user) => {
+    let jenis_uji_lab_id = body.jenis_uji_lab, 
+        modified_by = user.email,
+        created_by = user.email,
+        user_id = user.id,
+        error_msg = {};
+
+    let komoditas_dict = await this.mapping_komoditas_dict()
+    let status_uji_lab = await this.mapping_status_uji_lab_dict()
+
+    // Get key dari constant
+    let field_registrasi = await constant.field_db_uji(jenis_uji)
+    let key = field_registrasi.toString()
+    let value = [], wrong_format = [], line =1;
+
+    // Mapping data
+    for(index in raw_data){
+        let no = raw_data[index][0],
+            lembaga = raw_data[index][1],
+            lokasi_sampel = raw_data[index][3],
+            komoditas_tambahan = raw_data[index][5],
+            hasil_uji = raw_data[index][6],
+            parameter = raw_data[index][7],
+            standar = raw_data[index][8],
+            referensi_bmr = raw_data[index][9],
+            metode_uji = raw_data[index][10],
+            err_msg, 
+            is_wrong_format = false;
+
+        let tanggal = raw_data[index][2];
+        if(tanggal){
+            let is_valid = format_date.check_date_format(tanggal)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }
+        }
+
+        let komoditas = komoditas_dict[raw_data[index][4]]
+        if (komoditas == undefined || komoditas == null){
+            err_msg = 'Format Komoditas Salah';
+            error_msg[err_msg] = true
+            raw_data[index].push(err_msg, line);
+            wrong_format.push(raw_data[index]);
+            is_wrong_format = true
+        }else {
+            komoditas_id = komoditas.id
+        }
+
+        let status_id = status_uji_lab[raw_data[index][11]]
+        if (status_id){
+            err_msg = 'Status Uji Lab Salah';
+            error_msg[err_msg] = true
+            raw_data[index].push(err_msg, line);
+            wrong_format.push(raw_data[index]);
+            is_wrong_format = true
+        }else{
+            status_id = raw_data[index][11]
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
+        }
+
+        value.push(
+            [jenis_uji_lab_id, user_id, lembaga, tanggal, lokasi_sampel, komoditas_id, komoditas_tambahan, parameter, 
+             hasil_uji, standar, status_id, referensi_bmr, metode_uji, created_by, modified_by]
+        )
     }
 
     return {wrong_format, key, value}
