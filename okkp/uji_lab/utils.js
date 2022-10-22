@@ -10,7 +10,7 @@ exports.serialize_uji_lab = (data, user, process) => {
     let serialize = {
         "jenis_uji_lab_id" : data.jenis_uji_lab_id,
         "user_id" : user.id,
-        "lembaga" : user.duduk_lembaga,
+        "lembaga" : (data.lembaga) ? data.lembaga : user.duduk_lembaga,
         "tanggal" : data.tanggal,
         "lokasi_sampel" : data.lokasi_sampel,
         "komoditas_id" : data.komoditas_id,
