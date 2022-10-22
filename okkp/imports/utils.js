@@ -17,6 +17,7 @@ const db_jenis_registrasi = schema_static + '.jenis_registrasi';
 const db_jenis_sertifikat = schema_static + '.jenis_sertifikat';
 const db_status_uji_lab = schema_static + '.status_uji_lab';
 
+const db_jenis_rapid_test= schema_static + '.jenis_rapid_test';
 const db_rt_aflatoksin = schema_static + '.rt_aflatoksin';
 const db_rt_logam_berat = schema_static + '.rt_logam_berat';
 const db_rt_mikroba = schema_static + '.rt_mikroba';
@@ -141,6 +142,16 @@ exports.mapping_rt_pestisida_dict = async () => {
     }
 
     return rt_pestisida_dict
+}
+
+exports.mapping_jenis_rapid_test_dict = async () => {
+    let jenis_rapid_test_dict = {}
+    let jenis_rapid_test = await pool.query(`select * from ${db_jenis_rapid_test}`)
+    for(index in jenis_rapid_test.rows){
+        jenis_rapid_test_dict[jenis_rapid_test.rows[index].nama] = {'id' : jenis_rapid_test.rows[index].id, 'Nama': jenis_rapid_test.rows[index].nama}
+    }
+
+    return jenis_rapid_test_dict
 }
 
 exports.mapping_no_registrasi_dict = async (raw_data, index_no_regis, jenis_registrasi_id) => {
@@ -699,7 +710,8 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
 }
 
 exports.uji_lab = async (raw_data, body, user) => {
-    let jenis_uji_lab_id = body.jenis_uji_lab, 
+    let jenis_uji_lab_id = body.jenis_uji_lab,
+        jenis_uji = body.jenis_uji,
         modified_by = user.email,
         created_by = user.email,
         user_id = user.id,
@@ -709,7 +721,7 @@ exports.uji_lab = async (raw_data, body, user) => {
     let status_uji_lab = await this.mapping_status_uji_lab_dict()
 
     // Get key dari constant
-    let field_registrasi = await constant.field_db_uji(jenis_uji_lab_id)
+    let field_registrasi = await constant.field_db_uji(jenis_uji)
     let key = field_registrasi.toString()
     let value = [], wrong_format = [], line =1;
 
@@ -776,8 +788,8 @@ exports.uji_lab = async (raw_data, body, user) => {
 }
 
 exports.rapid_test = async (raw_data, body, user) => {
-    let jenis_rapid_test_id = body.jenis_uji,
-        jenis_parameter = body.jenis_rapid_test
+    let jenis_rapid_test_id = body.jenis_rapid_test,
+        jenis_uji = body.jenis_uji,
         modified_by = user.email,
         created_by = user.email,
         user_id = user.id,
@@ -785,18 +797,20 @@ exports.rapid_test = async (raw_data, body, user) => {
         parameter_dict;
 
     let komoditas_dict = await this.mapping_komoditas_dict()
-    if(jenis_parameter == 1){
+    let jenis_rapid_test_dict = await this.mapping_jenis_rapid_test_dict()
+
+    if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Aflatoksin'].id){
         parameter_dict = await this.mapping_rt_aflatoksin_dict()
-    }else if(jenis_parameter == 2){
+    }else if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Logam Berat'].id){
         parameter_dict = await this.mapping_rt_logam_berat_dict()
-    }else if(jenis_parameter == 3){
+    }else if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Mikroba'].id){
         parameter_dict = await this.mapping_rt_mikroba_dict()
-    }else if(jenis_parameter == 4){
+    }else if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Pestisida'].id){
         parameter_dict = await this.mapping_rt_pestisida_dict()
     }
 
     // Get key dari constant
-    let field_registrasi = await constant.field_db_uji(jenis_uji_lab_id)
+    let field_registrasi = await constant.field_db_uji(jenis_uji)
     let key = field_registrasi.toString()
     let value = [], wrong_format = [], line =1;
 
@@ -808,7 +822,7 @@ exports.rapid_test = async (raw_data, body, user) => {
             komoditas_tambahan = raw_data[index][5],
             hasil_uji = raw_data[index][7],
             note = raw_data[index][8],
-            err_msg, is_wrong_format = false,parameter_id, 
+            err_msg, is_wrong_format = false, 
             logam_berat_id, mikroba_id, aflatoksin_id, pestisida_id;
 
         let tanggal = raw_data[index][2];
@@ -838,19 +852,19 @@ exports.rapid_test = async (raw_data, body, user) => {
 
         let parameter = parameter_dict[raw_data[index][6]]
         if (parameter == undefined || parameter == null){
-            err_msg = 'Format Komoditas Salah';
+            err_msg = 'Format Parameter Salah';
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
             is_wrong_format = true
         }else {
-            if(jenis_parameter == 1){
+            if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Aflatoksin'].id){
                 aflatoksin_id = parameter.id
-            }else if(jenis_parameter == 2){
+            }else if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Logam Berat'].id){
                 logam_berat_id = parameter.id
-            }else if(jenis_parameter == 3){
+            }else if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Mikroba'].id){
                 mikroba_id = parameter.id
-            }else if(jenis_parameter == 4){
+            }else if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Pestisida'].id){
                 pestisida_id = parameter.id
             }
         }
@@ -861,7 +875,7 @@ exports.rapid_test = async (raw_data, body, user) => {
         }
 
         value.push(
-            [jenis_rapid_test_id, user_id, lembaga, tanggal, lokasi_sampel, komoditas_id, komoditas_tambahan, parameter, 
+            [jenis_rapid_test_id, user_id, lembaga, tanggal, lokasi_sampel, komoditas_id, komoditas_tambahan, 
              logam_berat_id, mikroba_id, aflatoksin_id, pestisida_id, hasil_uji, note, created_by, modified_by]
         )
     }

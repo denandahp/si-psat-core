@@ -56,7 +56,7 @@ class ImportModel {
                 wrong_format, key, value,
                 jenis_uji_lab;
             
-                await pool.query('BEGIN');
+            await pool.query('BEGIN');
             if(jenis_uji == 1){
                 let id_jenis_uji_lab = body.jenis_uji_lab
                 jenis_uji_lab = await pool.query('SELECT * FROM ' + db_jenis_uji_lab + ` WHERE id=${id_jenis_uji_lab}`);
@@ -66,7 +66,7 @@ class ImportModel {
                 let id_jenis_rapid_test = body.jenis_rapid_test
                 jenis_uji_lab = await pool.query('SELECT * FROM ' + db_jenis_rapid_test + ` WHERE id=${id_jenis_rapid_test}`);
                 ({wrong_format, key, value} = await utils.rapid_test(raw_data, body, user))
-                // await pool.query(format('INSERT INTO ' + db_rapid_test + ` (${key}) VALUES %L`, value));
+                await pool.query(format('INSERT INTO ' + db_rapid_test + ` (${key}) VALUES %L`, value));
             }
             await pool.query('COMMIT');
 
