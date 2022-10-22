@@ -4,7 +4,11 @@ const utils = require('./utils.js')
 
 const schema_static = 'static'
 const schema_regis = 'register';
+
 const db_registrations = schema_regis + '.registrasi';
+const db_uji_lab = schema_regis + '.uji_lab';
+const db_rapid_test = schema_regis + '.rapid_test';
+
 const db_jenis_registrasi = schema_static + '.jenis_registrasi';
 const db_jenis_uji_lab = schema_static + '.jenis_uji_lab ';
 const db_jenis_rapid_test = schema_static + '.jenis_rapid_test';
@@ -51,24 +55,27 @@ class ImportModel {
             let jenis_uji= body.jenis_uji,
                 wrong_format, key, value,
                 jenis_uji_lab;
-
+            
+                await pool.query('BEGIN');
             if(jenis_uji == 1){
                 let id_jenis_uji_lab = body.jenis_uji_lab
                 jenis_uji_lab = await pool.query('SELECT * FROM ' + db_jenis_uji_lab + ` WHERE id=${id_jenis_uji_lab}`);
                 ({wrong_format, key, value} = await utils.uji_lab(raw_data, body, user))
+                await pool.query(format('INSERT INTO ' + db_uji_lab + ` (${key}) VALUES %L`, value));
             }else if(jenis_uji == 2){
                 let id_jenis_rapid_test = body.jenis_rapid_test
                 jenis_uji_lab = await pool.query('SELECT * FROM ' + db_jenis_rapid_test + ` WHERE id=${id_jenis_rapid_test}`);
                 ({wrong_format, key, value} = await utils.rapid_test(raw_data, body, user))
+                // await pool.query(format('INSERT INTO ' + db_rapid_test + ` (${key}) VALUES %L`, value));
             }
-            
-            // await pool.query(format('INSERT INTO ' + db_registrations + ` (${key}) VALUES %L`, value));
+            await pool.query('COMMIT');
 
             return {status: '200', 
                     jenis_uji: jenis_uji_lab.rows[0].nama,
                     keterangan: 'Import Success',
                     not_created: wrong_format};
         } catch (ex) {
+            await pool.query('ROLLBACK');
             if (ex.code == '401') {
                 return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_upload: ex.details };
             }

@@ -17,6 +17,11 @@ const db_jenis_registrasi = schema_static + '.jenis_registrasi';
 const db_jenis_sertifikat = schema_static + '.jenis_sertifikat';
 const db_status_uji_lab = schema_static + '.status_uji_lab';
 
+const db_rt_aflatoksin = schema_static + '.rt_aflatoksin';
+const db_rt_logam_berat = schema_static + '.rt_logam_berat';
+const db_rt_mikroba = schema_static + '.rt_mikroba';
+const db_rt_pestisida = schema_static + '.rt_pestisida';
+
 const schema_regis = 'register';
 const db_registrations = schema_regis + '.registrasi';
 
@@ -55,7 +60,7 @@ exports.validation_headers = async (headers, body) => {
     let header_imports;
     if (body.jenis_uji){
         header_imports = await pool.query('SELECT * FROM ' + db_header_import + 
-                                          ` WHERE jenis_uji=${body.registrasi_id} ORDER BY jenis_uji ASC`);
+                                          ` WHERE jenis_uji=${body.jenis_uji} ORDER BY jenis_uji ASC`);
     }else if(body.registrasi_id){
         header_imports = await pool.query('SELECT * FROM ' + db_header_import + 
                                               ` WHERE jenis_registrasi_id=${body.registrasi_id} ORDER BY jenis_registrasi_id ASC`);
@@ -96,6 +101,46 @@ exports.mapping_status_uji_lab_dict = async () => {
     }
 
     return status_uji_lab_dict
+}
+
+exports.mapping_rt_aflatoksin_dict = async () => {
+    let rt_aflatoksin_dict = {}
+    let rt_aflatoksin = await pool.query(`select * from ${db_rt_aflatoksin}`)
+    for(index in rt_aflatoksin.rows){
+        rt_aflatoksin_dict[rt_aflatoksin.rows[index].nama] = {'id' : rt_aflatoksin.rows[index].id, 'Nama': rt_aflatoksin.rows[index].nama}
+    }
+
+    return rt_aflatoksin_dict
+}
+
+exports.mapping_rt_logam_berat_dict = async () => {
+    let rt_logam_berat_dict = {}
+    let rt_logam_berat = await pool.query(`select * from ${db_rt_logam_berat}`)
+    for(index in rt_logam_berat.rows){
+        rt_logam_berat_dict[rt_logam_berat.rows[index].nama] = {'id' : rt_logam_berat.rows[index].id, 'Nama': rt_logam_berat.rows[index].nama}
+    }
+
+    return rt_logam_berat_dict
+}
+
+exports.mapping_rt_mikroba_dict = async () => {
+    let rt_mikroba_dict = {}
+    let rt_mikroba = await pool.query(`select * from ${db_rt_mikroba}`)
+    for(index in rt_mikroba.rows){
+        rt_mikroba_dict[rt_mikroba.rows[index].nama] = {'id' : rt_mikroba.rows[index].id, 'Nama': rt_mikroba.rows[index].nama}
+    }
+
+    return rt_mikroba_dict
+}
+
+exports.mapping_rt_pestisida_dict = async () => {
+    let rt_pestisida_dict = {}
+    let rt_pestisida = await pool.query(`select * from ${db_rt_pestisida}`)
+    for(index in rt_pestisida.rows){
+        rt_pestisida_dict[rt_pestisida.rows[index].nama] = {'id' : rt_pestisida.rows[index].id, 'Nama': rt_pestisida.rows[index].nama}
+    }
+
+    return rt_pestisida_dict
 }
 
 exports.mapping_no_registrasi_dict = async (raw_data, index_no_regis, jenis_registrasi_id) => {
@@ -172,6 +217,8 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
                 is_wrong_format = true
+            }else{
+                terbit_sertifikat = format_date.date_format(terbit_sertifikat)
             }
         }
 
@@ -256,6 +303,8 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
                 is_wrong_format = true
+            }else{
+                terbit_sertifikat = format_date.date_format(terbit_sertifikat)
             }
         }
 
@@ -340,6 +389,8 @@ exports.packing_house = async (raw_data, body, user) => {
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
                 is_wrong_format = true
+            }else{
+                terbit_sertifikat = format_date.date_format(terbit_sertifikat)
             }
         }
 
@@ -437,6 +488,8 @@ exports.health_certificate = async (raw_data, body, user) => {
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
                 is_wrong_format = true
+            }else{
+                terbit_sertifikat = format_date.date_format(terbit_sertifikat)
             }
         }
 
@@ -520,6 +573,8 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
                 is_wrong_format = true
+            }else{
+                terbit_sertifikat = format_date.date_format(terbit_sertifikat)
             }
         }
 
@@ -616,6 +671,8 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
                 is_wrong_format = true
+            }else{
+                terbit_sertifikat = format_date.date_format(terbit_sertifikat)
             }
         }
 
@@ -652,7 +709,7 @@ exports.uji_lab = async (raw_data, body, user) => {
     let status_uji_lab = await this.mapping_status_uji_lab_dict()
 
     // Get key dari constant
-    let field_registrasi = await constant.field_db_uji(jenis_uji)
+    let field_registrasi = await constant.field_db_uji(jenis_uji_lab_id)
     let key = field_registrasi.toString()
     let value = [], wrong_format = [], line =1;
 
@@ -679,6 +736,8 @@ exports.uji_lab = async (raw_data, body, user) => {
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
                 is_wrong_format = true
+            }else{
+                tanggal = format_date.date_format(tanggal)
             }
         }
 
@@ -693,15 +752,13 @@ exports.uji_lab = async (raw_data, body, user) => {
             komoditas_id = komoditas.id
         }
 
-        let status_id = status_uji_lab[raw_data[index][11]]
-        if (status_id){
+        let status_id = status_uji_lab[raw_data[index][11]].id
+        if (status_id == undefined || status_id == null){
             err_msg = 'Status Uji Lab Salah';
             error_msg[err_msg] = true
             raw_data[index].push(err_msg, line);
             wrong_format.push(raw_data[index]);
             is_wrong_format = true
-        }else{
-            status_id = raw_data[index][11]
         }
 
         line++;
@@ -712,6 +769,100 @@ exports.uji_lab = async (raw_data, body, user) => {
         value.push(
             [jenis_uji_lab_id, user_id, lembaga, tanggal, lokasi_sampel, komoditas_id, komoditas_tambahan, parameter, 
              hasil_uji, standar, status_id, referensi_bmr, metode_uji, created_by, modified_by]
+        )
+    }
+
+    return {wrong_format, key, value}
+}
+
+exports.rapid_test = async (raw_data, body, user) => {
+    let jenis_rapid_test_id = body.jenis_uji,
+        jenis_parameter = body.jenis_rapid_test
+        modified_by = user.email,
+        created_by = user.email,
+        user_id = user.id,
+        error_msg = {},
+        parameter_dict;
+
+    let komoditas_dict = await this.mapping_komoditas_dict()
+    if(jenis_parameter == 1){
+        parameter_dict = await this.mapping_rt_aflatoksin_dict()
+    }else if(jenis_parameter == 2){
+        parameter_dict = await this.mapping_rt_logam_berat_dict()
+    }else if(jenis_parameter == 3){
+        parameter_dict = await this.mapping_rt_mikroba_dict()
+    }else if(jenis_parameter == 4){
+        parameter_dict = await this.mapping_rt_pestisida_dict()
+    }
+
+    // Get key dari constant
+    let field_registrasi = await constant.field_db_uji(jenis_uji_lab_id)
+    let key = field_registrasi.toString()
+    let value = [], wrong_format = [], line =1;
+
+    // Mapping data
+    for(index in raw_data){
+        let no = raw_data[index][0],
+            lembaga = raw_data[index][1],
+            lokasi_sampel = raw_data[index][3],
+            komoditas_tambahan = raw_data[index][5],
+            hasil_uji = raw_data[index][7],
+            note = raw_data[index][8],
+            err_msg, is_wrong_format = false,parameter_id, 
+            logam_berat_id, mikroba_id, aflatoksin_id, pestisida_id;
+
+        let tanggal = raw_data[index][2];
+        if(tanggal){
+            let is_valid = format_date.check_date_format(tanggal)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }else{
+                tanggal = format_date.date_format(tanggal)
+            }
+        }
+
+        let komoditas = komoditas_dict[raw_data[index][4]]
+        if (komoditas == undefined || komoditas == null){
+            err_msg = 'Format Komoditas Salah';
+            error_msg[err_msg] = true
+            raw_data[index].push(err_msg, line);
+            wrong_format.push(raw_data[index]);
+            is_wrong_format = true
+        }else {
+            komoditas_id = komoditas.id
+        }
+
+        let parameter = parameter_dict[raw_data[index][6]]
+        if (parameter == undefined || parameter == null){
+            err_msg = 'Format Komoditas Salah';
+            error_msg[err_msg] = true
+            raw_data[index].push(err_msg, line);
+            wrong_format.push(raw_data[index]);
+            is_wrong_format = true
+        }else {
+            if(jenis_parameter == 1){
+                aflatoksin_id = parameter.id
+            }else if(jenis_parameter == 2){
+                logam_berat_id = parameter.id
+            }else if(jenis_parameter == 3){
+                mikroba_id = parameter.id
+            }else if(jenis_parameter == 4){
+                pestisida_id = parameter.id
+            }
+        }
+
+        line++;
+        if(is_wrong_format){
+            continue;
+        }
+
+        value.push(
+            [jenis_rapid_test_id, user_id, lembaga, tanggal, lokasi_sampel, komoditas_id, komoditas_tambahan, parameter, 
+             logam_berat_id, mikroba_id, aflatoksin_id, pestisida_id, hasil_uji, note, created_by, modified_by]
         )
     }
 
