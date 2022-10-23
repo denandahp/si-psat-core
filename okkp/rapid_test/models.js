@@ -14,9 +14,12 @@ class OkkpRapidTestController {
         try {
             let rapid_test;
             let {key, value} = await utils.serialize_rapid_test(data, user, 'created')
+            await pool.query('BEGIN');
             rapid_test = await pool.query(format('INSERT INTO ' + db_rapid_test + ` (${key}) VALUES (%L) RETURNING *`, value));
+            await pool.query('COMMIT');
             return { status: '200', data: rapid_test.rows[0] };
         } catch (ex) {
+            await pool.query('ROLLBACK');
             return { status: '400', Error: "" + ex };
         };
     }
@@ -24,9 +27,12 @@ class OkkpRapidTestController {
     async update_rapid_test(data, user) {
         try {
             let {key, value} = utils.serialize_rapid_test(data, user, 'updated')
+            await pool.query('BEGIN');
             let rapid_test = await pool.query(format('UPDATE ' + db_rapid_test + ` SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value));
+            await pool.query('COMMIT');
             return { status: '200', data: rapid_test.rows[0] };
         } catch (ex) {
+            await pool.query('ROLLBACK');
             return { status: '400', Error: "" + ex };
         };
     }

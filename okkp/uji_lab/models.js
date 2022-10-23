@@ -14,9 +14,12 @@ class OkkpUjiLabController {
         try {
             let uji_lab;
             let {key, value} = await utils.serialize_uji_lab(data, user, 'created')
+            await pool.query('BEGIN');
             uji_lab = await pool.query(format('INSERT INTO ' + db_uji_lab + ` (${key}) VALUES (%L) RETURNING *`, value));
+            await pool.query('COMMIT');
             return { status: '200', data: uji_lab.rows[0] };
         } catch (ex) {
+            await pool.query('ROLLBACK');
             return { status: '400', Error: "" + ex };
         };
     }
@@ -24,9 +27,12 @@ class OkkpUjiLabController {
     async update_uji_lab(data, user) {
         try {
             let {key, value} = utils.serialize_uji_lab(data, user, 'updated')
+            await pool.query('BEGIN');
             let uji_lab = await pool.query(format('UPDATE ' + db_uji_lab + ` SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value));
+            await pool.query('COMMIT');
             return { status: '200', data: uji_lab.rows[0] };
         } catch (ex) {
+            await pool.query('ROLLBACK');
             return { status: '400', Error: "" + ex };
         };
     }

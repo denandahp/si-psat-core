@@ -15,13 +15,16 @@ class OkkpRegistrationsController {
             let registrasi;
             let {key, value} = await utils.serialize_registrations(data, user, 'created')
             let is_already_exist = await utils.is_no_register_already_exist(data)
+            await pool.query('BEGIN');
             if(is_already_exist == false){
                 registrasi = await pool.query(format('INSERT INTO ' + db_registrations + ` (${key}) VALUES (%L) RETURNING *`, value));
+                await pool.query('COMMIT');
             }else{
                 return { status: '400', Error: "Nomor registrasi sudah terdaftar", data: is_already_exist };
             }
             return { status: '200', data: registrasi.rows[0] };
         } catch (ex) {
+            await pool.query('ROLLBACK');
             return { status: '400', Error: "" + ex };
         };
     }
@@ -29,10 +32,13 @@ class OkkpRegistrationsController {
     async update_registrations(data, user) {
         try {
             let {key, value} = utils.serialize_registrations(data, user, 'updated')
+            await pool.query('BEGIN');
             let registrasi = await pool.query(format('UPDATE ' + db_registrations + ` SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value));
+            await pool.query('COMMIT');
             // debug('get %o', response);
             return { status: '200', data: registrasi.rows[0] };
         } catch (ex) {
+            await pool.query('ROLLBACK');
             return { status: '400', Error: "" + ex };
         };
     }
