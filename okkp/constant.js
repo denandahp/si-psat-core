@@ -13,40 +13,76 @@ exports.field_db = async (jenis_registrasi_id) => {
 
 exports.field_db_uji = async (jenis_uji_lab_id) => {
     let jenis_uji_field = {
-        1: ['jenis_uji_lab_id', 'user_id', 'lembaga', 'tanggal', 'lokasi_sampel', 'komoditas_id', 'komoditas_tambahan', 'parameter', 
-            'hasil_uji', 'standar', 'status_id', 'referensi_bmr', 'metode_uji', 'created_by', 'modified_by'],
-        2: ['jenis_rapid_test_id', 'user_id', 'lembaga', 'tanggal', 'lokasi_sampel', 'komoditas_id', 'komoditas_tambahan', 
-            'logam_berat_id', 'mikroba_id', 'aflatoksin_id', 'pestisida_id', 'hasil_uji', 'note', 'created_by', 'modified_by']
+        1: ["jenis_uji_lab_id", "user_id", "lembaga", "tanggal", "lokasi_sampel", "komoditas_id", "komoditas_tambahan", "parameter", 
+            "hasil_uji", "standar", "status_id", "referensi_bmr", "metode_uji", "created_by", "modified_by"],
+        2: ["jenis_rapid_test_id", "user_id", "lembaga", "tanggal", "lokasi_sampel", "komoditas_id", "komoditas_tambahan", 
+            "logam_berat_id", "mikroba_id", "aflatoksin_id", "pestisida_id", "hasil_uji", "note", "created_by", "modified_by"]
 
     }
     return jenis_uji_field[jenis_uji_lab_id]
 }
 
-exports.headers_dict = async (jenis_registrasi_id) => {
-    let keys ={
-        jenis_registrasi : "Jenis Registrasi",
-        unit_usaha: "Nama Unit Usaha",
-        kota: "Kab/Kota",
-        alamat_kantor: "Alamat Kantor",
-        alamat_unit: "Alamat Unit Penanganan",
-        komoditas: "Komoditas",
-        ruang_lingkup: "Ruang Lingkup",
-        nama_psat: "Nama PSAT",
-        nama_ilmiah: "Nama Ilmiah",
-        kemasan: "Kemasan dan Berat Bersih",
-        merk: "Nama Dagang/Merk",
-        no_registration: "Nomor Registrasi",
-        terbit_sertifikat: "Tanggal Penerbitan Sertifikat",
-        exp_sertifikat: "Tanggal Expired Sertifikat",
-        luas_lahan: "Luas Lahan",
-        label: "Label Hijau/Putih",
-        jenis_hc: "Jenis Sertifikat",
-        status: "Status",
-        created_at: "Tanggal Input",
-        updated_at: "Tanggal Input Diubah",
-        provinsi: "Provinsi",
-        negara_tujuan: "Negara Tujuan",
-        identitas_lot: "Identitas Lot"
+exports.headers_dict = async (data) => {
+    let keys;
+    if(data.jenis_registrasi){
+        keys = {
+            jenis_registrasi : "Jenis Registrasi",
+            unit_usaha: "Nama Unit Usaha",
+            kota: "Kab/Kota",
+            alamat_kantor: "Alamat Kantor",
+            alamat_unit: "Alamat Unit Penanganan",
+            komoditas: "Komoditas",
+            ruang_lingkup: "Ruang Lingkup",
+            nama_psat: "Nama PSAT",
+            nama_ilmiah: "Nama Ilmiah",
+            kemasan: "Kemasan dan Berat Bersih",
+            merk: "Nama Dagang/Merk",
+            no_registration: "Nomor Registrasi",
+            terbit_sertifikat: "Tanggal Penerbitan Sertifikat",
+            exp_sertifikat: "Tanggal Expired Sertifikat",
+            luas_lahan: "Luas Lahan",
+            label: "Label Hijau/Putih",
+            jenis_hc: "Jenis Sertifikat",
+            status: "Status",
+            created_at: "Tanggal Input",
+            updated_at: "Tanggal Input Diubah",
+            provinsi: "Provinsi",
+            negara_tujuan: "Negara Tujuan",
+            identitas_lot: "Identitas Lot"
+        }
+    }else if(data.jenis_uji_lab){
+        keys ={
+            jenis_uji_lab : "Uji Lab",
+            lembaga: "Lembaga",
+            tanggal: "Tanggal",
+            lokasi_sampel: "Lokasi Sampel",
+            komoditas: "Komoditas",
+            komoditas_tambahan: "Komoditas Tambahan",
+            parameter: "Parameter",
+            hasil_uji: "Hasil Uji",
+            standar: "Standar",
+            status: "Status",
+            referensi_bmr: "Referensi BMR",
+            metode_uji: "Metode Uji",
+            created_at: "Tanggal Input",
+        }
+
+    }else if(data.jenis_rapid_test){
+        keys ={
+            jenis_rapid_test : "Uji Lab",
+            lembaga: "Lembaga",
+            tanggal: "Tanggal",
+            lokasi_sampel: "Lokasi Sampel",
+            komoditas: "Komoditas",
+            komoditas_tambahan: "Komoditas Tambahan",
+            logam_berat: "Logam Berat",
+            mikroba: "Mikroba",
+            aflatoksin: "Aflatoksin",
+            pestisida: "Pestisida",
+            hasil_uji: "Hasil Uji",
+            note: "Keterangan",
+            created_at: "Tanggal Input",
+        }
     }
 
     return keys

@@ -53,7 +53,7 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
 
 exports.exports = async(data, keys) => {
     const workbook = new excelJS.Workbook();  // Create a new workbook
-    const worksheet = workbook.addWorksheet("My Users"); // New Worksheet
+    const worksheet = workbook.addWorksheet("Sheet"); // New Worksheet
 
     var date = format_date.time_format(), dir;
     if(process.env.NODE_ENV == 'LOKAL'){
@@ -67,7 +67,7 @@ exports.exports = async(data, keys) => {
     }
 
     // Column for data in excel. key must match data key
-    const headers_dict = await constant.headers_dict()
+    const headers_dict = await constant.headers_dict(data[0])
     let column = [{ header: "No", key: "number", width: 10 }, ];
     for(index in keys){
         let worksheet_column = {
@@ -88,7 +88,8 @@ exports.exports = async(data, keys) => {
 
     // Making first line in excel bold
     worksheet.getRow(1).eachCell((cell) => {cell.font = { bold: true };});
-    let name_file = `Export-${data[0].jenis_registrasi}-${date}.xlsx`
+    let name_file = `Export-${Object.values(data[0])[0]}-${date}.xlsx`
     dir = dir + name_file
+
     return {workbook, dir}
 }
