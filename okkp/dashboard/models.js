@@ -122,14 +122,16 @@ class DashboardController {
 
     async statistik_uji_lab(param) {
         try {
-            let created_at = '';
+            let created_at = '', start_date, end_date;
             let status_uji_lab_dict = await utils.mapping_status_uji_lab_dict()
 
             if(param.start_date && param.end_date){
-                created_at = `created_at BETWEEN '${param.start_date}' AND '${param.end_date}' ` 
+                start_date = param.start_date;
+                end_date = param.end_date;
+                created_at = `created_at BETWEEN '${start_date}' AND '${end_date}' ` 
             }else{
-                let start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
-                let end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
+                start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
+                end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
                 created_at = `created_at BETWEEN '${start_date}' AND '${end_date}'` 
             }
 
@@ -140,7 +142,10 @@ class DashboardController {
             let query = `SELECT ${select} FROM ${db_view_index_uji_lab} WHERE ${created_at} 
                          GROUP BY jenis_uji_lab_id, jenis_uji_lab ORDER BY jenis_uji_lab_id ASC`
             let jenis_uji_lab = await pool.query(query);
-            return { status: '200', data: jenis_uji_lab.rows };
+            return {status: '200',
+                    start_date: start_date,
+                    end_date: end_date,
+                    data: jenis_uji_lab.rows };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
         };
@@ -150,13 +155,16 @@ class DashboardController {
         try {
             let created_at = '',
                 hasil_uji_negatif = 'Negatif',
-                hasil_uji_positif = 'Positif';
+                hasil_uji_positif = 'Positif',
+                start_date, end_date;
 
             if(param.start_date && param.end_date){
-                created_at = `created_at BETWEEN '${param.start_date}' AND '${param.end_date}' ` 
+                start_date = param.start_date;
+                end_date = param.end_date;
+                created_at = `created_at BETWEEN '${start_date}' AND '${end_date}' ` 
             }else{
-                let start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
-                let end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
+                start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
+                end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
                 created_at = `created_at BETWEEN '${start_date}' AND '${end_date}'` 
             }
 
@@ -167,7 +175,10 @@ class DashboardController {
             let query = `SELECT ${select} FROM ${db_index_rapid_test} WHERE ${created_at} 
                          GROUP BY jenis_rapid_test_id, jenis_rapid_test ORDER BY jenis_rapid_test_id ASC`
             let jenis_rapid_test = await pool.query(query);
-            return { status: '200', data: jenis_rapid_test.rows };
+            return {status: '200',
+                    start_date: start_date,
+                    end_date: end_date,
+                    data: jenis_rapid_test.rows };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
         };
