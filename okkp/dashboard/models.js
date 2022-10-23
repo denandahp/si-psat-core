@@ -9,6 +9,9 @@ const db_provinsi = schema_static + '.provinsi';
 
 const schema_register = 'register';
 const db_view_registrasi = schema_register + '.view_index_registrasi';
+const db_view_index_uji_lab = schema_register + '.view_index_uji_lab';
+const db_index_rapid_test = schema_register + '.view_index_rapid_test';
+
 
 
 class DashboardController {
@@ -112,6 +115,59 @@ class DashboardController {
                          ${terbit_sertif} ${created_at} GROUP BY komoditas_id, komoditas ORDER BY total_registrasi DESC`
             let registrasi = await pool.query(query);
             return { status: '200', Provinsi: provinsi, data: registrasi.rows };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async statistik_uji_lab(param) {
+        try {
+            let created_at = '';
+            let status_uji_lab_dict = await utils.mapping_status_uji_lab_dict()
+
+            if(param.start_date && param.end_date){
+                created_at = `created_at BETWEEN '${param.start_date}' AND '${param.end_date}' ` 
+            }else{
+                let start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
+                let end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
+                created_at = `created_at BETWEEN '${start_date}' AND '${end_date}'` 
+            }
+
+            let select = `jenis_uji_lab_id, jenis_uji_lab,
+                          count(jenis_uji_lab_id) AS total_uji_lab,
+                          count(case when status_id = ${status_uji_lab_dict['MS']} then 1 else null end) as total_ms,
+                          count(case when status_id = ${status_uji_lab_dict['TMS']} then 1 else null end) as total_tms`
+            let query = `SELECT ${select} FROM ${db_view_index_uji_lab} WHERE ${created_at} 
+                         GROUP BY jenis_uji_lab_id, jenis_uji_lab ORDER BY jenis_uji_lab_id ASC`
+            let jenis_uji_lab = await pool.query(query);
+            return { status: '200', data: jenis_uji_lab.rows };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async statistik_rapid_test(param) {
+        try {
+            let created_at = '',
+                hasil_uji_negatif = 'Negatif',
+                hasil_uji_positif = 'Positif';
+
+            if(param.start_date && param.end_date){
+                created_at = `created_at BETWEEN '${param.start_date}' AND '${param.end_date}' ` 
+            }else{
+                let start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
+                let end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
+                created_at = `created_at BETWEEN '${start_date}' AND '${end_date}'` 
+            }
+
+            let select = `jenis_rapid_test_id, jenis_rapid_test,
+                          count(jenis_rapid_test_id) AS total_rapid_test,
+                          count(case when hasil_uji = '${hasil_uji_negatif}' then 1 else null end) as total_negatif,
+                          count(case when hasil_uji = '${hasil_uji_positif}' then 1 else null end) as total_positif`
+            let query = `SELECT ${select} FROM ${db_index_rapid_test} WHERE ${created_at} 
+                         GROUP BY jenis_rapid_test_id, jenis_rapid_test ORDER BY jenis_rapid_test_id ASC`
+            let jenis_rapid_test = await pool.query(query);
+            return { status: '200', data: jenis_rapid_test.rows };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
         };

@@ -93,6 +93,26 @@ class DashboardController {
         }
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
+
+    async statistik_rapid_test(req, res, next) {
+        let callback = async() => {
+            try {
+                let param = {
+                    start_date : req.query.start,
+                    end_date : req.query.end,
+                }
+                let response = await model.statistik_rapid_test(param);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
 }
 
 module.exports = new DashboardController();
