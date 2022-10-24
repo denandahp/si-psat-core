@@ -36,7 +36,7 @@ class DashboardController {
             if(param.start_terbit && param.end_terbit){
                 terbit_sertif = `terbit_sertifikat BETWEEN '${param.start_terbit}' AND '${param.end_terbit}' AND `
             }
-            let select = `jenis_registrasi_id,
+            let select = `jenis_registrasi_id, jenis_registrasi,
                           count(jenis_registrasi_id) AS total_registrasi,
                           count(case when status_id = ${jenis_status_dict['Masih Berlaku']} then 1 else null end) as total_masih_berlaku,
                           count(case when status_id = ${jenis_status_dict['Tidak Berlaku']} then 1 else null end) as total_tidak_berlaku,
@@ -45,9 +45,32 @@ class DashboardController {
                           count(case when jenis_sertifikat_id = ${jenis_sertif_dict['Prima 3']} then 1 else null end) as total_prima3,
                           count(case when jenis_sertifikat_id = ${jenis_sertif_dict['Sertifikat Jaminan Mutu Hidroponik']} then 1 else 0 end) as total_sertifikat_jaminan_mutu_hidroponik`
             let query = `SELECT ${select} FROM ${db_view_registrasi} WHERE ${core.check_value(param.provinsi_id, 'provinsi_id')} 
-                         ${terbit_sertif} ${created_at} GROUP BY jenis_registrasi_id ORDER BY jenis_registrasi_id ASC`
+                         ${terbit_sertif} ${created_at} GROUP BY jenis_registrasi_id, jenis_registrasi ORDER BY jenis_registrasi_id ASC`
             let registrasi = await pool.query(query);
             return { status: '200', Provinsi: provinsi, data: registrasi.rows };
+        } catch (ex) {
+            return { status: '400', Error: "" + ex };
+        };
+    }
+
+    async statistik_registrasi_by_year(year) {
+        try {
+            let jenis_registrasi_dict = await utils.mapping_jenis_registrasi_dict()
+
+            let select = `
+                EXTRACT(YEAR FROM created_at) as years,
+                EXTRACT(MONTH FROM created_at) as months,
+                COUNT(jenis_registrasi_id) AS count,
+                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Registrasi PDUK']} then 1 else null end) as total_registrasi_pduk,
+                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Izin Edar PSAT PD']} then 1 else null end) as total_izin_edar_pd,
+                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Rumah Pengemasan (Packing House)']} then 1 else null end) as total_packing_house,
+                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Sertifikat Jaminan Keamanan Pangan (Health Certificate)']} then 1 else null end) as total_hc,
+                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['SPPB-PSAT']} then 1 else null end) as total_sppb_psat,
+                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Izin Edar PSAT PL']} then 1 else null end) as total_izin_edar_pl`
+            let query = `SELECT ${select} FROM ${db_view_registrasi} WHERE EXTRACT(YEAR FROM created_at) = ${year} 
+                         GROUP BY years, months ORDER BY months ASC`
+            let registrasi = await pool.query(query);
+            return { status: '200', year: year, data: registrasi.rows };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
         };

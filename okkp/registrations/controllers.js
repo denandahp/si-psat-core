@@ -9,7 +9,6 @@ class OkkpRegistrationsController {
             try {
                 let requset_body = req.body;
                 let user = req.user.data.data;
-                debug('detail %o', requset_body);
                 let response = await model.create_registrations(requset_body, user);
                 if (response.status == '400') {res.status(400).json({ response });}
                 else { res.status(200).json({ response });}

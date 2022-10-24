@@ -3,6 +3,7 @@ const controllers = require('./controllers.js');
 const auth = require('../../middleware/auth.js')
 
 Router.get('/statistik_registrasi', controllers.statistik_registrasi)
+      .get('/statistik_registrasi/:year', controllers.statistik_registrasi_by_year)
       .get('/registrasi_by_provinsi', controllers.registrasi_by_provinsi)
       .get('/komoditas', controllers.komoditas)
       .get('/statistik_uji_lab', controllers.statistik_uji_lab)

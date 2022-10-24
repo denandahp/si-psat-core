@@ -1,6 +1,7 @@
 const pool = require('../../libs/okkp_db.js')
 
 const schema_static = 'static'
+const db_jenis_registrasi = schema_static + '.jenis_registrasi';
 const db_jenis_sertifikat = schema_static + '.jenis_sertifikat';
 const db_status = schema_static + '.status';
 const db_status_uji_lab = schema_static + '.status_uji_lab';
@@ -32,4 +33,13 @@ exports.mapping_status_uji_lab_dict = async () => {
         status_uji_lab_dict[status_uji_lab.rows[index].nama] = status_uji_lab.rows[index].id
     }
     return status_uji_lab_dict
+}
+
+exports.mapping_jenis_registrasi_dict = async () => {
+    let jenis_registrasi_dict = {}
+    let jenis_registrasi = await pool.query(`select * from ${db_jenis_registrasi}`)
+    for(index in jenis_registrasi.rows){
+        jenis_registrasi_dict[jenis_registrasi.rows[index].nama] = jenis_registrasi.rows[index].id
+    }
+    return jenis_registrasi_dict
 }

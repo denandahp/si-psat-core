@@ -31,6 +31,8 @@ exports.serialize_registrations = (data, user, process) => {
         "jenis_sertifikat_id" : data.jenis_sertifikat_id ,
         "identitas_lot": data.identitas_lot,
         "negara_tujuan": data.negara_tujuan,
+        "foto_kemasan": data.foto_kemasan,
+        "sertifikat": data.sertifikat,
         "status_id" : data.status_id,
         "provinsi_id":data.provinsi_id,
         "modified_by" : user.email,
