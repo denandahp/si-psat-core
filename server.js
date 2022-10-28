@@ -81,17 +81,6 @@ const past_pl_permohonan = require('./routes/psat_pl_permohonan.js');
 const past_pl_perubahan = require('./routes/psat_pl_perubahan.js');
 const psat_pl_audit = require('./routes/psat_pl_audit.js');
 
-// OKKP
-const okkp_import = require('./okkp/imports/routes.js');
-const okkp_export = require('./okkp/exports/routes.js');
-const okkp_registrations = require('./okkp/registrations/routes.js');
-const okkp_static = require('./okkp/static/routes')
-const okkp_dashboard = require('./okkp/dashboard/routes')
-const okkp_sync_data = require('./okkp/sync_data/routes.js')
-const okkp_uji_lab = require('./okkp/uji_lab/routes.js')
-const okkp_rapid_test = require('./okkp/rapid_test/routes.js')
-const okkp_ratings = require('./okkp/ratings/routes.js')
-
 //PUBLIC
 const index = require('./routes/index.js');
 const user = require('./routes/user.js');
@@ -114,15 +103,7 @@ app.use('/api/psat/pl', past_pl_perubahan)
 app.use('/api/psat/pl', psat_pl_audit)
 
 // OKKP
-app.use('/api/okkp/imports', okkp_import)
-app.use('/api/okkp/exports', okkp_export)
-app.use('/api/okkp/registrations', okkp_registrations)
-app.use('/api/okkp/static', okkp_static)
-app.use('/api/okkp/dashboard', okkp_dashboard)
-app.use('/api/okkp/sync_data', okkp_sync_data)
-app.use('/api/okkp/uji_lab', okkp_uji_lab)
-app.use('/api/okkp/rapid_test', okkp_rapid_test)
-app.use('/api/okkp/ratings', okkp_ratings)
+app.use('/api/okkp/', require('./okkp/routes.js'))
 
 // PUBLIC
 app.use('/', index);
