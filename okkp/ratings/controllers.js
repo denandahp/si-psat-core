@@ -78,30 +78,6 @@ class OkkpRatingsController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
-    async index_sertifikasi(req, res, next) {
-        let callback = async() => {
-            try {
-                let parameter = {
-                    page : req.query.page,
-                    limit : req.query.limit,
-                    sertif : req.query.sertif,
-                    provinsi : req.query.provinsi,
-                    no_sertif : core.default_dict(req.query.no_sertif, ''),
-                    usaha : core.default_dict(req.query.usaha, '')
-                }
-                let response = await model.index_sertifikasi(parameter);
-                if (response.status == '400') {res.status(400).json({ response });}
-                else { res.status(200).json({ response });}
-            } catch (e) {
-                next(e.detail || e);
-            }
-        };
-        let fallback = (err) => {
-            next(err);
-        }
-        authUtils.processRequestWithJWT(req, callback, fallback);
-    }
-
     async detail_ratings(req, res, next) {
         let callback = async() => {
             try {
