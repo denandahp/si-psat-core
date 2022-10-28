@@ -9,6 +9,9 @@ exports.serialize_ratings = (data, process) => {
         "ratings" : data.ratings,
         "no_hp" : data.no_hp,
         "note" : data.note,
+        "title" : data.title,
+        "type" : data.type,
+        "link" : data.link,
         "updated_at" : date,
     }
 

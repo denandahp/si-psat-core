@@ -90,6 +90,10 @@ const sertifikat = require('./routes/sertifikat.js');
 const notifikasi = require('./routes/notifikasi.js');
 const summary = require('./routes/summary.js');
 
+// OKKP
+const api_okkp = require('./okkp/routes.js');
+
+
 // ---------------------- URL NAMESPACE ---------------------------------
 // PSAT
 app.use('/api/psat/sppb', sppb_psat_penambahan)
@@ -103,7 +107,7 @@ app.use('/api/psat/pl', past_pl_perubahan)
 app.use('/api/psat/pl', psat_pl_audit)
 
 // OKKP
-app.use('/api/okkp/', require('./okkp/routes.js'))
+app.use('/api/okkp', api_okkp)
 
 // PUBLIC
 app.use('/', index);
