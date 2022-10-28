@@ -16,11 +16,15 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
     let counts, res, results = {},
-        err = [];
+        err = [], where;
     var date = utils.date_now();
     try {
-        console.log(filter)
-        counts = await pool.query('SELECT COUNT (*)  FROM ' + database + ` WHERE ${filter} `, data);
+        if([undefined, null, ' ', ''].includes(filter)){
+            where = ' '
+        }else{
+            where = ` WHERE ${filter} `
+        }
+        counts = await pool.query('SELECT COUNT (*)  FROM ' + database + ` ${where}`, data);
         if (endIndex <= counts.rows[0].count) {
             results.next = {
                 page: page + 1,
@@ -41,7 +45,7 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
         } else { results.previous = { page: 0, limit: limit } };
         results.total_query = counts.rows[0].count;
         results.max_page = Math.ceil(counts.rows[0].count / limit);
-        res = await pool.query(`SELECT ${query_select} FROM ${database} WHERE ${filter} ORDER BY created_at DESC OFFSET ${startIndex} LIMIT ${limit};`, data);
+        res = await pool.query(`SELECT ${query_select} FROM ${database} ${where} ORDER BY created_at DESC OFFSET ${startIndex} LIMIT ${limit};`, data);
         results.query = res.rows;
         results.date = date;
         return results;

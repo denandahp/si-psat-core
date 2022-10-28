@@ -90,6 +90,7 @@ const okkp_dashboard = require('./okkp/dashboard/routes')
 const okkp_sync_data = require('./okkp/sync_data/routes.js')
 const okkp_uji_lab = require('./okkp/uji_lab/routes.js')
 const okkp_rapid_test = require('./okkp/rapid_test/routes.js')
+const okkp_ratings = require('./okkp/ratings/routes.js')
 
 //PUBLIC
 const index = require('./routes/index.js');
@@ -121,6 +122,7 @@ app.use('/api/okkp/dashboard', okkp_dashboard)
 app.use('/api/okkp/sync_data', okkp_sync_data)
 app.use('/api/okkp/uji_lab', okkp_uji_lab)
 app.use('/api/okkp/rapid_test', okkp_rapid_test)
+app.use('/api/okkp/ratings', okkp_ratings)
 
 // PUBLIC
 app.use('/', index);
