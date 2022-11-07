@@ -10,7 +10,7 @@ const utils = require('../models/param/utils.js');
 dotenv.config();
 
 
-exports.pagination = async(page_query, limit_query, filter, data, query_select, database) => {
+exports.pagination = async(page_query, limit_query, filter, data, query_select, database, order_by) => {
     let page = parseInt(page_query);
     let limit = parseInt(limit_query);
     const startIndex = (page - 1) * limit;
@@ -18,12 +18,14 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
     let counts, res, results = {},
         err = [], where;
     var date = utils.date_now();
+    let order_by_field = 'created_at'
     try {
         if([undefined, null, ' ', ''].includes(filter)){
             where = ' '
         }else{
             where = ` WHERE ${filter} `
         }
+
         counts = await pool.query('SELECT COUNT (*)  FROM ' + database + ` ${where}`, data);
         if (endIndex <= counts.rows[0].count) {
             results.next = {
@@ -45,7 +47,11 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
         } else { results.previous = { page: 0, limit: limit } };
         results.total_query = counts.rows[0].count;
         results.max_page = Math.ceil(counts.rows[0].count / limit);
-        res = await pool.query(`SELECT ${query_select} FROM ${database} ${where} ORDER BY created_at DESC OFFSET ${startIndex} LIMIT ${limit};`, data);
+        if(order_by){
+            order_by_field = order_by
+        }
+
+        res = await pool.query(`SELECT ${query_select} FROM ${database} ${where} ORDER BY ${order_by_field} DESC OFFSET ${startIndex} LIMIT ${limit};`, data);
         results.query = res.rows;
         results.date = date;
         return results;

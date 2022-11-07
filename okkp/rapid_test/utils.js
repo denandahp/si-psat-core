@@ -22,7 +22,8 @@ exports.serialize_rapid_test = (data, user, process) => {
         "status" : data.status,
         "note" : data.note,
         "updated_at" : date,
-        "modified_by" : user.email
+        "modified_by" : user.email,
+        "provinsi_id" : data.provinsi_id
     }
 
     if(process == 'created'){

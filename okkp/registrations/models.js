@@ -64,7 +64,7 @@ class OkkpRegistrationsController {
             if(query.start_terbit && query.end_terbit){
                 filter = filter + `AND terbit_sertifikat BETWEEN '${query.start_terbit}' AND '${query.end_terbit}' `
             }
-            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_view_registrasi)
+            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_view_registrasi, 'terbit_sertifikat')
             return { status: '200', data: registrasi };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -75,7 +75,7 @@ class OkkpRegistrationsController {
         try {
             let filter = core.check_value(query.sertif,'jenis_sertifikat_id') + core.check_value( query.provinsi,'provinsi_id') + 
                          `no_sertifikat ILIKE '%${query.no_sertif}%' AND unit_usaha ILIKE '%${query.usaha}%'`
-            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_view_registrasi)
+            let registrasi = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_view_registrasi, 'terbit_sertifikat')
             return { status: '200', data: registrasi.query };
         } catch (ex) {
             return { status: '400', Error: "" + ex };

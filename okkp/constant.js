@@ -14,9 +14,9 @@ exports.field_db = async (jenis_registrasi_id) => {
 exports.field_db_uji = async (jenis_uji_lab_id) => {
     let jenis_uji_field = {
         1: ["jenis_uji_lab_id", "user_id", "lembaga", "tanggal", "lokasi_sampel", "komoditas_id", "komoditas_tambahan", "parameter", 
-            "hasil_uji", "standar", "status_id", "referensi_bmr", "metode_uji", "created_by", "modified_by"],
+            "hasil_uji", "standar", "status_id", "referensi_bmr", "metode_uji", "created_by", "modified_by", "provinsi_id"],
         2: ["jenis_rapid_test_id", "user_id", "lembaga", "tanggal", "lokasi_sampel", "komoditas_id", "komoditas_tambahan", 
-            "logam_berat_id", "mikroba_id", "aflatoksin_id", "pestisida_id", "hasil_uji", "note", "created_by", "modified_by"]
+            "logam_berat_id", "mikroba_id", "aflatoksin_id", "pestisida_id", "hasil_uji", "note", "created_by", "modified_by", "provinsi_id"]
 
     }
     return jenis_uji_field[jenis_uji_lab_id]

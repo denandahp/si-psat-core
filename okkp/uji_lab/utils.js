@@ -23,7 +23,8 @@ exports.serialize_uji_lab = (data, user, process) => {
         "metode_uji" : data.metode_uji,
         "note" : data.note,
         "updated_at" : date,
-        "modified_by" : user.email
+        "modified_by" : user.email,
+        "provinsi_id" : data.provinsi_id
     }
 
     if(process == 'created'){

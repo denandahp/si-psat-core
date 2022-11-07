@@ -715,6 +715,7 @@ exports.uji_lab = async (raw_data, body, user) => {
         modified_by = user.email,
         created_by = user.email,
         user_id = user.id,
+        provinsi_id = body.provinsi_id,
         error_msg = {};
 
     let komoditas_dict = await this.mapping_komoditas_dict()
@@ -780,7 +781,7 @@ exports.uji_lab = async (raw_data, body, user) => {
 
         value.push(
             [jenis_uji_lab_id, user_id, lembaga, tanggal, lokasi_sampel, komoditas_id, komoditas_tambahan, parameter, 
-             hasil_uji, standar, status_id, referensi_bmr, metode_uji, created_by, modified_by]
+             hasil_uji, standar, status_id, referensi_bmr, metode_uji, created_by, modified_by, provinsi_id]
         )
     }
 
@@ -793,6 +794,7 @@ exports.rapid_test = async (raw_data, body, user) => {
         modified_by = user.email,
         created_by = user.email,
         user_id = user.id,
+        provinsi_id = body.provinsi_id,
         error_msg = {},
         parameter_dict;
 
@@ -876,7 +878,7 @@ exports.rapid_test = async (raw_data, body, user) => {
 
         value.push(
             [jenis_rapid_test_id, user_id, lembaga, tanggal, lokasi_sampel, komoditas_id, komoditas_tambahan, 
-             logam_berat_id, mikroba_id, aflatoksin_id, pestisida_id, hasil_uji, note, created_by, modified_by]
+             logam_berat_id, mikroba_id, aflatoksin_id, pestisida_id, hasil_uji, note, created_by, modified_by, provinsi_id]
         )
     }
 
