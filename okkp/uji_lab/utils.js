@@ -7,32 +7,29 @@ const schema_regis = 'register';
 
 
 exports.serialize_uji_lab = (data, user, process) => {
-    let serialize = {
-        "jenis_uji_lab_id" : data.jenis_uji_lab_id,
-        "user_id" : user.id,
-        "lembaga" : (data.lembaga) ? data.lembaga : user.duduk_lembaga,
-        "tanggal" : data.tanggal,
-        "lokasi_sampel" : data.lokasi_sampel,
-        "komoditas_id" : data.komoditas_id,
-        "komoditas_tambahan" : data.komoditas_tambahan,
-        "parameter" : data.parameter,
-        "hasil_uji" : data.hasil_uji,
-        "standar" : data.standar,
-        "status_id" : data.status_id,
-        "referensi_bmr" : data.referensi_bmr,
-        "metode_uji" : data.metode_uji,
-        "note" : data.note,
-        "updated_at" : date,
-        "modified_by" : user.email,
-        "provinsi_id" : data.provinsi_id
-    }
+    let field_db = [
+        "jenis_uji_lab_id", "user_id", "lembaga", "tanggal", "lokasi_sampel", "komoditas_id", "komoditas_tambahan",
+        "parameter", "hasil_uji", "standar", "status_id", "referensi_bmr", "metode_uji", "note", "updated_at", 
+        "modified_by", "provinsi_id"
+    ]
 
     if(process == 'created'){
-        serialize.created_at = date
-        serialize.created_by = user.email
+        field_db.push("created_at", "created_by")
     }
 
-    let key = Object.keys(serialize).toString()
-    let value = Object.values(serialize)
+    let value = Object.entries(data.multiple_parameter).map(([number, val]) => {
+        let lembaga = (data.lembaga) ? data.lembaga : user.duduk_lembaga
+        value_list =  [
+            data.jenis_uji_lab_id, user.id, lembaga, data.tanggal, data.lokasi_sampel, data.komoditas_id, data.komoditas_tambahan,
+            val.parameter, val.hasil_uji, val.standar, data.status_id, data.referensi_bmr, data.metode_uji, data.note, date,
+            user.email, data.provinsi_id
+        ]
+        if(process == 'created'){
+            value_list.push(date, user.email)
+        }
+        return value_list
+    });
+
+    let key = field_db.toString()
     return {key, value}
 }

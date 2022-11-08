@@ -30,7 +30,8 @@ class DashboardController {
         let callback = async() => {
             try {
                 let year = req.params.year
-                let response = await model.statistik_registrasi_by_year(year);
+                let back_year = req.query.back_year
+                let response = await model.statistik_registrasi_by_year(year, back_year);
                 if (response.status == '400') {res.status(400).json({ response });}
                 else { res.status(200).json({ response });}
             } catch (e) {
@@ -111,6 +112,27 @@ class DashboardController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    async statistik_uji_lab_by_provinsi(req, res, next) {
+        let callback = async() => {
+            try {
+                let param = {
+                    year : req.query.year,
+                    month : req.query.month,
+                    jenis_uji_lab : req.query.jenis_uji_lab,
+                }
+                let response = await model.statistik_uji_lab_by_provinsi(param);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async statistik_rapid_test(req, res, next) {
         let callback = async() => {
             try {
@@ -119,6 +141,27 @@ class DashboardController {
                     end_date : req.query.end,
                 }
                 let response = await model.statistik_rapid_test(param);
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
+    async statistik_rapid_test_by_provins(req, res, next) {
+        let callback = async() => {
+            try {
+                let param = {
+                    year : req.query.year,
+                    month : req.query.month,
+                    jenis_rapid_test : req.query.jenis_rapid_test,
+                }
+                let response = await model.statistik_rapid_test_by_provins(param);
                 if (response.status == '400') {res.status(400).json({ response });}
                 else { res.status(200).json({ response });}
             } catch (e) {
