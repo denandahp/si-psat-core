@@ -18,3 +18,24 @@ exports.check_value = (value, column, not_operator) => {
         
     }
 }
+
+exports.response = (res, response) => {
+    if (response.status == '400') {
+        res.status(400).json({ response });
+    }else {
+        res.status(200).json({ response });
+    }
+}
+
+exports.array_query_format = (arr) => {
+    let arr_query = '';
+    let len_arr =arr.length
+    arr.forEach((kompetensi, index) => {
+        arr_query += `"${kompetensi}"`
+        if(index != len_arr-1){
+            arr_query += ',' 
+        }
+    });
+    return `{${arr_query}}`
+}
+

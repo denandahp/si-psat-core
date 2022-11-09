@@ -9,6 +9,7 @@ const okkp_sync_data = require('./sync_data/routes.js')
 const okkp_uji_lab = require('./uji_lab/routes.js')
 const okkp_rapid_test = require('./rapid_test/routes.js')
 const okkp_ratings = require('./ratings/routes.js')
+const okkp_sdm = require('./sdm/routes.js')
 
 
 Router.use('/imports', okkp_import)
@@ -20,5 +21,6 @@ Router.use('/sync_data', okkp_sync_data)
 Router.use('/uji_lab', okkp_uji_lab)
 Router.use('/rapid_test', okkp_rapid_test)
 Router.use('/ratings', okkp_ratings)
+Router.use('/sdm', okkp_sdm)
 
 module.exports = Router;

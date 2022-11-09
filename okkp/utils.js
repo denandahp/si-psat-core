@@ -56,7 +56,6 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
         results.date = date;
         return results;
     } catch (ex) {
-        console.log('Enek seng salah iki ' + ex);
         return { "error": "data" + ex, "res": err };
     };
 }

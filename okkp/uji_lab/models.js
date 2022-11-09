@@ -15,8 +15,6 @@ class OkkpUjiLabController {
             let uji_lab;
             let {key, value} = await utils.serialize_uji_lab(data, user, 'created')
             await pool.query('BEGIN');
-            console.log(key)
-            console.log(value)
             uji_lab = await pool.query(format('INSERT INTO ' + db_uji_lab + ` (${key}) VALUES %L RETURNING *`, value));
             await pool.query('COMMIT');
             return { status: '200', data: uji_lab.rows };
