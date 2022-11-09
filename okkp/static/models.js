@@ -10,6 +10,7 @@ const db_jenis_registrasi = schema + '.jenis_registrasi';
 const db_jenis_sertifikat = schema + '.jenis_sertifikat';
 const db_jenis_hc = schema + '.jenis_hc';
 const db_provinsi = schema + '.provinsi';
+const db_wilayah_2022 = schema + '.wilayah_2022';
 const db_status = schema + '.status';
 const db_status_uji_lab = schema + '.status_uji_lab';
 
@@ -280,10 +281,35 @@ class StaticController {
     }
 
     // ----------------------- CRUD Provinsi ----------------------------
-    async index_provinsi() {
+    async index_provinsi(kode_provinsi) {
         try {
-            let status = await pool.query(format('SELECT id, nama FROM ' + db_provinsi));
-            return { status: '200', data: status.rows};
+            let wilayah;
+            if(kode_provinsi){
+                wilayah = {
+                    "kota":{},
+                    "kecamatan":{},
+                    "kelurahan":{}
+                }
+                let query = await pool.query(`SELECT * FROM ${db_wilayah_2022} WHERE kode LIKE '${kode_provinsi}%'`);
+                Object.entries(query.rows).map(([key, value]) => {
+                    let kode_wilayah = value.kode
+                     if(value.kode.length == 5){
+                        // Kota
+                        wilayah.kota[kode_wilayah] = value
+                    }else if(value.kode.length == 8){
+                        // Kecamatan
+                        wilayah.kecamatan[kode_wilayah] = value
+                    }else if(value.kode.length > 8){
+                        // Kelurahan
+                        wilayah.kelurahan[kode_wilayah] = value
+                    }
+                    return wilayah
+                })
+            }else{
+                let query = await pool.query(format(`SELECT * FROM ${db_wilayah_2022} WHERE kode = substring(kode, 1, 2)`));
+                wilayah = query.rows
+            }
+            return { status: '200', data: wilayah};
         } catch (ex) {
             console.log('data', 'error ' + ex)
         };

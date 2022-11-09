@@ -457,7 +457,8 @@ class StaticController {
     async index_provinsi(req, res, next) {
         let callback = async() => {
             try {
-                let response = await model.index_provinsi();
+                let kode_provinsi = req.query.kode;
+                let response = await model.index_provinsi(kode_provinsi);
                 if (response.status == '400') {res.status(400).json({ response });}
                 else { res.status(200).json({ response });}
             } catch (e) {
