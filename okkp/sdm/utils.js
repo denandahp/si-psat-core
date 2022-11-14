@@ -19,7 +19,6 @@ exports.serialize_sdm = (data, user, process) => {
         "foto": data.foto,
         "updated_at": date,
         "modified_by": user.email,
-        "provinsi_id": user.provinsi_id,
     }
 
     if(process == 'created'){
