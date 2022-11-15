@@ -6,6 +6,7 @@ var format = require('pg-format');
 
 const schema = 'register';
 const db_sdm = schema + '.sdm';
+const db_index_sdm= schema + '.view_index_sdm';
 
 
 class OkkpSDMController {
@@ -41,11 +42,21 @@ class OkkpSDMController {
 
     async index_sdm(query) {
         try {
-            let filter = '';
-            if(query.start && query.end){
-                filter = `created_at BETWEEN '${moment(query.start).format()}' AND '${moment(query.end).format()}' `
+            let filter = '', sdm = {};
+            if(query.provinsi == 'provinsi'){
+                let sdm_per_prov;
+                let query_sdm = await pool.query(`SELECT * FROM ${db_index_sdm} ORDER BY provinsi_id ASC`);
+                for(let [key, value] of Object.entries(query_sdm.rows)){
+                    sdm_per_prov = sdm[value.provinsi] ?? []
+                    sdm_per_prov.push(value)
+                    sdm[value.provinsi] = sdm_per_prov
+                }
+            }else{
+                if(query.start && query.end){
+                    filter = `created_at BETWEEN '${moment(query.start).format()}' AND '${moment(query.end).format()}' `
+                }
+                sdm = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_index_sdm)
             }
-            let sdm = await utils_core.pagination(query.page, query.limit, filter, [], '*', db_sdm)
             return { status: '200', data: sdm };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -54,7 +65,7 @@ class OkkpSDMController {
 
     async detail_sdm(sdm_id) {
         try {
-            let sdm = await pool.query('SELECT * FROM ' + db_sdm + ` WHERE id=${sdm_id}`);
+            let sdm = await pool.query('SELECT * FROM ' + db_index_sdm + ` WHERE id=${sdm_id}`);
             return { status: '200', data: sdm.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
