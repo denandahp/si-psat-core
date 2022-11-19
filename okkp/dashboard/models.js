@@ -46,6 +46,7 @@ class DashboardController {
                           count(case when jenis_sertifikat_id = ${jenis_sertif_dict['Sertifikat Jaminan Mutu Hidroponik']} then 1 else 0 end) as total_sertifikat_jaminan_mutu_hidroponik`
             let query = `SELECT ${select} FROM ${db_view_registrasi} WHERE ${core.check_value(param.provinsi_id, 'provinsi_id')} 
                          ${terbit_sertif} ${created_at} GROUP BY jenis_registrasi_id, jenis_registrasi ORDER BY jenis_registrasi_id ASC`
+            console.log(query)
             let registrasi = await pool.query(query);
             return { status: '200', Provinsi: provinsi, data: registrasi.rows };
         } catch (ex) {

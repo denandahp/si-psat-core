@@ -11,7 +11,7 @@ class DashboardController {
                     start_date : req.query.start,
                     end_date : req.query.end,
                     start_terbit : req.query.start_terbit,
-                    end_terbit : req.query.end_terbit
+                    end_terbit : req.query.end_terbit                    
                 }
                 let response = await model.statistik_registrasi(param);
                 if (response.status == '400') {res.status(400).json({ response });}
