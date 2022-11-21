@@ -471,6 +471,23 @@ class StaticController {
         authUtils.processRequestWithJWT(req, callback, fallback);
     }
 
+    // ----------------------- CRUD GOLONGAN ----------------------------
+    async index_golongan(req, res, next) {
+        let callback = async() => {
+            try {
+                let response = await model.index_golongan();
+                if (response.status == '400') {res.status(400).json({ response });}
+                else { res.status(200).json({ response });}
+            } catch (e) {
+                next(e.detail || e);
+            }
+        };
+        let fallback = (err) => {
+            next(err);
+        }
+        authUtils.processRequestWithJWT(req, callback, fallback);
+    }
+
     async sync_data(req, res, next) {
         let callback = async() => {
             try {

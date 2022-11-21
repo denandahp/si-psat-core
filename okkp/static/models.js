@@ -12,6 +12,7 @@ const db_jenis_hc = schema + '.jenis_hc';
 const db_provinsi = schema + '.provinsi';
 const db_wilayah_2022 = schema + '.wilayah_2022';
 const db_status = schema + '.status';
+const db_golongan = schema + '.golongan';
 const db_status_uji_lab = schema + '.status_uji_lab';
 
 let date_now = param_utils.date_now()
@@ -310,6 +311,16 @@ class StaticController {
                 wilayah = query.rows
             }
             return { status: '200', data: wilayah};
+        } catch (ex) {
+            console.log('data', 'error ' + ex)
+        };
+    }
+
+    // ----------------------- CRUD Golongan ----------------------------
+    async index_golongan() {
+        try {
+            let status = await pool.query(format('SELECT id, nama FROM ' + db_golongan));
+            return { status: '200', data: status.rows};
         } catch (ex) {
             console.log('data', 'error ' + ex)
         };

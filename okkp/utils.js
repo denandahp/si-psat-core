@@ -51,7 +51,9 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
             order_by_field = order_by
         }
 
-        res = await pool.query(`SELECT ${query_select} FROM ${database} ${where} ORDER BY ${order_by_field} DESC OFFSET ${startIndex} LIMIT ${limit};`, data);
+        res = await pool.query(
+            `SELECT ${query_select} FROM ${database} ${where} ORDER BY 
+            ${order_by_field} DESC OFFSET ${startIndex} LIMIT ${limit};`, data);
         results.query = res.rows;
         results.date = date;
         return results;

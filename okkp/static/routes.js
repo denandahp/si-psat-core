@@ -6,6 +6,7 @@ Router.get('/status', controllers.index_status)
       .get('/status_uji_lab', controllers.index_status_uji_lab)
       .get('/provinsi', controllers.index_provinsi)
       .post('/sync_data', controllers.sync_data)
+      .get('/golongan', controllers.index_golongan)
 
       // -------------------- Komoditas -------------------------------------
       .get('/komoditas', controllers.index_komoditas)
