@@ -52,10 +52,17 @@ class StaticController {
 
     async index_komoditas() {
         try {
-            let redis_client = core.redis_conn();
-            const komoditas_cache = await redis_client.get('index_komoditas');
-            let komoditas = await pool.query(format('SELECT id, nama FROM ' + db_komoditas));
-            return { status: '200', data: komoditas.rows};
+            let komoditas, redis_key = 'index_komoditas';
+            let redis_client = await core.redis_conn();
+            const komoditas_cache = await redis_client.get(redis_key);
+            if(komoditas_cache){
+                komoditas = JSON.parse(komoditas_cache);
+            }else{
+                komoditas = await pool.query(format('SELECT id, nama FROM ' + db_komoditas));
+                komoditas = komoditas.rows
+                await redis_client.set(redis_key, JSON.stringify(komoditas));
+            }
+            return { status: '200', data: komoditas};
         } catch (ex) {
             console.log('data', 'error ' + ex)
         };

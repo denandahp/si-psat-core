@@ -1,4 +1,7 @@
+const dotenv = require('dotenv');
 const redis = require("redis");
+
+dotenv.config();
 
 
 exports.default_dict = (value, default_value) => {
@@ -47,8 +50,8 @@ exports.redis_conn = async (arr) => {
     let redisClient;
     redisClient = redis.createClient(
         {
-            host:'127.0.0.1',
-            port:6379
+            host:process.env.REDIS_HOST,
+            port:process.env.REDIS_PORT
         }
     );
     redisClient.on("error", (error) => console.error(`Error : ${error}`));
