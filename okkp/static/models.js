@@ -1,3 +1,4 @@
+const core = require('../core.js')
 const param_utils = require('../../models/param/utils.js');
 const mysql = require('../../libs/mysql.js');
 const pool = require('../../libs/okkp_db.js');
@@ -51,6 +52,8 @@ class StaticController {
 
     async index_komoditas() {
         try {
+            let redis_client = core.redis_conn();
+            const komoditas_cache = await redis_client.get('index_komoditas');
             let komoditas = await pool.query(format('SELECT id, nama FROM ' + db_komoditas));
             return { status: '200', data: komoditas.rows};
         } catch (ex) {

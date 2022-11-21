@@ -1,3 +1,6 @@
+const redis = require("redis");
+
+
 exports.default_dict = (value, default_value) => {
     if(value === undefined || value === null ){
         return default_value;
@@ -37,5 +40,20 @@ exports.array_query_format = (arr) => {
         }
     });
     return `{${arr_query}}`
+}
+
+
+exports.redis_conn = async (arr) => {
+    let redisClient;
+    redisClient = redis.createClient(
+        {
+            host:'127.0.0.1',
+            port:6379
+        }
+    );
+    redisClient.on("error", (error) => console.error(`Error : ${error}`));
+    await redisClient.connect();
+
+    return redisClient;
 }
 

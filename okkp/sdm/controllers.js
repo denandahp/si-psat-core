@@ -62,7 +62,7 @@ class OkkpSDMController {
                     limit : req.query.limit,
                     start : req.query.start,
                     end : req.query.end,
-                    provinsi : req.params.filter
+                    filter_by : req.query.filter_by
                 }
                 let response = await model.index_sdm(parameter);
                 core.response(res, response)

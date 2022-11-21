@@ -43,7 +43,7 @@ class OkkpSDMController {
     async index_sdm(query) {
         try {
             let filter = '', sdm = {};
-            if(query.provinsi == 'provinsi'){
+            if(query.filter_by == 'provinsi'){
                 let sdm_per_prov;
                 let query_sdm = await pool.query(`SELECT * FROM ${db_index_sdm} ORDER BY provinsi_id ASC`);
                 for(let [key, value] of Object.entries(query_sdm.rows)){
