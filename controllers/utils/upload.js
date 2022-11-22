@@ -12,9 +12,11 @@ exports.param = () => {
     const diskStorage = multer.diskStorage({
         // konfigurasi folder penyimpanan file
         destination: function(req, file, cb) {
-            if(process.env.NODE_ENV == 'LOKAL'){
+            if(process.env.NODE_ENV == 'LOKAL' ||
+               process.env.NODE_ENV == 'STAGING' ||
+               process.env.NODE_ENV == 'PRODUCTION'){
                 dir = path.join(process.cwd(), `/media/${date}/`);
-            } else {
+            }else {
                 dir = `si-psat-core/media/${date}/`;
             };
 
