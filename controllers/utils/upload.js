@@ -12,42 +12,9 @@ exports.param = () => {
     const diskStorage = multer.diskStorage({
         // konfigurasi folder penyimpanan file
         destination: function(req, file, cb) {
-            if(process.env.NODE_ENV == 'LOKAL' ||
-               process.env.NODE_ENV == 'STAGING' ||
-               process.env.NODE_ENV == 'PRODUCTION'){
+            if(['LOKAL', 'STAGING', 'PRODUCTION'].includes(process.env.NODE_ENV)){
                 dir = path.join(process.cwd(), `/media/${date}/`);
             }else {
-                dir = `si-psat-core/media/${date}/`;
-            };
-
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
-            cb(null, dir);
-        },
-        // konfigurasi penamaan file yang unik
-        filename: function(req, file, cb) {
-            let name = file.originalname.replace(path.extname(file.originalname), '').replace(/ /g, '_').toLowerCase()
-            cb(
-                null, name + String(Date.now()) + path.extname(file.originalname)
-            );
-        },
-    });
-
-    return multer({
-        storage: diskStorage,
-    }).array('files', 12);
-}
-
-exports.param = () => {
-    var date = format_date.time_format();
-    var dir;
-    const diskStorage = multer.diskStorage({
-        // konfigurasi folder penyimpanan file
-        destination: function(req, file, cb) {
-            if(process.env.NODE_ENV == 'LOKAL'){
-                dir = path.join(process.cwd(), `/media/${date}/`);
-            } else {
                 dir = `si-psat-core/media/${date}/`;
             };
 
