@@ -5,7 +5,7 @@ const utils = require('./utils')
 const utils_param = require('../../models/param/utils.js')
 
 const schema_static = 'static';
-const db_provinsi = schema_static + '.provinsi';
+const db_provinsi = schema_static + '.wilayah_2022';
 
 const schema_register = 'register';
 const db_view_registrasi = schema_register + '.view_index_registrasi';

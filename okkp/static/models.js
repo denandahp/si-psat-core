@@ -10,7 +10,6 @@ const db_komoditas = schema + '.komoditas';
 const db_jenis_registrasi = schema + '.jenis_registrasi';
 const db_jenis_sertifikat = schema + '.jenis_sertifikat';
 const db_jenis_hc = schema + '.jenis_hc';
-const db_provinsi = schema + '.provinsi';
 const db_wilayah_2022 = schema + '.wilayah_2022';
 const db_status = schema + '.status';
 const db_golongan = schema + '.golongan';
