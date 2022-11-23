@@ -4,7 +4,7 @@ const redis = require("redis");
 dotenv.config();
 
 
-exports.default_dict = (value, default_value) => {
+function default_dict(value, default_value){
     if(value === undefined || value === null ){
         return default_value;
     } else{
@@ -12,7 +12,7 @@ exports.default_dict = (value, default_value) => {
     }
 }
 
-exports.check_value = (value, column, not_operator) => {
+function check_value(value, column, not_operator){
     if(value === undefined || value === null ){
         return '';
     } else{
@@ -25,7 +25,7 @@ exports.check_value = (value, column, not_operator) => {
     }
 }
 
-exports.response = (res, response) => {
+function response(res, response){
     if (response.status == '400') {
         res.status(400).json({ response });
     }else {
@@ -33,7 +33,7 @@ exports.response = (res, response) => {
     }
 }
 
-exports.array_query_format = (arr) => {
+function array_query_format(arr){
     let arr_query = '';
     let len_arr =arr.length
     arr.forEach((kompetensi, index) => {
@@ -46,17 +46,47 @@ exports.array_query_format = (arr) => {
 }
 
 
-exports.redis_conn = async (arr) => {
-    let redisClient;
-    redisClient = redis.createClient(
-        {
-            host:process.env.REDIS_HOST,
-            port:process.env.REDIS_PORT
-        }
-    );
-    redisClient.on("error", (error) => console.error(`Error : ${error}`));
-    await redisClient.connect();
+class RedisGetSet {
+    constructor(key, value){
+        this.key = key;
+        this.value = value;
+    }
 
-    return redisClient;
+    async redis_conn (){
+        let redisClient;
+        redisClient = redis.createClient(
+            {
+                host:process.env.REDIS_HOST,
+                port:process.env.REDIS_PORT
+            }
+        );
+        redisClient.on("error", (error) => console.error(`Error : ${error}`));
+        await redisClient.connect();
+    
+        return redisClient;
+    }
+
+    async del_cache (){
+        let redis_client = await this.redis_conn()
+        redis_client.del(this.key)
+    }
+
+    async get_cache (){
+        let cache_json;
+        let redis_client = await this.redis_conn()
+        const redis_cache = await redis_client.get(this.key);
+        if(redis_cache){
+            cache_json = JSON.parse(redis_cache);
+        }
+        return cache_json
+    }
+
+    async set_cache (){
+        let redis_client = await this.redis_conn()
+        redis_client.set(this.key, JSON.stringify(this.value));
+    }
+}
+module.exports = {
+    RedisGetSet, array_query_format, default_dict, check_value, response
 }
 

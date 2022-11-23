@@ -1,7 +1,7 @@
-const core = require('../core.js')
-const param_utils = require('../../models/param/utils.js');
 const mysql = require('../../libs/mysql.js');
+const param_utils = require('../../models/param/utils.js');
 const pool = require('../../libs/okkp_db.js');
+const { RedisGetSet } = require('../core.js');
 const utils = require('./utils.js')
 var format = require('pg-format');
 
@@ -18,6 +18,8 @@ const db_status_uji_lab = schema + '.status_uji_lab';
 
 let date_now = param_utils.date_now()
 
+let key_komoditas = 'index_komoditas'
+
 
 class StaticController {
     // ----------------------- CRUD KOMODITAS ----------------------------
@@ -25,6 +27,7 @@ class StaticController {
         try {
             let value = [data.nama, date_now, date_now]
             let komoditas = await pool.query(format('INSERT INTO ' + db_komoditas + ` (nama, created_at, updated_at) VALUES (%L) RETURNING *`, value));
+            new RedisGetSet(key_komoditas).del_cache()
             return { status: '200', data: komoditas.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -35,6 +38,7 @@ class StaticController {
         try {
             let value = [data.id, data.nama, date_now]
             let komoditas = await pool.query('UPDATE ' + db_komoditas + ` SET (nama, updated_at) = ($2, $3) WHERE id=$1 RETURNING *`, value);
+            new RedisGetSet(key_komoditas).del_cache()
             return { status: '200', data: komoditas.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -44,6 +48,7 @@ class StaticController {
     async delete_komoditas(id) {
         try {
             let komoditas = await pool.query('DELETE FROM ' + db_komoditas + ` WHERE id=${id} RETURNING *`);
+            new RedisGetSet(key_komoditas).del_cache()
             return { status: '200', data: komoditas.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -52,15 +57,12 @@ class StaticController {
 
     async index_komoditas() {
         try {
-            let komoditas, redis_key = 'index_komoditas';
-            let redis_client = await core.redis_conn();
-            const komoditas_cache = await redis_client.get(redis_key);
-            if(komoditas_cache){
-                komoditas = JSON.parse(komoditas_cache);
-            }else{
-                komoditas = await pool.query(format('SELECT id, nama FROM ' + db_komoditas));
+            let komoditas;
+            komoditas = await new RedisGetSet(key_komoditas).get_cache()
+            if([undefined, null, ''].includes(komoditas)){
+                komoditas = await pool.query(format(`SELECT id, nama FROM ${db_komoditas} ORDER BY nama ASC`  ));
                 komoditas = komoditas.rows
-                await redis_client.set(redis_key, JSON.stringify(komoditas));
+                new RedisGetSet(key_komoditas, komoditas).set_cache()
             }
             return { status: '200', data: komoditas};
         } catch (ex) {
