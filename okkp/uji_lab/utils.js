@@ -16,8 +16,7 @@ exports.serialize_uji_lab = (data, user, process) => {
     if(process == 'created'){
         field_db.push("created_at", "created_by")
     }
-
-    let value = Object.entries(data.multiple_parameter).map(([number, val]) => {
+    let value = data.multiple_parameter.map((val) => {
         let lembaga = (data.lembaga) ? data.lembaga : user.duduk_lembaga
         value_list =  [
             data.jenis_uji_lab_id, user.id, lembaga, data.tanggal, data.lokasi_sampel, data.komoditas_id, data.komoditas_tambahan,
