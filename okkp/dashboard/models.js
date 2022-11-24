@@ -128,14 +128,10 @@ class DashboardController {
 
             if(param.start_date && param.end_date){
                 created_at = `created_at BETWEEN '${param.start_date}' AND '${param.end_date}' ` 
-            }else{
-                let start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
-                let end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
-                created_at = `created_at BETWEEN '${start_date}' AND '${end_date}'` 
             }
 
             if(param.start_terbit && param.end_terbit){
-                terbit_sertif = `terbit_sertifikat BETWEEN '${param.start_terbit}' AND '${param.end_terbit}' AND `
+                terbit_sertif = `terbit_sertifikat BETWEEN '${param.start_terbit}' AND '${param.end_terbit}'`
             }
 
             let query = `SELECT ${select} FROM ${db_view_registrasi} WHERE ${core.check_value(param.provinsi_id, 'provinsi_id')} 
@@ -157,14 +153,10 @@ class DashboardController {
 
             if(param.start_date && param.end_date){
                 created_at = `created_at BETWEEN '${param.start_date}' AND '${param.end_date}' ` 
-            }else{
-                let start_date = moment().tz("Asia/jakarta").subtract(1, 'M').format('YYYY-MM-DD')
-                let end_date = moment().tz("Asia/jakarta").format('YYYY-MM-DD')
-                created_at = `created_at BETWEEN '${start_date}' AND '${end_date}'` 
             }
 
             if(param.start_terbit && param.end_terbit){
-                terbit_sertif = `terbit_sertifikat BETWEEN '${param.start_terbit}' AND '${param.end_terbit}' AND `
+                terbit_sertif = `terbit_sertifikat BETWEEN '${param.start_terbit}' AND '${param.end_terbit}'`
             }
 
             let select = `komoditas_id, komoditas, count(jenis_registrasi_id) AS total_registrasi`
