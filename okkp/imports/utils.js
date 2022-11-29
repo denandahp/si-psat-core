@@ -223,7 +223,7 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
         if(terbit_sertifikat){
             let is_valid = format_date.check_date_format(terbit_sertifikat)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
@@ -309,7 +309,7 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
         if(terbit_sertifikat){
             let is_valid = format_date.check_date_format(terbit_sertifikat)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
@@ -395,7 +395,7 @@ exports.packing_house = async (raw_data, body, user) => {
         if(terbit_sertifikat){
             let is_valid = format_date.check_date_format(terbit_sertifikat)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
@@ -494,7 +494,7 @@ exports.health_certificate = async (raw_data, body, user) => {
         if(terbit_sertifikat){
             let is_valid = format_date.check_date_format(terbit_sertifikat)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
@@ -579,7 +579,7 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
         if(terbit_sertifikat){
             let is_valid = format_date.check_date_format(terbit_sertifikat)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
@@ -677,7 +677,7 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
         if(terbit_sertifikat){
             let is_valid = format_date.check_date_format(terbit_sertifikat)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
@@ -744,7 +744,7 @@ exports.uji_lab = async (raw_data, body, user) => {
         if(tanggal){
             let is_valid = format_date.check_date_format(tanggal)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);
@@ -831,7 +831,7 @@ exports.rapid_test = async (raw_data, body, user) => {
         if(tanggal){
             let is_valid = format_date.check_date_format(tanggal)
             if(is_valid == false){
-                err_msg = 'Format tanggal salah (DD/MM/YYYY)';
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
                 error_msg[err_msg] = true
                 raw_data[index].push(err_msg, line);
                 wrong_format.push(raw_data[index]);

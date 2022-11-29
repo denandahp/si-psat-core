@@ -31,8 +31,8 @@ exports.limit_time = (limit) => {
 }
 
 exports.check_date_format = (data_date) => {
-    let date_format = moment(data_date, 'DD-MM-YYYY').toDate();
-    let is_valid = moment(date_format, 'DD/MM/YYYY',true).isValid()
+    let date_format = moment(data_date, 'YYYY-MM-DD').toDate();
+    let is_valid = moment(date_format, 'YYYY-MM-DD',true).isValid()
     return is_valid;
 }
 
