@@ -19,6 +19,7 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
         err = [], where;
     var date = utils.date_now();
     let order_by_field = 'created_at'
+    let limit_data = 5000
     try {
         if([undefined, null, ' ', ''].includes(filter)){
             where = ' '
@@ -26,7 +27,7 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
             where = ` WHERE ${filter} `
         }
 
-        counts = await pool.query('SELECT COUNT (*)  FROM ' + database + ` ${where}`, data);
+        counts = await pool.query('SELECT COUNT (*)  FROM ' + database + ` ${where} LIMIT ${limit_data}`, data);
         if (endIndex <= counts.rows[0].count) {
             results.next = {
                 page: page + 1,
