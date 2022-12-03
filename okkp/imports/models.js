@@ -43,7 +43,7 @@ class ImportModel {
                     not_created: wrong_format};
         } catch (ex) {
             if (ex.code == '401') {
-                return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_upload: ex.details };
+                return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_created: ex.details };
             }
             console.log('Error ' + ex.message )
             return { status: '400', Error: "" + ex.message };
@@ -77,7 +77,7 @@ class ImportModel {
         } catch (ex) {
             await pool.query('ROLLBACK');
             if (ex.code == '401') {
-                return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_upload: ex.details };
+                return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_created: ex.details };
             }
             console.log('Error ' + ex.message )
             return { status: '400', Error: "" + ex.message };

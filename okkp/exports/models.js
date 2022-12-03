@@ -29,7 +29,7 @@ class ExportsModel {
             return {jenis_registrasi : jenis_registrasi.rows, keys: keys}
         } catch (ex) {
             if (ex.code == '401') {
-                return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_upload: ex.details };
+                return { status: '400', jenis_registrasi: ex.jenis_registrasi, Error: ex.pesan, not_created: ex.details };
             }
             console.log('Error ' + ex.message )
             return { status: '400', Error: "" + ex.message };
@@ -51,7 +51,7 @@ class ExportsModel {
             return {uji_lab : uji_lab.rows, keys: keys}
         } catch (ex) {
             if (ex.code == '401') {
-                return { status: '400', uji_lab: ex.uji_lab, Error: ex.pesan, not_upload: ex.details };
+                return { status: '400', uji_lab: ex.uji_lab, Error: ex.pesan, not_created: ex.details };
             }
             console.log('Error ' + ex.message )
             return { status: '400', Error: "" + ex.message };
@@ -73,7 +73,7 @@ class ExportsModel {
             return {rapid_test : rapid_test.rows, keys: keys}
         } catch (ex) {
             if (ex.code == '401') {
-                return { status: '400', rapid_test: ex.rapid_test, Error: ex.pesan, not_upload: ex.details };
+                return { status: '400', rapid_test: ex.rapid_test, Error: ex.pesan, not_created: ex.details };
             }
             console.log('Error ' + ex.message )
             return { status: '400', Error: "" + ex.message };
