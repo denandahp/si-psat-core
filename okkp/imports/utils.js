@@ -244,6 +244,8 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
         )
     }
 
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
+
     if(value.length === 0){
         let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
 
@@ -329,6 +331,7 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
              nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
     }
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
 
     if(value.length === 0){
         let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
@@ -415,6 +418,8 @@ exports.packing_house = async (raw_data, body, user) => {
              nama_ilmiah, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
     }
+
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
 
     if(value.length === 0){
         let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
@@ -515,6 +520,8 @@ exports.health_certificate = async (raw_data, body, user) => {
         )
     }
 
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
+
     if(value.length === 0){
         let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
 
@@ -599,6 +606,8 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
              nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
     }
+
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
 
     if(value.length === 0){
         let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
@@ -697,6 +706,9 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
              nama_ilmiah, merk, jenis_sertifikat_id, no_registration, terbit_sertifikat, provinsi_id, modified_by]
         )
     }
+
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
+
     if(value.length === 0){
         let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
 
@@ -784,6 +796,8 @@ exports.uji_lab = async (raw_data, body, user) => {
              hasil_uji, standar, status_id, referensi_bmr, metode_uji, created_by, modified_by, provinsi_id]
         )
     }
+
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
 
     return {wrong_format, key, value}
 }
@@ -883,4 +897,21 @@ exports.rapid_test = async (raw_data, body, user) => {
     }
 
     return {wrong_format, key, value}
+}
+
+exports.mapping_wrong_format = async (wrong_format, registrasi_id) => {
+    header_imports = await pool.query('SELECT * FROM ' + db_header_import + 
+                                      ` WHERE jenis_registrasi_id=${registrasi_id} ORDER BY jenis_registrasi_id ASC`);
+    let fix_headers = header_imports.rows[0].headers
+    fix_headers.push('Note', 'Line')
+    let new_wrong_format = []
+    for(let data of wrong_format){
+        let wrong_format_dict = {}
+        fix_headers.forEach((element, index) => {
+            wrong_format_dict[element] = data[index]
+        });
+        new_wrong_format.push(wrong_format_dict)
+    }
+
+    return new_wrong_format
 }
