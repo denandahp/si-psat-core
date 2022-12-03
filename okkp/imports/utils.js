@@ -903,7 +903,7 @@ exports.mapping_wrong_format = async (wrong_format, registrasi_id) => {
     header_imports = await pool.query('SELECT * FROM ' + db_header_import + 
                                       ` WHERE jenis_registrasi_id=${registrasi_id} ORDER BY jenis_registrasi_id ASC`);
     let fix_headers = header_imports.rows[0].headers
-    fix_headers.push('Note', 'Line')
+    fix_headers.push('Keterangan', 'Baris')
     let new_wrong_format = []
     for(let data of wrong_format){
         let wrong_format_dict = {}
