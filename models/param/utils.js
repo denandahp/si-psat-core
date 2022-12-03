@@ -37,7 +37,7 @@ exports.check_date_format = (data_date) => {
 }
 
 exports.date_format = (data_date) => {
-    let date_format = moment(data_date, 'DD-MM-YYYY').tz("Asia/jakarta").format();
+    let date_format = moment(data_date, 'YYYY-MM-DD').tz("Asia/jakarta").format();
     return date_format;
 }
 
