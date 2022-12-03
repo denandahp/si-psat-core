@@ -83,6 +83,21 @@ exports.headers_dict = async (data) => {
             note: "Keterangan",
             created_at: "Tanggal Input",
         }
+    }else{
+        keys={
+            'No': 'Nomor',
+            'Nama Unit Usaha': 'Nama Unit Usaha',
+            'Kab/Kota':'Kab/Kota',
+            'Alamat Kantor': 'Alamat Kantor',
+            'Alamat Unit Penanganan': 'Alamat Unit Penanganan',
+            'Komoditas Utama': 'Komoditas Utama',
+            'Nama PSAT': 'Nama PSAT',
+            'Nama Ilmiah': 'Nama Ilmiah',
+            'Kemasan dan Berat Bersih': 'Kemasan dan Berat Bersih',
+            'Nama Dagang/Merk': 'Nama Dagang/Merk',
+            'Nomor Registrasi': 'Nomor Registrasi',
+            'Tanggal Penerbitan Sertifikat': 'Tanggal Penerbitan Sertifikat'
+        }
     }
 
     return keys

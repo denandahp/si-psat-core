@@ -7,6 +7,7 @@ var param = multer.param();
 
 Router.post('', auth, param, imports.import_excels_registration)
       .post('/uji_lab', auth, param, imports.import_excels_uji_lab)
+      .post('/ploting', param, imports.ploting_excel)
 
 
 module.exports = Router;
