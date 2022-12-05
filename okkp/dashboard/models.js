@@ -75,7 +75,7 @@ class DashboardController {
                 count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Rumah Pengemasan (Packing House)']} then 1 else null end) as total_packing_house,
                 count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Sertifikat Jaminan Keamanan Pangan (Health Certificate)']} then 1 else null end) as total_hc,
                 count(case when jenis_registrasi_id = ${jenis_registrasi_dict['SPPB-PSAT']} then 1 else null end) as total_sppb_psat,
-                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Izin Edar PSAT PL']} then 1 else null end) as total_izin_edar_pl
+                count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Izin Edar PSAT PL']} then 1 else null end) as total_izin_edar_pl,
                 count(case when jenis_registrasi_id = ${jenis_registrasi_dict['Sertifikasi Prima']} then 1 else null end) as sertifikasi_prima`
             let query = `SELECT ${select} FROM ${db_view_registrasi} WHERE ${filter} ${group_by}`
             let registrasi = await pool.query(query);
