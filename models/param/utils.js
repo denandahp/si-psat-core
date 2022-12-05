@@ -41,6 +41,11 @@ exports.date_format = (data_date) => {
     return date_format;
 }
 
+exports.add_date = (data_date, number_add, format) => {
+    let date_format = moment(data_date, 'YYYY-MM-DD').tz("Asia/jakarta").add(number_add, format).format();
+    return date_format;
+}
+
 exports.date_now = () => {
     var date = moment().tz("Asia/jakarta").format();
     return date;

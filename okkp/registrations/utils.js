@@ -34,10 +34,11 @@ exports.serialize_registrations = (data, user, process) => {
         "foto_kemasan": data.foto_kemasan,
         "sertifikat": data.sertifikat,
         "lampiran": data.lampiran,
-        "status_id" : data.status_id,
+        "status_id" : data.exp_sertifikat < date_now ? 2 : 1,
         "provinsi_id":data.provinsi_id,
         "modified_by" : user.email,
-        "updated_at": date
+        "updated_at": date,
+        "lembaga_penerbit": data.lembaga_penerbit
     }
 
     if(process == 'created'){

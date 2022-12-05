@@ -26,6 +26,8 @@ const db_rt_pestisida = schema_static + '.rt_pestisida';
 const schema_regis = 'register';
 const db_registrations = schema_regis + '.registrasi';
 
+let date_now = format_date.date_now()
+
 
 exports.param = () => {
     var date = format_date.time_format(), dir;
@@ -233,6 +235,9 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
             }
         }
 
+        let exp_sertifikat = format_date.add_date(terbit_sertifikat, 5, 'Y');
+        let status_id = exp_sertifikat < date_now ? 2 : 1;
+
         line++;
         if(is_wrong_format){
             continue;
@@ -240,7 +245,8 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, komoditas_id, nama_psat, 
-             nama_ilmiah, kemasan, merk, no_registration, label, terbit_sertifikat, provinsi_id, modified_by]
+             nama_ilmiah, kemasan, merk, no_registration, label, terbit_sertifikat, provinsi_id, modified_by,
+             exp_sertifikat, status_id]
         )
     }
 
@@ -283,6 +289,7 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
             nama_ilmiah = raw_data[index][7],
             kemasan = raw_data[index][8],
             merk = raw_data[index][9],
+            lembaga_penerbit = raw_data[index][12],
             komoditas_id, err_msg, is_wrong_format = false;
 
         let komoditas = komoditas_dict[raw_data[index][5]]
@@ -318,8 +325,12 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
                 is_wrong_format = true
             }else{
                 terbit_sertifikat = format_date.date_format(terbit_sertifikat)
-            }
+            }            
         }
+
+        let exp_sertifikat = format_date.add_date(terbit_sertifikat, 5, 'Y');
+        let status_id = exp_sertifikat < date_now ? 2 : 1;
+
 
         line++;
         if(is_wrong_format){
@@ -328,7 +339,101 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, komoditas_id, nama_psat, 
-             nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, provinsi_id, modified_by]
+             nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, lembaga_penerbit, provinsi_id, modified_by,
+             exp_sertifikat, status_id]
+        )
+    }
+    wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
+
+    if(value.length === 0){
+        let jenis_registrasi = await pool.query('SELECT * FROM ' + db_jenis_registrasi + ` WHERE id=${jenis_registrasi_id}`);
+
+        throw ({pesan: Object.keys(error_msg), 
+                code: '401' ,
+                jenis_registrasi: jenis_registrasi.rows[0].nama,
+                details: wrong_format});
+    }
+
+    return {wrong_format, key, value}
+}
+
+exports.izin_edar_psat_pl = async (raw_data, body, user) => {
+    let jenis_registrasi_id = body.registrasi_id, 
+        provinsi_id = body.provinsi_id,
+        modified_by = user.email,
+        error_msg = {};
+
+    let komoditas_dict = await this.mapping_komoditas_dict()
+    let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 10, jenis_registrasi_id)
+
+    // Get key dari constant
+    let field_registrasi = await constant.field_db(jenis_registrasi_id)
+    let key = field_registrasi.toString()
+    let value = [], wrong_format = [], line =1;
+
+    // Mapping data
+    for(index in raw_data){
+        let no = raw_data[index][0],
+            unit_usaha = raw_data[index][1],
+            kota = raw_data[index][2],
+            alamat_kantor = raw_data[index][3],
+            alamat_unit = raw_data[index][4],
+            nama_psat = raw_data[index][6],
+            nama_ilmiah = raw_data[index][7],
+            kemasan = raw_data[index][8],
+            merk = raw_data[index][9],
+            lembaga_penerbit = raw_data[index][12],
+            komoditas_id, err_msg, is_wrong_format = false;
+
+        let komoditas = komoditas_dict[raw_data[index][5]]
+        if (komoditas == undefined || komoditas == null){
+            err_msg = 'Format Komoditas Salah';
+            error_msg[err_msg] = true
+            raw_data[index].push(err_msg, line);
+            wrong_format.push(raw_data[index]);
+            is_wrong_format = true
+        }else {
+            komoditas_id = komoditas.id
+        }
+
+        let no_registration = no_regis_dict[raw_data[index][10]]
+        if (no_registration){
+            err_msg = 'No Registrasi sudah terdaftar';
+            error_msg[err_msg] = true
+            raw_data[index].push(err_msg, line);
+            wrong_format.push(raw_data[index]);
+            is_wrong_format = true
+        }else{
+            no_registration = raw_data[index][10]
+        }
+
+        let terbit_sertifikat = raw_data[index][11];
+        if(terbit_sertifikat){
+            let is_valid = format_date.check_date_format(terbit_sertifikat)
+            if(is_valid == false){
+                err_msg = 'Format tanggal salah (YYYY-MM-DD)';
+                error_msg[err_msg] = true
+                raw_data[index].push(err_msg, line);
+                wrong_format.push(raw_data[index]);
+                is_wrong_format = true
+            }else{
+                terbit_sertifikat = format_date.date_format(terbit_sertifikat)
+            }            
+        }
+
+        let exp_sertifikat = format_date.add_date(terbit_sertifikat, 5, 'Y');
+        let status_id = exp_sertifikat < date_now ? 2 : 1;
+
+
+        line++;
+        if(is_wrong_format){
+            continue;
+        }
+
+        value.push(
+            [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, komoditas_id, nama_psat, 
+             nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, lembaga_penerbit, provinsi_id, modified_by,
+             exp_sertifikat, status_id]
         )
     }
     wrong_format = await this.mapping_wrong_format(wrong_format, jenis_registrasi_id)
@@ -408,6 +513,9 @@ exports.packing_house = async (raw_data, body, user) => {
             }
         }
 
+        let exp_sertifikat = format_date.add_date(terbit_sertifikat, 5, 'Y');
+        let status_id = exp_sertifikat < date_now ? 2 : 1;
+
         line++;
         if(is_wrong_format){
             continue;
@@ -415,7 +523,7 @@ exports.packing_house = async (raw_data, body, user) => {
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, ruang_lingkup, luas_lahan, komoditas_id, nama_psat, 
-             nama_ilmiah, no_registration, terbit_sertifikat, provinsi_id, modified_by]
+             nama_ilmiah, no_registration, terbit_sertifikat, provinsi_id, modified_by, exp_sertifikat, status_id]
         )
     }
 
@@ -509,6 +617,9 @@ exports.health_certificate = async (raw_data, body, user) => {
             }
         }
 
+        let exp_sertifikat = format_date.add_date(terbit_sertifikat, 5, 'Y');
+        let status_id = exp_sertifikat < date_now ? 2 : 1;
+
         line++;
         if(is_wrong_format){
             continue;
@@ -516,7 +627,8 @@ exports.health_certificate = async (raw_data, body, user) => {
 
         value.push(
             [jenis_registrasi_id, unit_usaha, jenis_hc_id, alamat_kantor, komoditas_id, identitas_lot, 
-             negara_tujuan, no_registration, terbit_sertifikat, provinsi_id, modified_by]
+             negara_tujuan, no_registration, terbit_sertifikat, provinsi_id, modified_by,
+             exp_sertifikat, status_id]
         )
     }
 
@@ -596,6 +708,9 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
             }
         }
 
+        let exp_sertifikat = format_date.add_date(terbit_sertifikat, 5, 'Y');
+        let status_id = exp_sertifikat < date_now ? 2 : 1;
+
         line++;
         if(is_wrong_format){
             continue;
@@ -603,7 +718,8 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
 
         value.push(
             [jenis_registrasi_id, unit_usaha, alamat_kantor, alamat_unit, ruang_lingkup, komoditas_id, nama_psat, 
-             nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, provinsi_id, modified_by]
+             nama_ilmiah, kemasan, merk, no_registration, terbit_sertifikat, provinsi_id, modified_by,
+             exp_sertifikat, status_id]
         )
     }
 
@@ -696,6 +812,9 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
             }
         }
 
+        let exp_sertifikat = format_date.add_date(terbit_sertifikat, 5, 'Y');
+        let status_id = exp_sertifikat < date_now ? 2 : 1;
+
         line++;
         if(is_wrong_format){
             continue;
@@ -703,7 +822,8 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
 
         value.push(
             [jenis_registrasi_id, unit_usaha, kota, alamat_kantor, alamat_unit, komoditas_id, nama_psat, 
-             nama_ilmiah, merk, jenis_sertifikat_id, no_registration, terbit_sertifikat, provinsi_id, modified_by]
+             nama_ilmiah, merk, jenis_sertifikat_id, no_registration, terbit_sertifikat, provinsi_id, modified_by,
+             exp_sertifikat, status_id]
         )
     }
 
