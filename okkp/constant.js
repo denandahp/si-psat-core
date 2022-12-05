@@ -16,8 +16,8 @@ exports.field_db = async (jenis_registrasi_id) => {
             'nama_ilmiah', 'kemasan', 'merk', 'no_registration', 'terbit_sertifikat', 'provinsi_id', 'modified_by',
             'exp_sertifikat', 'status_id'],
         6: ['jenis_registrasi_id', 'unit_usaha', 'kota', 'alamat_kantor', 'alamat_unit', 'komoditas_id', 'nama_psat', 
-            'nama_ilmiah', 'kemasan', 'merk', 'no_registration', 'terbit_sertifikat', 'provinsi_id', 'modified_by', 
-            'exp_sertifikat', 'status_id'],
+            'nama_ilmiah', 'kemasan', 'merk', 'no_registration', 'terbit_sertifikat', 'lembaga_penerbit',
+            'provinsi_id', 'modified_by', 'exp_sertifikat', 'status_id'],
         7: ['jenis_registrasi_id', 'unit_usaha', 'kota', 'alamat_kantor', 'alamat_unit', 'komoditas_id', 'nama_psat', 
             'nama_ilmiah', 'merk', 'jenis_sertifikat_id', 'no_registration', 'terbit_sertifikat', 'provinsi_id', 'modified_by',
             'exp_sertifikat', 'status_id']
