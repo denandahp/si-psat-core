@@ -111,7 +111,8 @@ exports.headers_dict = async (data) => {
             'Kemasan dan Berat Bersih': 'Kemasan dan Berat Bersih',
             'Nama Dagang/Merk': 'Nama Dagang/Merk',
             'Nomor Registrasi': 'Nomor Registrasi',
-            'Tanggal Penerbitan Sertifikat': 'Tanggal Penerbitan Sertifikat'
+            'Tanggal Penerbitan Sertifikat': 'Tanggal Penerbitan Sertifikat',
+            'Lembaga Penerbit Registrasi': 'Lembaga Penerbit Registrasi'
         }
     }
 

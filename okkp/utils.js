@@ -7,6 +7,9 @@ const path = require('path');
 const pool = require('../libs/okkp_db.js');
 const utils = require('../models/param/utils.js');
 
+const schema_static = 'static'
+const db_komoditas = schema_static + '.komoditas'
+
 dotenv.config();
 
 
@@ -63,7 +66,7 @@ exports.pagination = async(page_query, limit_query, filter, data, query_select, 
     };
 }
 
-exports.exports = async(data, keys) => {
+exports.exports = async(data, keys, nama_prov) => {
     const workbook = new excelJS.Workbook();  // Create a new workbook
     const worksheet = workbook.addWorksheet("Sheet"); // New Worksheet
 
@@ -101,7 +104,20 @@ exports.exports = async(data, keys) => {
     // Making first line in excel bold
     worksheet.getRow(1).eachCell((cell) => {cell.font = { bold: true };});
     let name_file = `Export-${Object.values(data[0])[0]}-${date}.xlsx`
+    if(nama_prov){
+        name_file = `${nama_prov[0]}_Export-${Object.values(data[0])[0]}-${date}.xlsx`
+    }
     dir = dir + name_file
 
     return {workbook, dir}
+}
+
+exports.mapping_komoditas_dict = async () => {
+    let komoditas_dict = {}
+    let komoditas = await pool.query(`select * from ${db_komoditas}`)
+    for(index in komoditas.rows){
+        komoditas_dict[komoditas.rows[index].nama] = {'id' : komoditas.rows[index].id, 'Nama': komoditas.rows[index].nama}
+    }
+
+    return komoditas_dict
 }

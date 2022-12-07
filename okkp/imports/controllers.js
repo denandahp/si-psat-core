@@ -83,40 +83,48 @@ class ImportController {
             } else {
                 let body = req.body
                 let excel_file = req.file;
-                let nama_prov = ['Papua Barat', 'Papua barat'];
-                let headers;
-                let data = await readXlsxFile(excel_file.path)
-                                .then(async (raw_data) => {
-                                    headers = raw_data.shift()
-                                    let data_perprov = [];
-                                    for(let element of raw_data){
-                                        if(element[4] != null && element[4] != 0){
-                                            const found = nama_prov.some(r=> element[4].includes(r))
-                                            if(found){
-                                            // console.log(element[0], element[4])
-                                            data_perprov.push(element)
+                let nama_prov_list = await utils.export_plotting_provinsi()
+                for(let nama_prov of nama_prov_list){
+                    let headers;
+                    nama_prov = nama_prov[0]
+                    let data = await readXlsxFile(excel_file.path)
+                                    .then(async (raw_data) => {
+                                        headers = raw_data.shift()
+                                        let data_perprov = [];
+                                        for(let element of raw_data){
+                                            if(element[3] != null && element[3] != 0){
+                                                const found = nama_prov.some(r=> element[3].includes(r))
+                                                if(found){
+                                                    data_perprov.push(element)
+                                                }
                                             }
                                         }
-                                    }
-                                    return data_perprov
-                                })
-                console.log(data.length)
-                let {workbook, dir}= await utils_core.exports(data, headers)
-                try {
+                                        return data_perprov
+                                    })
+                    if(data.length == 0){
+                        continue
+                    }
+                    let {workbook, dir}= await utils_core.exports(data, headers, nama_prov)
                     await workbook.xlsx.writeFile(dir)
-                        .then(() => {
-                        res.send({
-                            status: "success",
-                            message: "file successfully downloaded",
-                            path: dir,
-                        });
-                     });
-                } catch (err) {
-                        console.log("error" + err)
-                        res.send({
-                        status: "error",
-                        message: "Something went wrong",
-                    });
+                            .then(() => {
+                                console.log("file successfully downloaded", nama_prov[0], data.length)
+                            });
+                    // try {
+                    //     await workbook.xlsx.writeFile(dir)
+                    //         .then(() => {
+                    //         res.send({
+                    //             status: "success",
+                    //             message: "file successfully downloaded",
+                    //             path: dir,
+                    //         });
+                    //      });
+                    // } catch (err) {
+                    //         console.log("error" + err)
+                    //         res.send({
+                    //         status: "error",
+                    //         message: "Something went wrong",
+                    //     });
+                    // }
                 }
             }
         };

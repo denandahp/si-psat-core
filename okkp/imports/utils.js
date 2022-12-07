@@ -6,16 +6,17 @@ var fs = require('fs');
 const multer = require('multer');
 const path = require('path');
 const pool = require('../../libs/okkp_db.js')
+const utils = require('../utils.js')
 
 dotenv.config();
 
 const schema_static = 'static'
 const db_header_import = schema_static + '.header_import'
-const db_komoditas = schema_static + '.komoditas'
 const db_jenis_hc = schema_static + '.jenis_hc'
 const db_jenis_registrasi = schema_static + '.jenis_registrasi';
 const db_jenis_sertifikat = schema_static + '.jenis_sertifikat';
 const db_status_uji_lab = schema_static + '.status_uji_lab';
+const db_wilayah_2022 = schema_static + '.wilayah_2022';
 
 const db_jenis_rapid_test= schema_static + '.jenis_rapid_test';
 const db_rt_aflatoksin = schema_static + '.rt_aflatoksin';
@@ -59,6 +60,43 @@ exports.param = () => {
     }).single('import-excel')
 }
 
+exports.export_plotting_provinsi = async () => {
+    let query = await pool.query(format(`SELECT * FROM ${db_wilayah_2022} WHERE kode = substring(kode, 1, 2)`));
+    let provinsi = query.rows
+    let nama_prov_list = []
+    for(let element of provinsi){
+        let plotting = []
+        let split = element.nama.split(" ");
+        if(split[0] == 'DAERAH'){
+            split.shift()
+            split.shift()
+        }else if(split[0] == 'DKI' || split[0] == 'KEPULAUAN'){
+            split.shift()
+        }
+
+        if (split.length > 1) {
+            let first_word = split[0].toLowerCase()
+            let second_word = split[1].toLowerCase()
+            let capitalize_first_word = first_word.charAt(0).toUpperCase() + first_word.slice(1);
+            let capitalize_second_word = second_word.charAt(0).toUpperCase() + second_word.slice(1);
+            let tolower_first_word = first_word.toLowerCase()
+            let tolower_second_word = second_word.toLowerCase()
+            let join_capitilze = `${capitalize_first_word} ${capitalize_second_word}`
+            let join_capitilze_tolower = `${capitalize_first_word} ${tolower_second_word}`
+            let join_tolower = `${tolower_first_word} ${tolower_second_word}`
+
+            plotting.push([join_capitilze, join_capitilze_tolower, join_tolower])
+        }else{
+            let string = split[0];
+            let tolower = string.toLowerCase()
+            let capitalize = tolower.charAt(0).toUpperCase() + tolower.slice(1);
+            plotting.push([capitalize, tolower])
+        }
+        nama_prov_list.push(plotting)
+    }
+    return nama_prov_list;
+}
+
 exports.validation_headers = async (headers, body) => {
     let header_imports;
     if (body.jenis_uji){
@@ -74,16 +112,6 @@ exports.validation_headers = async (headers, body) => {
         return element === headers[index]; 
     });
     return is_same;
-}
-
-exports.mapping_komoditas_dict = async () => {
-    let komoditas_dict = {}
-    let komoditas = await pool.query(`select * from ${db_komoditas}`)
-    for(index in komoditas.rows){
-        komoditas_dict[komoditas.rows[index].nama] = {'id' : komoditas.rows[index].id, 'Nama': komoditas.rows[index].nama}
-    }
-
-    return komoditas_dict
 }
 
 exports.mapping_jenis_sertif_dict = async () => {
@@ -177,7 +205,7 @@ exports.mapping_pd_uk = async (raw_data, body, user) => {
         modified_by = user.email,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 10, jenis_registrasi_id)
 
     // Get key dari constant
@@ -270,7 +298,7 @@ exports.izin_edar_psat_pd = async (raw_data, body, user) => {
         modified_by = user.email,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 10, jenis_registrasi_id)
 
     // Get key dari constant
@@ -363,7 +391,7 @@ exports.izin_edar_psat_pl = async (raw_data, body, user) => {
         modified_by = user.email,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 10, jenis_registrasi_id)
 
     // Get key dari constant
@@ -456,7 +484,7 @@ exports.packing_house = async (raw_data, body, user) => {
         modified_by = user.email,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 10, jenis_registrasi_id)
 
     // Get key dari constant
@@ -547,7 +575,7 @@ exports.health_certificate = async (raw_data, body, user) => {
         modified_by = user.email,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 7, jenis_registrasi_id)
 
     let jenis_hc_dict = {}
@@ -651,7 +679,7 @@ exports.sppb_psat_provinsi = async (raw_data, body, user) => {
         modified_by = user.email,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 10, jenis_registrasi_id)
 
     // Get key dari constant
@@ -743,7 +771,7 @@ exports.sertifikasi_prima = async (raw_data, body, user) => {
         modified_by = user.email,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let jenis_sertif_dict = await this.mapping_jenis_sertif_dict()
     let no_regis_dict = await this.mapping_no_registrasi_dict(raw_data, 10, jenis_registrasi_id)
 
@@ -850,7 +878,7 @@ exports.uji_lab = async (raw_data, body, user) => {
         provinsi_id = body.provinsi_id,
         error_msg = {};
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let status_uji_lab = await this.mapping_status_uji_lab_dict()
 
     // Get key dari constant
@@ -932,7 +960,7 @@ exports.rapid_test = async (raw_data, body, user) => {
         error_msg = {},
         parameter_dict;
 
-    let komoditas_dict = await this.mapping_komoditas_dict()
+    let komoditas_dict = await utils.mapping_komoditas_dict()
     let jenis_rapid_test_dict = await this.mapping_jenis_rapid_test_dict()
 
     if(jenis_rapid_test_id == jenis_rapid_test_dict['Rapid Test Aflatoksin'].id){

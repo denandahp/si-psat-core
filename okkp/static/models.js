@@ -3,6 +3,7 @@ const param_utils = require('../../models/param/utils.js');
 const pool = require('../../libs/okkp_db.js');
 const { RedisGetSet } = require('../core.js');
 const utils = require('./utils.js')
+const utils_core = require('../utils.js')
 var format = require('pg-format');
 
 const schema = 'static';
@@ -24,23 +25,33 @@ class StaticController {
     // ----------------------- CRUD KOMODITAS ----------------------------
     async create_komoditas(data) {
         try {
-            let value = [data.nama, date_now, date_now]
-            let komoditas = await pool.query(format('INSERT INTO ' + db_komoditas + ` (nama, created_at, updated_at) VALUES (%L) RETURNING *`, value));
+            let value = [data.nama, date_now, date_now], komoditas;
+            let komoditas_dict = await utils_core.mapping_komoditas_dict()
+            if(komoditas_dict[data.nama]){
+                throw new Error('Komoditas sudah terdaftar')
+            }else{
+                komoditas = await pool.query(format('INSERT INTO ' + db_komoditas + ` (nama, created_at, updated_at) VALUES (%L) RETURNING *`, value));
+            }
             new RedisGetSet(key_komoditas).del_cache()
             return { status: '200', data: komoditas.rows[0] };
         } catch (ex) {
-            return { status: '400', Error: "" + ex };
+            return { status: '400', Error: ex.message };
         };
     }
 
     async update_komoditas(data) {
         try {
-            let value = [data.id, data.nama, date_now]
-            let komoditas = await pool.query('UPDATE ' + db_komoditas + ` SET (nama, updated_at) = ($2, $3) WHERE id=$1 RETURNING *`, value);
+            let value = [data.id, data.nama, date_now], komoditas;
+            let komoditas_dict = await utils_core.mapping_komoditas_dict()
+            if(komoditas_dict[data.nama]){
+                throw new Error('Komoditas sudah terdaftar')
+            }else{
+                komoditas = await pool.query('UPDATE ' + db_komoditas + ` SET (nama, updated_at) = ($2, $3) WHERE id=$1 RETURNING *`, value);
+            }
             new RedisGetSet(key_komoditas).del_cache()
             return { status: '200', data: komoditas.rows[0] };
         } catch (ex) {
-            return { status: '400', Error: "" + ex };
+            return { status: '400', Error: ex.message };
         };
     }
 
