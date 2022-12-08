@@ -32,20 +32,20 @@ class OkkpRegistrationsController {
     async update_registrations(data, user) {
         try {
             let {key, value} = utils.serialize_registrations(data, user, 'updated')
-            await pool.query('BEGIN');
-            let registrasi = await pool.query(format('UPDATE ' + db_registrations + ` SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value));
-            await pool.query('COMMIT');
+            let provinsi = utils_core.filter_provinsi(user)
+            let registrasi = await pool.query(format(
+                `UPDATE  ${db_registrations} SET (${key}) = (%L) WHERE id = ${data.id} ${provinsi} RETURNING *`, value));
             // debug('get %o', response);
             return { status: '200', data: registrasi.rows[0] };
         } catch (ex) {
-            await pool.query('ROLLBACK');
             return { status: '400', Error: "" + ex };
         };
     }
 
     async delete_registrations(registrasi_id) {
         try {
-            let registrasi = await pool.query('DELETE FROM ' + db_registrations + ` WHERE id = ${registrasi_id} RETURNING *`);
+            let provinsi = utils_core.filter_provinsi(user)
+            let registrasi = await pool.query('DELETE FROM ' + db_registrations + ` WHERE id = ${registrasi_id} ${provinsi} RETURNING *`);
             return { status: '200', data: registrasi.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };

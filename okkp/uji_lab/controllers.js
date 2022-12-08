@@ -59,13 +59,22 @@ class OkkpUjiLabController {
     async index_uji_lab(req, res, next) {
         let callback = async() => {
             try {
+                let user = req.user ? req.user.data.data : undefined;
+                let provinsi = req.query.provinsi;
+                let is_superadmin = core.is_superadmin(user)
+                if(is_superadmin){
+                    provinsi = req.query.provinsi
+                }else{
+                    provinsi = user.provinsi_id;
+                }
                 let parameter = {
                     page : req.query.page,
                     limit : req.query.limit,
                     uji_lab_id: req.query.uji_lab_id,
                     jenis_uji_lab_id: req.query.jenis_uji_lab_id,
                     start_date : req.query.start,
-                    end_date : req.query.end
+                    end_date : req.query.end, 
+                    provinsi : provinsi
                 }
                 let response = await model.index_uji_lab(parameter);
                 if (response.status == '400') {res.status(400).json({ response });}

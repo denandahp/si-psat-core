@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const pool = require('../libs/db.js');
 const utils = require('../models/param/utils.js');
+const core = require('./core.js')
 
 const schema_static = 'okkp_static'
 const db_komoditas = schema_static + '.komoditas'
@@ -120,4 +121,14 @@ exports.mapping_komoditas_dict = async () => {
     }
 
     return komoditas_dict
+}
+
+exports.filter_provinsi = async (user) => {
+    let provinsi = '';
+    let is_superadmin = core.is_superadmin(user);
+    if(is_superadmin == false){
+        provinsi = `AND ${user.provinsi_id}`
+    }
+
+    return provinsi
 }

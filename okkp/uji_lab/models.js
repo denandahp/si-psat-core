@@ -25,7 +25,8 @@ class OkkpUjiLabController {
     async update_uji_lab(data, user) {
         try {
             let {key, value} = new SerializeUjiLab(data, user, 'updated').save()
-            let query = format('UPDATE ' + db_uji_lab + ` SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value)
+            let provinsi = utils_core.filter_provinsi(user)
+            let query = format('UPDATE ' + db_uji_lab + ` SET (${key}) = (%L) WHERE id = ${data.id} ${provinsi} RETURNING *`, value)
             console.log(query)
             let uji_lab = await pool.query(query);
             return { status: '200', data: uji_lab.rows[0] };
@@ -36,7 +37,8 @@ class OkkpUjiLabController {
 
     async delete_uji_lab(uji_lab_id) {
         try {
-            let uji_lab = await pool.query('DELETE FROM ' + db_uji_lab + ` WHERE id = ${uji_lab_id} RETURNING *`);
+            let provinsi = utils_core.filter_provinsi(user)
+            let uji_lab = await pool.query('DELETE FROM ' + db_uji_lab + ` WHERE id = ${uji_lab_id} ${provinsi} RETURNING *`);
             return { status: '200', data: uji_lab.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };
@@ -45,7 +47,8 @@ class OkkpUjiLabController {
 
     async index_uji_lab(query) {
         try {
-            let filter = core.check_value(query.jenis_uji_lab_id,'jenis_uji_lab_id', true) + core.check_value(query.uji_lab_id,'uji_lab_id')
+            let filter = core.check_value(query.jenis_uji_lab_id,'jenis_uji_lab_id', true) + core.check_value( query.provinsi,'provinsi_id') +
+                         core.check_value(query.uji_lab_id,'uji_lab_id')
             if(query.start && query.end){
                 filter = filter + `AND created_at BETWEEN '${query.start_date}' AND '${query.end_date}' `
             }

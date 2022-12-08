@@ -45,6 +45,14 @@ function array_query_format(arr){
     return `{${arr_query}}`
 }
 
+function is_superadmin(user){
+    let superadmin_role = ['SUPERADMIN', 'OKKP_ADMIN_PUSAT']
+    let user_role = user.role
+    if(superadmin_role.includes(user_role)){
+        return true
+    }
+    return false
+}
 
 class RedisGetSet {
     constructor(key, value){
@@ -86,7 +94,10 @@ class RedisGetSet {
         redis_client.set(this.key, JSON.stringify(this.value));
     }
 }
+
+
 module.exports = {
-    RedisGetSet, array_query_format, default_dict, check_value, response
+    RedisGetSet, array_query_format, default_dict, check_value, response,
+    is_superadmin
 }
 

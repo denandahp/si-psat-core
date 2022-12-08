@@ -61,11 +61,19 @@ class OkkpRegistrationsController {
     async index_registrasi(req, res, next) {
         let callback = async() => {
             try {
+                let user = req.user ? req.user.data.data : 'public';
+                let provinsi = req.query.provinsi;
+                let is_superadmin = core.is_superadmin(user)
+                if(is_superadmin || user == 'public'){
+                    provinsi = req.query.provinsi
+                }else{
+                    provinsi = user.provinsi_id;
+                }
                 let parameter = {
                     page : req.query.page,
                     limit : req.query.limit,
                     reg : req.query.reg,
-                    provinsi : req.query.provinsi,
+                    provinsi : provinsi,
                     no_reg : core.default_dict(req.query.no_reg, ''),
                     usaha : core.default_dict(req.query.usaha, ''),
                     id_sertif: req.query.id_sertif,

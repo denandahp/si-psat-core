@@ -28,7 +28,8 @@ class OkkpRapidTestController {
         try {
             let {key, value} = utils.serialize_rapid_test(data, user, 'updated')
             await pool.query('BEGIN');
-            let rapid_test = await pool.query(format('UPDATE ' + db_rapid_test + ` SET (${key}) = (%L) WHERE id = ${data.id} RETURNING *`, value));
+            let provinsi = utils_core.filter_provinsi(user)
+            let rapid_test = await pool.query(format('UPDATE ' + db_rapid_test + ` SET (${key}) = (%L) WHERE id = ${data.id} ${provinsi} RETURNING *`, value));
             await pool.query('COMMIT');
             return { status: '200', data: rapid_test.rows[0] };
         } catch (ex) {
@@ -39,7 +40,8 @@ class OkkpRapidTestController {
 
     async delete_rapid_test(rapid_test_id) {
         try {
-            let rapid_test = await pool.query('DELETE FROM ' + db_rapid_test + ` WHERE id = ${rapid_test_id} RETURNING *`);
+            let provinsi = utils_core.filter_provinsi(user)
+            let rapid_test = await pool.query('DELETE FROM ' + db_rapid_test + ` WHERE id = ${rapid_test_id} ${provinsi} RETURNING *`);
             return { status: '200', data: rapid_test.rows[0] };
         } catch (ex) {
             return { status: '400', Error: "" + ex };

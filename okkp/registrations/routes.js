@@ -2,7 +2,8 @@ const Router = require('express').Router();
 const controllers = require('./controllers.js');
 const auth = require('../../middleware/auth.js')
 
-Router.get('', controllers.index_registrasi)
+Router.get('', auth, controllers.index_registrasi)
+      .get('/index_public', controllers.index_registrasi)
       .get('/index_sertifikasi', auth, controllers.index_sertifikasi)
       .get('/detail', auth, controllers.detail_registrations)
       .post('/add', auth, controllers.create_registrations)
