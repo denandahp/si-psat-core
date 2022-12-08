@@ -19,7 +19,7 @@ class UserModel {
   async login (username, password) {
     try{
       let pengguna, detail;
-      pengguna = await pool.query('SELECT * from ' + db_pengguna + ' where username = $1', [username]);  
+      pengguna = await pool.query('SELECT * from ' + db_pengguna + ' where username ILIKE $1', [username]);  
       if (pengguna.rowCount <= 0) {
         throw new Error('User tidak ditemukan.');
       } else {
