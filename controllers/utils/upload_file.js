@@ -23,10 +23,13 @@ class UploadController {
                         fileArray = req.files;
                         for (var k in fileArray) {
                             let size = multer.clean_size(fileArray[k]);
+                            let save_folder = 'media'
+                            let save_folder_length = save_folder.length + 1
                             if (size.err == 'FILE_TO_LARGE') {
                                 throw new Error(size.message)
                             } else {
                                 fileLocation = fileArray[k].path;
+                                fileLocation = fileLocation.substring(fileLocation.indexOf(save_folder) + save_folder_length)
                                 response.push(fileLocation)
                             };
                         };
@@ -42,7 +45,8 @@ class UploadController {
 
     async view_pdf(req, res) {
         try {
-            let query_path = req.query.path;
+            let path_file = req.query.path;
+            let query_path = path.join(process.cwd(), `/media/${path_file}`);
             if (fs.existsSync(query_path)) {
                 let ext_file = path.extname(query_path)
                 if(ext_file == ".pdf"){
