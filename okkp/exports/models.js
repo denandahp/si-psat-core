@@ -1,7 +1,7 @@
 const core = require('../core.js')
-const pool = require('../../libs/okkp_db');
+const pool = require('../../libs/db');
 
-const schema_regis = 'register';
+const schema_regis = 'okkp';
 const db_view_index_registarasi = schema_regis + '.view_index_registrasi';
 const db_view_index_uji_lab = schema_regis + '.view_index_uji_lab';
 const db_view_index_rapid_test = schema_regis + '.view_index_rapid_test';

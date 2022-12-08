@@ -7,7 +7,7 @@ if (process.env.POSTGRES_USER == undefined) {
         database = {
             user: process.env.POSTGRES_USER,
             host: process.env.PROD_POSTGRES_HOST,
-            database: process.env.POSTGRES_DATABASE_PSAT,
+            database: process.env.POSTGRES_DATABASE_SIPSAT,
             password: process.env.POSTGRES_PASSWORD,
             sslmode: process.env.POSTGRES_SSLMODE,
             post: process.env.POSTGRES_PORT
@@ -16,7 +16,7 @@ if (process.env.POSTGRES_USER == undefined) {
     database = {
         user: process.env.POSTGRES_USER,
         host: process.env.POSTGRES_HOST,
-        database: process.env.POSTGRES_DATABASE_PSAT,
+        database: process.env.POSTGRES_DATABASE_SIPSAT,
         password: process.env.POSTGRES_PASSWORD,
         sslmode: process.env.POSTGRES_SSLMODE,
         post: process.env.POSTGRES_PORT

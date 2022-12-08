@@ -1,6 +1,6 @@
-const pool = require('../../libs/okkp_db.js')
+const pool = require('../../libs/db.js')
 
-const schema_static = 'static'
+const schema_static = 'okkp_static'
 const db_jenis_registrasi = schema_static + '.jenis_registrasi';
 const db_jenis_sertifikat = schema_static + '.jenis_sertifikat';
 const db_status = schema_static + '.status';

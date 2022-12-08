@@ -1,9 +1,9 @@
 var format = require('pg-format');
-const pool = require('../../libs/okkp_db');
+const pool = require('../../libs/db');
 const utils = require('./utils.js')
 
-const schema_static = 'static'
-const schema_regis = 'register';
+const schema_static = 'okkp_static'
+const schema_regis = 'okkp';
 
 const db_registrations = schema_regis + '.registrasi';
 const db_uji_lab = schema_regis + '.uji_lab';

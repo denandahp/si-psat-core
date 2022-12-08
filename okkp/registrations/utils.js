@@ -1,9 +1,9 @@
 const utils = require('../../models/param/utils.js');
-const pool = require('../../libs/okkp_db.js');
+const pool = require('../../libs/db.js');
 
 var date = utils.date_now();
 
-const schema_regis = 'register';
+const schema_regis = 'okkp';
 const db_registrations = schema_regis + '.registrasi';
 
 

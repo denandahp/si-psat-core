@@ -1,10 +1,10 @@
 const core = require('../core.js')
-const pool = require('../../libs/okkp_db.js');
+const pool = require('../../libs/db.js');
 const {SerializeUjiLab} = require('./utils.js')
 const utils_core = require('../../okkp/utils.js')
 var format = require('pg-format');
 
-const schema = 'register';
+const schema = 'okkp';
 const db_uji_lab = schema + '.uji_lab';
 const db_view_uji_lab = schema + '.view_index_uji_lab';
 

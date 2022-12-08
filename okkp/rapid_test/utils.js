@@ -2,7 +2,7 @@ const utils = require('../../models/param/utils.js');
 
 var date = utils.date_now();
 
-const schema_regis = 'register';
+const schema_regis = 'okkp';
 
 
 exports.serialize_rapid_test = (data, user, process) => {

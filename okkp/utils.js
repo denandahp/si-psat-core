@@ -4,10 +4,10 @@ const excelJS = require("exceljs");
 const format_date = require('../models/param/utils.js');
 const fs = require('fs');
 const path = require('path');
-const pool = require('../libs/okkp_db.js');
+const pool = require('../libs/db.js');
 const utils = require('../models/param/utils.js');
 
-const schema_static = 'static'
+const schema_static = 'okkp_static'
 const db_komoditas = schema_static + '.komoditas'
 
 dotenv.config();

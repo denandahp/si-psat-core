@@ -1,10 +1,10 @@
 const core = require('../core.js')
-const pool = require('../../libs/okkp_db.js');
+const pool = require('../../libs/db.js');
 const utils = require('./utils.js')
 const utils_core = require('../../okkp/utils.js')
 var format = require('pg-format');
 
-const schema = 'register';
+const schema = 'okkp';
 const db_rapid_test = schema + '.rapid_test';
 const db_view_rapid_test = schema + '.view_index_rapid_test';
 

@@ -1,13 +1,13 @@
 const core = require('../core.js')
 const moment = require('moment-timezone');
-const pool = require('../../libs/okkp_db.js');
+const pool = require('../../libs/db.js');
 const utils = require('./utils')
 const utils_param = require('../../models/param/utils.js')
 
-const schema_static = 'static';
+const schema_static = 'okkp_static';
 const db_provinsi = schema_static + '.wilayah_2022';
 
-const schema_register = 'register';
+const schema_register = 'okkp';
 const db_view_registrasi = schema_register + '.view_index_registrasi';
 const db_view_index_uji_lab = schema_register + '.view_index_uji_lab';
 const db_index_rapid_test = schema_register + '.view_index_rapid_test';

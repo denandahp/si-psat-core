@@ -1,10 +1,10 @@
 const param_utils = require('../../models/param/utils.js');
 const mysql = require('../../libs/mysql.js');
-const pool_okkp = require('../../libs/okkp_db.js');
+const pool_okkp = require('../../libs/db.js');
 const pool_psat = require('../../libs/db.js');
 var format = require('pg-format');
 
-let schema = 'static';
+let schema = 'okkp_static';
 
 let schema_user_psat = 'pengguna';
 let db_info_sekretariat = schema_user_psat + '.info_sekretariat';

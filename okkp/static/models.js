@@ -1,12 +1,12 @@
 const mysql = require('../../libs/mysql.js');
 const param_utils = require('../../models/param/utils.js');
-const pool = require('../../libs/okkp_db.js');
+const pool = require('../../libs/db.js');
 const { RedisGetSet } = require('../core.js');
 const utils = require('./utils.js')
 const utils_core = require('../utils.js')
 var format = require('pg-format');
 
-const schema = 'static';
+const schema = 'okkp_static';
 const db_komoditas = schema + '.komoditas';
 const db_jenis_registrasi = schema + '.jenis_registrasi';
 const db_jenis_sertifikat = schema + '.jenis_sertifikat';

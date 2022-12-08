@@ -1,4 +1,4 @@
-const schema = 'static';
+const schema = 'okkp_static';
 const db_jenis_rapid_test = schema + '.jenis_rapid_test';
 const db_jenis_uji_lab = schema + '.jenis_uji_lab';
 const db_rt_aflatoksin = schema + '.rt_aflatoksin';

@@ -5,12 +5,12 @@ const format_date = require('../../models/param/utils.js');
 var fs = require('fs');
 const multer = require('multer');
 const path = require('path');
-const pool = require('../../libs/okkp_db.js')
+const pool = require('../../libs/db.js')
 const utils = require('../utils.js')
 
 dotenv.config();
 
-const schema_static = 'static'
+const schema_static = 'okkp_static'
 const db_header_import = schema_static + '.header_import'
 const db_jenis_hc = schema_static + '.jenis_hc'
 const db_jenis_registrasi = schema_static + '.jenis_registrasi';
@@ -24,7 +24,7 @@ const db_rt_logam_berat = schema_static + '.rt_logam_berat';
 const db_rt_mikroba = schema_static + '.rt_mikroba';
 const db_rt_pestisida = schema_static + '.rt_pestisida';
 
-const schema_regis = 'register';
+const schema_regis = 'okkp';
 const db_registrations = schema_regis + '.registrasi';
 
 let date_now = format_date.date_now()
