@@ -1,11 +1,17 @@
-# PostgreSQL + Express.js Example
+## Check Saldo & Transfer Rest API
+A simple rest api used to on check saldo & transfer. 
 
-- Node.js v8.x
-- PostgreSQL 9.6
-- Express.js 4.x
+### How to run the apps :
+#### 1. Install dependencies
+```
+$ npm install
+```
 
-## Initialize
-
-Schema in `sql/pg.sql`
-
-![](http://i.imgur.com/bNYDlBl.png)
+#### 2. Launch the apps
+Example command for running it locally :
+```
+$ npm start
+```
+After the apps running is succesfully, we can start by calling routes. For example :
+```
+127.0.0.1:4000/
