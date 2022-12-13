@@ -1,5 +1,4 @@
-## Check Saldo & Transfer Rest API
-A simple rest api used to on check saldo & transfer. 
+https://sipsat.badanpangan.go.id/
 
 ### How to run the apps :
 #### 1. Install dependencies
@@ -15,3 +14,5 @@ $ npm start
 After the apps running is succesfully, we can start by calling routes. For example :
 ```
 127.0.0.1:4000/
+```
+
