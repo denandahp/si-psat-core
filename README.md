@@ -16,3 +16,8 @@ After the apps running is succesfully, we can start by calling routes. For examp
 127.0.0.1:4000/
 ```
 
+### API Guide And Documentation :
+All API documentation can be accessed at the following link:
+```
+https://documenter.getpostman.com/view/9038393/UV5ZBGaL
+```
